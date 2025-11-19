@@ -33,7 +33,7 @@ The environment is built into a rack with structured cabling, patch panels, and 
 
 - **Compute**
   - Dell PowerEdge R710 – primary Proxmox host (dual Xeon, 128 GB RAM)
-    ![ primary Proxmox host](/assets/images/front.jpg)
+    ![ primary Proxmox host](/assets/photos/front.jpg)
   - Dell EqualLogic FS7610 (2 nodes) – additional compute and storage services
 
 - **Storage**
