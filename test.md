@@ -13,7 +13,7 @@
 </p>
 
 > [!IMPORTANT]
-> → **Professional-grade security & infrastructure lab** — built on real enterprise hardware, operated like production, documented like a religion.
+> Built on real enterprise hardware, operated like production & documented like a religion.
 
 > [!NOTE]  
 > Proxmox • Cisco ASA • SonicWall • Suricata • SELKS • VLAN Zones • Honeypots • Runbooks • Zero config drift
