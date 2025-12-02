@@ -26,80 +26,97 @@ This repository details the architecture, implementation, and management of a de
 
 ## At a Glance — Current as of December 2025
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-bottom: 20px;">
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">Hypervisor</h4>
-    <p><strong>Spec:</strong> Proxmox VE on Dell R710 (128 GB RAM, dual Xeon)</p>
-    <p><strong>Status:</strong> Stable</p>
-    <p>Core virtualization layer for resource management.</p>
-  </div>
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">Storage</h4>
-    <p><strong>Spec:</strong> Dual EqualLogic FS7610 + Avid 18-bay chassis</p>
-    <p><strong>Status:</strong> Redundant</p>
-    <p>Fault-tolerant storage for data reliability.</p>
-  </div>
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">Core Switch</h4>
-    <p><strong>Spec:</strong> Dell X1052P — 52-port, full VLAN trunking</p>
-    <p><strong>Status:</strong> L2 Master</p>
-    <p>Central networking hub with Layer 2 features.</p>
-  </div>
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">Perimeter</h4>
-    <p><strong>Spec:</strong> Cisco ASA 5510/5515-X + SonicWall SRA 4200</p>
-    <p><strong>Status:</strong> Hardened</p>
-    <p>Boundary security with firewall and access controls.</p>
-  </div>
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">SOC Node</h4>
-    <p><strong>Spec:</strong> Panasonic Toughbook → NST/SELKS + Suricata</p>
-    <p><strong>Status:</strong> Live DPI</p>
-    <p>Security operations for packet inspection.</p>
-  </div>
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">Network Model</h4>
-    <p><strong>Spec:</strong> Multi-zone, ASA-only L3 routing</p>
-    <p><strong>Status:</strong> Zero Trust–inspired</p>
-    <p>Segmented architecture for enhanced security.</p>
-  </div>
-  <div style="width: 300px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <h4 style="margin-top: 0;">OOB Management</h4>
-    <p><strong>Spec:</strong> OpenGear CM4148 + rack KVM + HP TFT5600</p>
-    <p><strong>Status:</strong> Always reachable</p>
-    <p>Out-of-band access for management.</p>
-  </div>
+<div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
+  Overview of key lab components, specifications, and operational status.
 </div>
 
-<div align="center" style="margin-top: 30px;">
+<table style="width: 100%; max-width: 900px; margin: 0 auto; border-collapse: separate; border-spacing: 0 10px; font-family: Arial, sans-serif;">
+  <thead>
+    <tr style="background-color: #f0f4f8; color: #333;">
+      <th style="padding: 12px 16px; text-align: left; border-radius: 6px 0 0 6px; font-weight: 600;">Component</th>
+      <th style="padding: 12px 16px; text-align: left; font-weight: 600;">Specification</th>
+      <th style="padding: 12px 16px; text-align: left; border-radius: 0 6px 6px 0; font-weight: 600;">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Hypervisor</td>
+      <td style="padding: 12px 16px;">Proxmox VE on Dell R710 (128 GB RAM, dual Xeon)</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-Stable-brightgreen?style=flat-square" alt="Stable"/>
+      </td>
+    </tr>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Storage</td>
+      <td style="padding: 12px 16px;">Dual EqualLogic FS7610 + Avid 18-bay chassis</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-Redundant-brightgreen?style=flat-square" alt="Redundant"/>
+      </td>
+    </tr>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Core Switch</td>
+      <td style="padding: 12px 16px;">Dell X1052P — 52-port, full VLAN trunking</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-L2%20Master-brightgreen?style=flat-square" alt="L2 Master"/>
+      </td>
+    </tr>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Perimeter</td>
+      <td style="padding: 12px 16px;">Cisco ASA 5510/5515-X + SonicWall SRA 4200</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-Hardened-brightgreen?style=flat-square" alt="Hardened"/>
+      </td>
+    </tr>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">SOC Node</td>
+      <td style="padding: 12px 16px;">Panasonic Toughbook → NST/SELKS + Suricata</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-Live%20DPI-brightgreen?style=flat-square" alt="Live DPI"/>
+      </td>
+    </tr>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">Network Model</td>
+      <td style="padding: 12px 16px;">Multi-zone, ASA-only L3 routing</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-Zero%20Trust%E2%80%93inspired-brightgreen?style=flat-square" alt="Zero Trust–inspired"/>
+      </td>
+    </tr>
+    <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      <td style="padding: 12px 16px; border-radius: 6px 0 0 6px;">OOB Management</td>
+      <td style="padding: 12px 16px;">OpenGear CM4148 + rack KVM + HP TFT5600</td>
+      <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
+        <img src="https://img.shields.io/badge/Status-Always%20reachable-brightgreen?style=flat-square" alt="Always reachable"/>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div align="center" style="margin-top: 32px;">
   <strong>Lab Maturity</strong><br>
-  <progress value="94" max="100" style="width: 60%; height: 24px; border-radius: 4px; background-color: #e0e0e0;"></progress> <span style="font-weight: bold; font-size: 1.1em; margin-left: 10px;">94%</span>
+  <progress value="94" max="100" style="width: 300px; height: 20px; border-radius: 4px; background-color: #e0e0e0; color: #4caf50;"></progress> <span style="font-weight: bold; margin-left: 8px;">94%</span>
 </div>
 
-<details>
-<summary><strong>System Architecture Overview (Mermaid Diagram)</strong></summary>
+<details style="margin-top: 24px;">
+<summary><strong>Architecture Diagram</strong></summary>
 
 ```mermaid
 graph LR
-    subgraph Core
-        A[Hypervisor<br>Proxmox VE]
-        B[Storage<br>EqualLogic]
+    subgraph "Core Infrastructure"
+        A[Hypervisor: Proxmox VE<br>Dell R710] --> B[Storage: Dual EqualLogic<br>FS7610 + Avid Chassis]
     end
-    subgraph Networking
-        C[Core Switch<br>Dell X1052P] --> D[Perimeter<br>Cisco ASA]
-        D --> E[SOC Node<br>Suricata]
-        F[Network Model<br>Zero Trust]
+    subgraph "Networking & Security"
+        C[Core Switch: Dell X1052P<br>52-port VLAN] --> D[Perimeter: Cisco ASA<br>+ SonicWall SRA]
+        D --> E[SOC Node: Panasonic Toughbook<br>NST/SELKS + Suricata]
+        F[Network Model: Multi-zone<br>ASA L3 Routing - Zero Trust]
     end
-    subgraph Management
-        G[OOB Mgmt<br>OpenGear]
+    subgraph "Management"
+        G[OOB Management: OpenGear CM4148<br>+ Rack KVM + HP TFT5600] --> A
     end
     A --> C
-    A --> B
-    G --> A
     C --> F
-    style Core fill:#f0f8ff,stroke:#0078d4,stroke-width:2px
-    style Networking fill:#f0f8ff,stroke:#0078d4,stroke-width:2px
-    style Management fill:#f0f8ff,stroke:#0078d4,stroke-width:2px
+    style Core Infrastructure fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
+    style Networking & Security fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
+    style Management fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
 
 
 
