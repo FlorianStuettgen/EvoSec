@@ -19,7 +19,7 @@
 > [!NOTE]  
 > The lab is isolated from production networks and is used to design, test, and operate realistic network and security topologies.
 
-## At a Glance — Current as of: **December 2025**
+## At a Glance — Current as of: <ins>**December 2025**</ins>
 
 | Component                | Specification                                                                 | Status                  |
 |--------------------------|-------------------------------------------------------------------------------|-------------------------|
