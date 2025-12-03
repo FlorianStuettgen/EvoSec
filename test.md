@@ -18,7 +18,7 @@ This repository details the architecture, implementation & management of a dedic
 Built on genuine enterprise hardware, it provides a secure, isolated environment for designing, testing, and refining network topologies, security measures, and Project Controls.
 
 > [!IMPORTANT]  
-> Engineered with production-level standards on authentic hardware, accompanied by exhaustive documentation to support professional development and portfolio enhancement.
+> Engineered with production-level standards on authentic hardware and accompanied by documentation.
 
 > [!NOTE]  
 > Operated in complete isolation from production environments to enable risk-free experimentation with realistic scenarios.
