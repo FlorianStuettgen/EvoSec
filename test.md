@@ -105,12 +105,12 @@ This repository details the architecture, implementation, and management of a de
 </div>
 
 graph TD;
-    A[Core: Hypervisor Proxmox VE Dell R710] --> B[Core: Storage Dual EqualLogic FS7610 + Avid Chassis];
-    B --> C[Network: Core Switch Dell X1052P 52-port VLAN];
-    C --> D[Network: Perimeter Cisco ASA + SonicWall SRA];
-    D --> E[Network: SOC Node Panasonic Toughbook NST/SELKS + Suricata];
-    C --> F[Network: Network Model Multi-zone ASA L3 Routing - Zero Trust];
-    G[Mgmt: OOB Management OpenGear CM4148 + Rack KVM + HP TFT5600] --> A;
+    Core: Hypervisor Proxmox VE Dell R710 --> BCore: Storage Dual EqualLogic FS7610 + Avid Chassis;
+    B --> CNetwork: Core Switch Dell X1052P 52-port VLAN;
+    C --> DNetwork: Perimeter Cisco ASA + SonicWall SRA;
+    D --> ENetwork: SOC Node Panasonic Toughbook NST/SELKS + Suricata;
+    C --> FNetwork: Network Model Multi-zone ASA L3 Routing - Zero Trust;
+    GMgmt: OOB Management OpenGear CM4148 + Rack KVM + HP TFT5600 --> A;
 
 
 
