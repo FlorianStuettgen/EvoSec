@@ -45,7 +45,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">Proxmox VE on Dell R710 (128 GB RAM, dual Xeon)</td>
       <td style="padding: 12px 16px;">Serves as the foundational virtualization platform, enabling efficient VM and container management with high resource utilization and failover capabilities.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Operational%20and%20Stable-brightgreen?style=flat-square" alt="Operational and Stable"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Operational and Stable</span>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -53,7 +53,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">Dual EqualLogic FS7610 + Avid 18-bay chassis</td>
       <td style="padding: 12px 16px;">Provides scalable, high-performance NAS storage with RAID redundancy, supporting iSCSI and NFS protocols for seamless data access across the lab.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Fully%20Redundant-brightgreen?style=flat-square" alt="Fully Redundant"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Fully Redundant</span>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -61,7 +61,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">Dell X1052P — 52-port, full VLAN trunking</td>
       <td style="padding: 12px 16px;">Acts as the central Layer 2 switch, handling VLAN segmentation, PoE for devices, and high-throughput traffic management in the lab's network core.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-L2%20Master%20Operational-brightgreen?style=flat-square" alt="L2 Master Operational"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">L2 Master Operational</span>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -69,7 +69,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">Cisco ASA 5510/5515-X + SonicWall SRA 4200</td>
       <td style="padding: 12px 16px;">Forms the security boundary with adaptive firewalling, VPN support, and intrusion prevention, ensuring controlled access and threat mitigation.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Hardened%20and%20Secure-brightgreen?style=flat-square" alt="Hardened and Secure"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Hardened and Secure</span>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -77,7 +77,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">Panasonic Toughbook → NST/SELKS + Suricata</td>
       <td style="padding: 12px 16px;">Dedicated security operations center node for real-time monitoring, ELK stack integration, and IDS/IPS via Suricata for deep packet analysis.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Live%20DPI%20Active-brightgreen?style=flat-square" alt="Live DPI Active"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Live DPI Active</span>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -85,7 +85,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">Multi-zone, ASA-only L3 routing</td>
       <td style="padding: 12px 16px;">Implements a segmented, zero-trust architecture with Layer 3 routing confined to ASA devices, promoting least-privilege access and isolation.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Zero%20Trust%20Enforced-brightgreen?style=flat-square" alt="Zero Trust Enforced"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Zero Trust Enforced</span>
       </td>
     </tr>
     <tr style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -93,7 +93,7 @@ This repository details the architecture, implementation, and management of a de
       <td style="padding: 12px 16px;">OpenGear CM4148 + rack KVM + HP TFT5600</td>
       <td style="padding: 12px 16px;">Out-of-band management console for remote access, serial console switching, and KVM-over-IP, ensuring accessibility during network outages.</td>
       <td style="padding: 12px 16px; border-radius: 0 6px 6px 0;">
-        <img src="https://img.shields.io/badge/Status-Always%20Accessible-brightgreen?style=flat-square" alt="Always Accessible"/>
+        <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Always Accessible</span>
       </td>
     </tr>
   </tbody>
@@ -108,23 +108,25 @@ This repository details the architecture, implementation, and management of a de
 <summary><strong>Architecture Diagram</strong></summary>
 
 ```mermaid
-graph LR
+flowchart LR
     subgraph "Core Infrastructure"
+        direction TB
         A[Hypervisor: Proxmox VE<br>Dell R710] --> B[Storage: Dual EqualLogic<br>FS7610 + Avid Chassis]
     end
     subgraph "Networking & Security"
+        direction TB
         C[Core Switch: Dell X1052P<br>52-port VLAN] --> D[Perimeter: Cisco ASA<br>+ SonicWall SRA]
         D --> E[SOC Node: Panasonic Toughbook<br>NST/SELKS + Suricata]
-        F[Network Model: Multi-zone<br>ASA L3 Routing - Zero Trust]
+        C --> F[Network Model: Multi-zone<br>ASA L3 Routing - Zero Trust]
     end
     subgraph "Management"
+        direction TB
         G[OOB Management: OpenGear CM4148<br>+ Rack KVM + HP TFT5600] --> A
     end
     A --> C
-    C --> F
-    style Core Infrastructure fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
-    style Networking & Security fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
-    style Management fill:#f0f8ff,stroke:#007bff,stroke-width:2px,stroke-dasharray: 5 5
+    style Core Infrastructure fill:#f0f8ff,stroke:#007bff,stroke-width:2px
+    style Networking & Security fill:#f0f8ff,stroke:#007bff,stroke-width:2px
+    style Management fill:#f0f8ff,stroke:#007bff,stroke-width:2px
 
 
 
