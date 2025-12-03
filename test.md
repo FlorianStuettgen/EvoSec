@@ -5,11 +5,14 @@
 </div>
 
 <div align="left" style="margin-top: 16px;">
-  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat&logo=proxmox&logoColor=white" alt="Lab Status: Active"/>
-  <img src="https://img.shields.io/badge/Built-Solo-1182c3?style=flat&logo=github&logoColor=white" alt="Built Solo"/>
-  <img src="https://img.shields.io/badge/Documentation-Comprehensive-ff8800?style=flat&logo=markdown&logoColor=white" alt="Comprehensive Documentation"/>
-  <img src="https://img.shields.io/badge/Nerd_Factor-11/10-ff0066?style=flat&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge&logo=proxmox&logoColor=white" alt="Lab Status: Active"/>
+  <img src="https://img.shields.io/badge/Built-Solo-blue?style=for-the-badge&logo=github&logoColor=white" alt="Built Solo"/>
+  <img src="https://img.shields.io/badge/Docs-Comprehensive-orange?style=for-the-badge&logo=readthedocs&logoColor=white" alt="Comprehensive Documentation"/>
+  <img src="https://img.shields.io/badge/Nerd_Factor-11/10-pink?style=for-the-badge&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
+  <img src="https://img.shields.io/badge/Security-Hardened-9cf?style=for-the-badge&logo=lock&logoColor=white" alt="Security Hardened"/>
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge&logo=github&logoColor=white" alt="MIT License"/>
 </div>
+
 
 ## What is this? 
 
