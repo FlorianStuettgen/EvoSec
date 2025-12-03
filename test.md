@@ -21,8 +21,6 @@ This details the architecture, implementation & management of an isolated enviro
 > [!WARNING]
 > Operated in complete isolation from production environments to enable risk-free experimentation with realistic scenarios.
 
-> [!CAUTION]
-> All information in this repository has been securely sanitized. Any sensitive data, credentials, or real network details have been removed or anonymized to protect operational security
 
 ## At a Glance — Current as of December 2025
 
