@@ -105,26 +105,12 @@ This repository details the architecture, implementation, and management of a de
 </div>
 
 flowchart TB
-    %% Core Infrastructure
-    A[Hypervisor: Proxmox VE - Dell R710]
-    B[Storage: Dual EqualLogic FS7610 + Avid Chassis]
-    A --> B
-
-    %% Networking & Security
-    C[Core Switch: Dell X1052P 52-port VLAN]
-    D[Perimeter: Cisco ASA + SonicWall SRA]
-    E[SOC Node: Panasonic Toughbook NST/SELKS + Suricata]
-    F[Network Model: Multi-zone ASA L3 Routing - Zero Trust]
-    C --> D
-    D --> E
-    C --> F
-
-    %% Management
-    G[OOB Management: OpenGear CM4148 + Rack KVM + HP TFT5600]
-    G --> A
-
-    %% Connections
-    A --> C
+    A[Hypervisor Proxmox VE Dell R710] --> B[Storage Dual EqualLogic FS7610 + Avid Chassis]
+    B --> C[Core Switch Dell X1052P 52-port VLAN]
+    C --> D[Perimeter Cisco ASA + SonicWall SRA]
+    D --> E[SOC Node Panasonic Toughbook NST/SELKS + Suricata]
+    C --> F[Network Model Multi-zone ASA L3 Routing - Zero Trust]
+    G[OOB Management OpenGear CM4148 + Rack KVM + HP TFT5600] --> A
 
 
 
