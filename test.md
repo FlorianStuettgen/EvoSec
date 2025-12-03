@@ -1,6 +1,4 @@
-
-
-#EvoSec-Lab
+# EvoSec-Lab
 <div align="center" style="margin-bottom: 24px; font-style: bold; color: #555; font-size: 0.9em;">
   EvoSec-Lab
 </div>
