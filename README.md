@@ -1,7 +1,7 @@
 # Digital infrastructure Lab
 ![](/assets/photos/test2.jpeg)
 
-**Digital infrastructure Lab** is a self-hosted security and infrastructure lab built on enterprise hardware and operated like a small production network. It is designed, built, and documented end to end by a single operator as a long-term R&D and learning platform.
+**EvoSec-Lab** EvoSec-Lab is a fully matured, adaptive security environment designed to model advanced threat detection and response in a controlled, production-like setting. Application VMs run critical services on isolated VLANs, while honeypots and tar pits actively attract and analyze potential threats. SaltStack automates network reconfiguration, shifting VMs and activating traps in real time, while storage telemetry feeds an LLM-driven security engine for intelligent threat anticipation. Zero Trust policies, robust perimeter defenses, and continuous monitoring ensure that the lab remains resilient, segmented, and fully auditable.
 
 > [!NOTE]
 > ### In This Project:
