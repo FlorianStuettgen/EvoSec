@@ -25,6 +25,10 @@ This repository details the architecture, implementation, and management of a de
 > Operated in complete isolation from production environments to enable risk-free experimentation with realistic scenarios.
 
 ## At a Glance — Current as of December 2025
+
+<img src="assets/diagram.svg" alt="System Diagram" width="700"/>
+
+
 <div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
   Expanded overview of lab components, including detailed specifications, roles, and operational status for a comprehensive snapshot.
 </div>
