@@ -26,7 +26,7 @@ This repository details the architecture, implementation, and management of a de
 
 ## At a Glance — Current as of December 2025
 
-<img src="assets/photos/diagram.svg" alt="System Diagram" width="700"/>
+<img src="assets/photos/diagram.svg" alt="System Diagram" width="800"/>
 
 
 <div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
