@@ -25,13 +25,6 @@ It provides a secure, isolated environment for designing, testing, and refining 
 
 ## At a Glance — Current as of December 2025
 
-<div align="center">
-  <h2>🚀 Digital Infrastructure Lab</h2>
-  <img src="https://github.com/FlorianStuettgen/digital-infrastructure-lab/blob/main/assets/photos/diagram.svg" alt="System Diagram" width="1000"/>
-  <p><i>Full system architecture showing compute, storage, and network topology</i></p>
-</div>
-
-
 <div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
   Expanded overview of lab components, including detailed specifications, roles, and operational status for a comprehensive snapshot.
 </div>
@@ -112,6 +105,16 @@ It provides a secure, isolated environment for designing, testing, and refining 
 </div>
 
 
+<div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
+With full operational maturity, the lab now operates as a dynamic, self-regulating security environment. Application VMs run critical services on isolated VLANs, while honeypots and tar pits detect and slow threats. SaltStack orchestrates real-time network adjustments, moving VMs and activating traps as needed, while LLM-driven analytics process logs to anticipate attacks and adjust topology.
+</div>
+
+
+<div align="center">
+  <h2>🚀 Digital Infrastructure Lab</h2>
+  <img src="https://github.com/FlorianStuettgen/digital-infrastructure-lab/blob/main/assets/photos/diagram.svg" alt="System Diagram" width="1000"/>
+  <p><i>Full system architecture showing compute, storage, and network topology</i></p>
+</div>
 
 
 
