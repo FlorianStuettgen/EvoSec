@@ -19,8 +19,6 @@ It provides a secure, isolated environment for designing, testing, and refining 
 
 > [!IMPORTANT]  
 > Engineered with production-level standards and documentation on authentic enterprise-grade hardware.
-
-> [!NOTE]  
 > Operated in complete isolation from production environments to enable risk-free experimentation with realistic scenarios.
 
 ## At a Glance — Current as of December 2025
