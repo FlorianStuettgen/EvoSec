@@ -104,39 +104,27 @@ This repository details the architecture, implementation, and management of a de
   <progress value="94" max="100" style="width: 300px; height: 20px; border-radius: 4px; background-color: #e0e0e0; color: #4caf50;"></progress> <span style="font-weight: bold; margin-left: 8px;">94%</span>
 </div>
 
-
 flowchart TB
     %% Core Infrastructure
-    subgraph Core["Core Infrastructure"]
-        A["Hypervisor:\nProxmox VE\nDell R710"]
-        B["Storage:\nDual EqualLogic FS7610\nAvid Chassis"]
-        A --> B
-    end
+    A[Hypervisor: Proxmox VE - Dell R710]
+    B[Storage: Dual EqualLogic FS7610 + Avid Chassis]
+    A --> B
 
     %% Networking & Security
-    subgraph Network["Networking & Security"]
-        C["Core Switch:\nDell X1052P 52-port VLAN"]
-        D["Perimeter:\nCisco ASA + SonicWall SRA"]
-        E["SOC Node:\nPanasonic Toughbook\nNST/SELKS + Suricata"]
-        F["Network Model:\nMulti-zone\nASA L3 Routing - Zero Trust"]
-        C --> D
-        D --> E
-        C --> F
-    end
+    C[Core Switch: Dell X1052P 52-port VLAN]
+    D[Perimeter: Cisco ASA + SonicWall SRA]
+    E[SOC Node: Panasonic Toughbook NST/SELKS + Suricata]
+    F[Network Model: Multi-zone ASA L3 Routing - Zero Trust]
+    C --> D
+    D --> E
+    C --> F
 
     %% Management
-    subgraph Management["Management"]
-        G["OOB Management:\nOpenGear CM4148 + Rack KVM + HP TFT5600"]
-        G --> A
-    end
+    G[OOB Management: OpenGear CM4148 + Rack KVM + HP TFT5600]
+    G --> A
 
     %% Connections
     A --> C
-
-    %% Styles
-    style Core fill:#f0f8ff,stroke:#007bff,stroke-width:2px
-    style Network fill:#f0f8ff,stroke:#007bff,stroke-width:2px
-    style Management fill:#f0f8ff,stroke:#007bff,stroke-width:2px
 
 
 
