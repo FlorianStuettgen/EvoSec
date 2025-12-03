@@ -13,7 +13,7 @@
 
 ## Summary
 
-This repository details the architecture, implementation & management of an isolated environment for designing, testing, and refining of network topologies, security measures, and Project Controls.
+This details the architecture, implementation & management of an isolated environment for designing, testing, and refining of network topologies, security measures, and Project Controls.
 
 > [!NOTE]  
 > Engineered with production-level standards and documentation on authentic enterprise-grade hardware.
