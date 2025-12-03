@@ -11,10 +11,10 @@
   <img src="https://img.shields.io/badge/Nerd_Factor-11/10-ff0066?style=flat&logo=dependabot&logoColor=white" alt="Nerd Factor"/>
 </div>
 
-## Summary
+## What is this? 
 
-This details the architecture, implementation & management of an isolated environment for the design, testing, and refinement of network topologies, security measures, and Project Controls.
-It showcases how complex infrastructure, automated workflows, and robust monitoring can be orchestrated to deliver secure, controlled, and reproducible outcomes.
+This details the architecture, implementation & management of EvoSec-Lab, an isolated environment for the design, testing, and refinement of network topologies, security measures, and Project Controls.
+I made this to showcase how complex infrastructure, automated workflows, and robust monitoring can be orchestrated to deliver secure, controlled, and reproducible outcomes.
 
 > [!NOTE]  
 > Engineered with production-level standards and documentation on authentic enterprise-grade hardware.
