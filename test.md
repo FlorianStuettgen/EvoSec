@@ -28,7 +28,7 @@
     - [Compute & Storage](#compute--storage)  
     - [Network & OOB Management](#network--oob-management)  
     - [Security & SOC Node](#security--soc-node)  
-4. [System Architecture](#system-architecture)  
+4. [System Architecture & Qubes OS Integration](#system-architecture--qubes-os-integration)  
 5. [Logical Architecture & Zones](#logical-architecture--zones)  
 6. [Professional Impact](#professional-impact)  
 7. [100% Solo Operator](#100-solo-operator)  
@@ -63,6 +63,7 @@
 | Component       | Specification                            | Description                                                                 | Status |
 |-----------------|-----------------------------------------|----------------------------------------------------------------------------|--------|
 | **Hypervisor**      | Proxmox VE on Dell R710 — 128 GB RAM | Core virtualization platform supporting clustered VM deployments. | 🟩 **Operational** |
+| **Compute Node (Qubes OS)** | Qubes OS VMs on R710, isolated per domain | Each VM represents isolated workloads: management, lab, honeypot, guest. Provides an additional layer of security beyond Proxmox. | 🟦 **Secure & Isolated** |
 | **Storage**         | EqualLogic FS7610 + Avid 18-bay NAS  | Redundant, high-performance iSCSI/NFS storage backbone. | 🟦 **Fully Redundant** |
 | **Core Switch**     | Dell X1052P — 52-port VLAN trunking  | Central L2 switching plane for all segments and management networks. | 🟩 **Active** |
 | **Perimeter**       | Cisco ASA 5510/5515-X + SonicWall SRA | Boundary firewalls and VPN endpoints enforcing strict zone policies. | 🟩 **Hardened** |
@@ -76,7 +77,7 @@
 
 ## **Physical Platform**
 The EvoSec-Lab is divided into three primary domains: **Compute & Storage**, **Network & OOB Management**, and **Security & SOC Node**.  
-Each domain is designed to mirror enterprise operations while remaining fully isolated for experimentation.
+Each domain mirrors enterprise operations while remaining fully isolated for experimentation.
 
 ### Compute & Storage
 <details>
@@ -88,13 +89,14 @@ Each domain is designed to mirror enterprise operations while remaining fully is
 
 **Compute:**  
 - Dell R710 servers with dual Xeon CPUs and 128GB RAM.  
-- Hosts Proxmox VE for clustered VMs and containerized workloads.  
-- Designed for high availability and resource-intensive simulations.
+- Hosts **Proxmox VE** and **Qubes OS VMs**, isolating critical services and providing security-by-design domains.  
+- Each Qubes VM represents a secure environment: management, lab workloads, honeypots, and guest access.  
+- High-availability design ensures fault-tolerant workloads.
 
 **Storage:**  
 - Dual EqualLogic FS7610 arrays with 18-bay Avid chassis.  
-- Provides high-speed, redundant NAS storage for VMs, logs, and backups.  
-- Supports iSCSI and NFS protocols for seamless integration.
+- Redundant, high-speed NAS storage for all VMs, logs, and datasets.  
+- Supports iSCSI and NFS for seamless integration with Proxmox and Qubes OS environments.
 
 </details>
 
@@ -108,13 +110,13 @@ Each domain is designed to mirror enterprise operations while remaining fully is
 <img src="/assets/photos/console1.jpg" loading="lazy" width="100%"/>
 
 **Network Core:**  
-- Dell X1052P switches providing VLAN segmentation and high-throughput L2 switching.  
+- Dell X1052P switches provide VLAN segmentation and high-throughput L2 switching.  
 - Supports lab, DMZ, management, honeypot, and guest networks.  
-- PoE for peripheral devices.
+- PoE for edge devices, IP cameras, and VoIP.
 
 **OOB Management:**  
-- OpenGear CM4148 and Rack KVMs with HP TFT5600 for console-level access.  
-- Provides full control and recovery even during network outages.
+- OpenGear CM4148 combined with Rack KVM and HP TFT5600 ensures remote console access.  
+- Guarantees full recovery and administration even during network failures.
 
 </details>
 
@@ -130,37 +132,40 @@ Each domain is designed to mirror enterprise operations while remaining fully is
 
 **SOC Node:**  
 - Panasonic Toughbook running SELKS/NST with Suricata for IDS/IPS.  
-- ELK stack integration for real-time analysis.  
-- Monitors honeypots and tar pits, feeding data to automation scripts.  
+- ELK stack ingests logs from Proxmox, Qubes OS, honeypots, and network devices.  
+- Provides real-time visibility and dynamic defensive responses.
 
 **Honeypots & Tar Pits:**  
-- Isolated traps for attacker engagement.  
-- Dynamic responses via SaltStack and LLM-driven log analytics.
+- Strategically deployed in lab and DMZ zones to attract and slow attackers.  
+- SaltStack automation triggers adaptive network changes in response to threat events.  
+- LLM analytics monitor, predict, and orchestrate VM network changes dynamically.
 
 </details>
 
 ---
 
-## **System Architecture**
-The lab’s operational behavior is complex; the diagram below represents a **simplified high-level overview**:
-
+## **System Architecture & Qubes OS Integration**
 <div align="center">
-  <img src="https://github.com/FlorianStuettgen/digital-infrastructure-lab/blob/main/assets/photos/diagram.svg" alt="System Diagram" width="1000"/>
-  <p><i>
-  Shows compute, storage, and network topology. Application VMs run on isolated VLANs; honeypots detect adversaries.  
-  SaltStack automates dynamic network adjustments; LLM analytics monitor logs and anticipate attacks in real-time.
-  </i></p>
+  <img src="/assets/animations/lab-operations.gif" alt="Lab Operations Animation" width="100%"/>
+  <p><i>Animated representation of compute, storage, and network orchestration. Qubes OS VMs are isolated domains managing workloads securely, while SaltStack automates dynamic VM movements and network changes in response to threat signals.</i></p>
 </div>
+
+**How it works:**  
+- Proxmox VE manages the hypervisor layer and VM lifecycles.  
+- Qubes OS VMs provide **secure isolation**, each representing a specific trust domain.  
+- SaltStack automation dynamically deploys configurations, moves VMs, and triggers honeypot traps.  
+- IDS alerts from Suricata feed into LLM-based analytics, which orchestrates proactive network adjustments.  
+- Honeypots and tar pits provide real-world adversarial testing without impacting critical workloads.
 
 ---
 
 ## **Logical Architecture & Zones**
-The lab enforces a **zero-trust, segmented model**, with zones categorized by trust level, purpose, and visual identifier:
+The lab enforces a **zero-trust, segmented model**, with zones categorized by trust, purpose, and visual identifiers:
 
 | Zone       | Trust     | Color  | Purpose                              |
 |------------|-----------|--------|--------------------------------------|
 | Management | Highest   | 🔵 Blue | Crown jewels & consoles              |
-| Core       | High      | 🟢 Green | Proxmox + storage                    |
+| Core       | High      | 🟢 Green | Proxmox + Qubes OS workloads         |
 | DMZ        | Medium    | 🟡 Yellow| Controlled exposure                  |
 | Lab        | Medium    | 🟠 Orange| General workloads                    |
 | Honeypots  | Low       | 🔴 Red   | Attack surface bait                  |
@@ -174,7 +179,7 @@ The lab enforces a **zero-trust, segmented model**, with zones categorized by tr
 | Network Engineering       | Zone-based firewall design, ASA object-group mastery, VLAN planning |
 | Security Engineering      | Suricata tuning, honeypot deployment, attack traffic analysis       |
 | SRE / Platform Engineering| Observability, reproducibility, runbook discipline                 |
-| DevOps & Automation       | Ansible playbooks, config-as-code, documentation-as-code           |
+| DevOps & Automation       | SaltStack playbooks, Qubes OS integration, config-as-code           |
 | Technical Leadership      | End-to-end ownership, systems thinking, risk-aware architecture     |
 
 ---
@@ -184,7 +189,7 @@ Every cable pulled, ACL written, diagram drawn, and line of Markdown — **one h
 
 - Sourced & refurbished all enterprise hardware  
 - Designed every security zone & policy from scratch  
-- Stood up Proxmox, ASA, SonicWall, Suricata, SELKS  
+- Stood up Proxmox, Qubes OS, ASA, SonicWall, Suricata, SELKS  
 - Authored full documentation & runbooks  
 - Continually iterating features at 2 a.m. for fun  
 
