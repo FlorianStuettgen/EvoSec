@@ -29,8 +29,7 @@ This lab serves as a **hands-on playground for experimentation, learning, and pr
 
 ---
 
-<h3 align="center"><strong>🔹 Key Highlights</strong></h2>
-
+<h2 align="center"><strong>🔹 Key Highlights:</strong></h2>
 <details open>
 <summary>Enterprise-Grade Simulation</summary>
 Realistic network environments featuring racks, switches, and firewalls designed to mirror production-grade infrastructures.
@@ -137,86 +136,18 @@ Detailed notes, diagrams, and procedures ensuring all setups are transparent, re
   </tbody>
 </table>
 
-<div align="center" style="margin-top: 32px;">
-  <strong>Lab Maturity</strong><br>
-  <progress value="94" max="100" style="width: 300px; height: 20px; border-radius: 4px; background-color: #e0e0e0; color: #4caf50;"></progress> <span style="font-weight: bold; margin-left: 8px;">94%</span>
-</div>
+
 
 
 <div align="center" style="margin-bottom: 24px; font-style: italic; color: #555; font-size: 0.9em;">
-With full operational maturity, the lab now operates as a dynamic, self-regulating security environment. Application VMs run critical services on isolated VLANs, while honeypots and tar pits detect and slow threats. SaltStack orchestrates real-time network adjustments, moving VMs and activating traps as needed, while LLM-driven analytics process logs to anticipate attacks and adjust topology.
+With full operational maturity, the lab now operates as a dynamic, self-regulating security environment. Application VMs run critical services on isolated VLANs, while honeypots and tar pits detect and slow threats. SaltStack orchestrates real-time network adjustments, moving VMs and activating traps as needed, while LLM-driven analytics process logs to anticipate attacks and adjust topology. The interplay here is complex, but charted here is a naive approach:
 </div>
 
-
 <div align="center">
-  <h2>🚀 Digital Infrastructure Lab</h2>
+  <h3>🚀 Digital Infrastructure Lab</h3>
   <img src="https://github.com/FlorianStuettgen/digital-infrastructure-lab/blob/main/assets/photos/diagram.svg" alt="System Diagram" width="1000"/>
   <p><i>Full system architecture showing compute, storage, and network topology</i></p>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
