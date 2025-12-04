@@ -14,7 +14,7 @@
 
 ---
 
-## What is EvoSec-Lab?
+## What is this?
 
 **EvoSec-Lab** is an isolated design and testing environment for network topologies, security measures & Project Controls workflows.  
 
