@@ -14,184 +14,124 @@
 ---
 
 > [!NOTE]  
-> Engineered with **production-level standards**, fully documented, and executed on authentic enterprise-grade hardware.
+> Engineered with enterprise-grade precision and fully documented hardware, software, and network operations.
 
 > [!WARNING]  
-> All sensitive information, credentials, or production network data are **obfuscated or excluded**. This lab is fully sanitized.
+> All sensitive credentials and network details are obfuscated or excluded to protect operational security.
 
 ---
 
-## **Table of Contents**
+<details open>
+<summary><strong>Table of Contents</strong></summary>
+
 1. [Key Highlights](#key-highlights)  
-2. [At a Glance (Dec 2025)](#at-a-glance-december-2025)  
-3. [Physical Platform](#physical-platform)  
+2. [Lab Overview & Platform](#lab-overview--platform)  
     - [Compute & Storage](#compute--storage)  
     - [Network & OOB Management](#network--oob-management)  
     - [Security & SOC Node](#security--soc-node)  
-4. [System Architecture & Qubes OS Integration](#system-architecture--qubes-os-integration)  
-5. [Logical Architecture & Zones](#logical-architecture--zones)  
-6. [Professional Impact](#professional-impact)  
-7. [100% Solo Operator](#100-solo-operator)  
+3. [System Architecture & Qubes OS Integration](#system-architecture--qubes-os-integration)  
+4. [Logical Architecture & Zones](#logical-architecture--zones)  
+5. [Professional Impact](#professional-impact)  
+6. [100% Solo Operator](#100-solo-operator)  
+
+</details>
 
 ---
 
 ## **Key Highlights**
-- **Enterprise-Grade Simulation**  
-  Realistic network environments with racks, switches, firewalls, and segmented topologies mirroring production infrastructure.
-
-- **Project Controls Workflows**  
-  Structured processes for planning, monitoring, and managing complex IT, networking, and change-controlled operations.
-
-- **Security Experimentation**  
-  Controlled deployment of honeypots, tar pits, and monitoring systems for safe adversarial research.
-
-- **Automation & Orchestration**  
-  LLM-assisted SaltStack workflows dynamically manage VM topology, deploy states, and ensure operational consistency.
-
-- **Isolated Testing Environment**  
-  Fully contained lab environment for risk-free experimentation without touching live systems.
-
-- **Thorough Documentation**  
-  Diagrams, notes, and reproducible procedures ensure clarity, repeatability, and transparency.
+- **Enterprise-Grade Simulation** — Hardware and network topology mirror real production environments with realistic workloads.  
+- **Project Controls Workflows** — Formalized processes for planning, monitoring, and documenting IT and network operations.  
+- **Security Experimentation** — Deployment of honeypots, tar pits, and network monitoring for safe adversarial testing.  
+- **Automation & Orchestration** — LLM + SaltStack dynamically manage VM placement, firewall rules, and honeypot activation.  
+- **Isolated Testing Environment** — Fully contained lab for experimentation, mitigating risk to any external or production systems.  
+- **Thorough Documentation** — Diagrams, notes, and procedures ensure repeatability, transparency, and operational clarity.
 
 ---
 
-## **At a Glance (December 2025)**
+## **Lab Overview & Platform**
+This section integrates hardware, software, and operational details into a coherent overview, highlighting all major components in the lab environment.
+
 <details open>
-<summary><em>Component summary, specifications, and operational status</em></summary>
+<summary><em>Expand for full component list, specifications, and operational status</em></summary>
 
-| Component       | Specification                            | Description                                                                 | Status |
+| Component        | Specification                            | Description                                                                 | Status |
 |-----------------|-----------------------------------------|----------------------------------------------------------------------------|--------|
-| **Hypervisor**      | Proxmox VE on Dell R710 — 128 GB RAM | Core virtualization platform supporting clustered VM deployments. | 🟩 **Operational** |
-| **Compute Node (Qubes OS)** | Qubes OS VMs on R710, isolated per domain | Each VM represents isolated workloads: management, lab, honeypot, guest. Provides an additional layer of security beyond Proxmox. | 🟦 **Secure & Isolated** |
-| **Storage**         | EqualLogic FS7610 + Avid 18-bay NAS  | Redundant, high-performance iSCSI/NFS storage backbone. | 🟦 **Fully Redundant** |
-| **Core Switch**     | Dell X1052P — 52-port VLAN trunking  | Central L2 switching plane for all segments and management networks. | 🟩 **Active** |
-| **Perimeter**       | Cisco ASA 5510/5515-X + SonicWall SRA | Boundary firewalls and VPN endpoints enforcing strict zone policies. | 🟩 **Hardened** |
-| **SOC Node**        | Panasonic Toughbook running SELKS     | Dedicated IDS/IPS telemetry node with Suricata and ELK stack. | 🟧 **Live DPI** |
-| **Network Model**   | Multi-zone, ASA-only L3 routing       | Zero-trust segmentation with strict L3 enforcement. | 🟩 **Zero Trust** |
-| **OOB Management**  | OpenGear CM4148 + Rack KVM + HP TFT5600 | Out-of-band remote access for emergency maintenance. | 🟩 **Always Accessible** |
-
-</details>
+| **Compute Node (R710)**   | Dell R710, dual Xeon, 128GB RAM | Runs **Qubes OS** as the primary experimental hypervisor for multi-domain security isolation (AppVMs for management, honeypots, and guest domains). | 🟦 Secure & Isolated |
+| **Primary Storage (EqualLogic + Avid Bay)** | Dual EqualLogic FS7610 + Avid 18-bay chassis | Runs **Proxmox VE** to host storage-centric VMs, containers, and orchestration services. Provides redundant, high-performance iSCSI/NFS storage for all lab workloads. | 🟩 Operational & Stable |
+| **Core Switch**  | Dell X1052P — 52-port VLAN trunking | Layer 2 central switch managing VLAN segmentation, PoE, and high-throughput traffic. | 🟩 Active |
+| **Perimeter Firewall** | Cisco ASA 5510/5515-X + SonicWall SRA 4200 | Security boundary with adaptive firewalling, VPN, intrusion prevention, and multi-zone segmentation. | 🟩 Hardened & Secure |
+| **SOC Node**     | Panasonic Toughbook → SELKS + Suricata | Real-time monitoring, ELK stack integration, IDS/IPS, and DPI analysis. | 🟧 Live DPI Active |
+| **Out-of-Band Management** | OpenGear CM4148 + Rack KVM + HP TFT5600 | Remote access, serial console switching, KVM-over-IP for all rack devices. | 🟩 Always Accessible |
+| **Patch Panels & Cabling** | Standard 24/48-port panels | Structured cabling for connectivity, redundancy, and isolation. | 🟩 Fully Installed |
+| **Lab Workstation** | Desktop PC + monitors | Administrative orchestration and monitoring of the lab environment. | 🟩 Operational |
+| **Honeypot Nodes** | Virtualized in Qubes OS AppVMs | Attack surface simulation for IDS/IPS validation. | 🟧 Active |
 
 ---
-
-## **Physical Platform**
-The EvoSec-Lab is divided into three primary domains: **Compute & Storage**, **Network & OOB Management**, and **Security & SOC Node**.  
-Each domain mirrors enterprise operations while remaining fully isolated for experimentation.
 
 ### Compute & Storage
-<details>
-<summary>Click to expand</summary>
-
-<img src="/assets/photos/Compute1.jpg" alt="R710" loading="lazy" width="100%"/>
-<img src="/assets/photos/Compute2.png" alt="EqualLogic" loading="lazy" width="100%"/>
-<img src="/assets/photos/Storage1.png" alt="Avid" loading="lazy" width="100%"/>
-
-**Compute:**  
-- Dell R710 servers with dual Xeon CPUs and 128GB RAM.  
-- Hosts **Proxmox VE** and **Qubes OS VMs**, isolating critical services and providing security-by-design domains.  
-- Each Qubes VM represents a secure environment: management, lab workloads, honeypots, and guest access.  
-- High-availability design ensures fault-tolerant workloads.
-
-**Storage:**  
-- Dual EqualLogic FS7610 arrays with 18-bay Avid chassis.  
-- Redundant, high-speed NAS storage for all VMs, logs, and datasets.  
-- Supports iSCSI and NFS for seamless integration with Proxmox and Qubes OS environments.
-
-</details>
+- **Dell R710** runs **Qubes OS** as a VM-centric hypervisor to enforce security domains.  
+- **EqualLogic FS7610 + Avid 18-bay chassis** run **Proxmox VE**, hosting storage-heavy VMs, orchestration, and containerized workloads.  
+- This separation allows **compute isolation (R710/Qubes)** and **storage orchestration (EqualLogic/Avid/Proxmox)** simultaneously, maximizing security while maintaining high-performance storage and compute capabilities.  
 
 ### Network & OOB Management
-<details>
-<summary>Click to expand</summary>
-
-<img src="/assets/photos/switch.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/patch.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/console3.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/console1.jpg" loading="lazy" width="100%"/>
-
-**Network Core:**  
-- Dell X1052P switches provide VLAN segmentation and high-throughput L2 switching.  
-- Supports lab, DMZ, management, honeypot, and guest networks.  
-- PoE for edge devices, IP cameras, and VoIP.
-
-**OOB Management:**  
-- OpenGear CM4148 combined with Rack KVM and HP TFT5600 ensures remote console access.  
-- Guarantees full recovery and administration even during network failures.
-
-</details>
+- Core switch Dell X1052P handles all VLANs and traffic flows.  
+- Patch panels and structured cabling maintain clean, redundant connections.  
+- Out-of-band access via OpenGear CM4148 and Rack KVM allows management of all devices even during network outages.  
 
 ### Security & SOC Node
-<details>
-<summary>Click to expand</summary>
-
-<img src="/assets/photos/sec1.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/sec3.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/sec2.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/monitor1.jpg" loading="lazy" width="100%"/>
-<img src="/assets/photos/monitor2.jpg" loading="lazy" width="100%"/>
-
-**SOC Node:**  
-- Panasonic Toughbook running SELKS/NST with Suricata for IDS/IPS.  
-- ELK stack ingests logs from Proxmox, Qubes OS, honeypots, and network devices.  
-- Provides real-time visibility and dynamic defensive responses.
-
-**Honeypots & Tar Pits:**  
-- Strategically deployed in lab and DMZ zones to attract and slow attackers.  
-- SaltStack automation triggers adaptive network changes in response to threat events.  
-- LLM analytics monitor, predict, and orchestrate VM network changes dynamically.
-
-</details>
+- Panasonic Toughbook running SELKS + Suricata provides continuous monitoring, intrusion detection, and ELK integration.  
+- SaltStack automates VM orchestration, firewall adjustments, and dynamic honeypot activation across Proxmox and Qubes domains.  
+- LLM-driven analysis interprets logs, anticipates threats, and reconfigures the network in real-time.
 
 ---
 
 ## **System Architecture & Qubes OS Integration**
 <div align="center">
   <img src="/assets/animations/lab-operations.gif" alt="Lab Operations Animation" width="100%"/>
-  <p><i>Animated representation of compute, storage, and network orchestration. Qubes OS VMs are isolated domains managing workloads securely, while SaltStack automates dynamic VM movements and network changes in response to threat signals.</i></p>
 </div>
 
-**How it works:**  
-- Proxmox VE manages the hypervisor layer and VM lifecycles.  
-- Qubes OS VMs provide **secure isolation**, each representing a specific trust domain.  
-- SaltStack automation dynamically deploys configurations, moves VMs, and triggers honeypot traps.  
-- IDS alerts from Suricata feed into LLM-based analytics, which orchestrates proactive network adjustments.  
-- Honeypots and tar pits provide real-world adversarial testing without impacting critical workloads.
+- **Proxmox VE** hosts storage-centric workloads on EqualLogic + Avid hardware.  
+- **Qubes OS** runs on the R710 as the main experimental and security-focused hypervisor.  
+- AppVMs in Qubes separate workloads by trust: management, lab, guest, and honeypot domains.  
+- SaltStack orchestrates VMs across Proxmox and Qubes for dynamic deployment, network adjustments, and honeypot activation.  
+- LLM-driven analytics read logs, predict attacks, and reconfigure both Proxmox and Qubes VMs in real time.
 
 ---
 
 ## **Logical Architecture & Zones**
-The lab enforces a **zero-trust, segmented model**, with zones categorized by trust, purpose, and visual identifiers:
+<div align="center">
+  <img src="/assets/photos/diagram.svg" alt="System Architecture Diagram" width="100%"/>
+</div>
 
 | Zone       | Trust     | Color  | Purpose                              |
 |------------|-----------|--------|--------------------------------------|
-| Management | Highest   | 🔵 Blue | Crown jewels & consoles              |
-| Core       | High      | 🟢 Green | Proxmox + Qubes OS workloads         |
-| DMZ        | Medium    | 🟡 Yellow| Controlled exposure                  |
-| Lab        | Medium    | 🟠 Orange| General workloads                    |
-| Honeypots  | Low       | 🔴 Red   | Attack surface bait                  |
-| Guest      | Lowest    | ⚫ Black | Untrusted devices                     |
+| Management | Highest   | 🔵 Blue | Administrative consoles & critical assets |
+| Core       | High      | 🟢 Green | Proxmox VMs & Qubes R710 workloads   |
+| DMZ        | Medium    | 🟡 Yellow| Controlled exposure & service testing |
+| Lab        | Medium    | 🟠 Orange| General experimental workloads        |
+| Honeypots  | Low       | 🔴 Red   | IDS/IPS bait & attack simulation      |
+| Guest      | Lowest    | ⚫ Black | Untrusted devices & code testing      |
 
 ---
 
 ## **Professional Impact**
-| Discipline                | Real-World Skills Demonstrated                                      |
+| Discipline                | Skills & Experience Demonstrated                                    |
 |---------------------------|---------------------------------------------------------------------|
-| Network Engineering       | Zone-based firewall design, ASA object-group mastery, VLAN planning |
-| Security Engineering      | Suricata tuning, honeypot deployment, attack traffic analysis       |
-| SRE / Platform Engineering| Observability, reproducibility, runbook discipline                 |
-| DevOps & Automation       | SaltStack playbooks, Qubes OS integration, config-as-code           |
-| Technical Leadership      | End-to-end ownership, systems thinking, risk-aware architecture     |
+| **Network Engineering**    | VLAN design, ASA object-group mastery, L2/L3 architecture, zone-based routing |
+| **Security Engineering**   | Honeypot deployment, Suricata IDS tuning, zero-trust enforcement, tar pits |
+| **SRE / Platform Engineering** | Observability, HA, DR planning, reproducibility, full-stack orchestration |
+| **DevOps & Automation**    | SaltStack orchestration, config-as-code, Qubes OS AppVM management |
+| **Technical Leadership**   | End-to-end ownership, workflow optimization, risk-aware system design |
 
 ---
 
 ## **100% Solo Operator**
-Every cable pulled, ACL written, diagram drawn, and line of Markdown — **one human**.
+Every component, configuration, and line of Markdown was completed by **one human**:
 
-- Sourced & refurbished all enterprise hardware  
-- Designed every security zone & policy from scratch  
-- Stood up Proxmox, Qubes OS, ASA, SonicWall, Suricata, SELKS  
-- Authored full documentation & runbooks  
-- Continually iterating features at 2 a.m. for fun  
+- Refurbished and integrated all enterprise hardware.  
+- Built and configured Proxmox, Qubes OS, ASA, SonicWall, SELKS, and Suricata.  
+- Authored all diagrams, documentation, and runbooks.  
+- Continuously adding features, expanding lab operations, and integrating automation.
 
 <p align="center">
   <strong>Built with precision.<br>Documented with obsession.<br>Operated with fire.</strong>
