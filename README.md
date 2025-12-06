@@ -1,4 +1,3 @@
-![diagram](https://github.com/user-attachments/assets/b58633aa-b6cb-4580-9d00-20b61859e8e4)<div align="left">
 <img width="452" height="170" alt="ChatGPT Image Dec 5, 2025, 05_22_47 PM" src="https://github.com/user-attachments/assets/c35d9192-3736-40ba-9d59-d2660507c0c2" />
 </div> 
 
