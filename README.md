@@ -104,7 +104,11 @@ Supporting automated deployment, updates, scaling, adaptive experiments, and pre
 
 The system delivers granular observability across infrastructure, apps, and network by collecting metrics such as CPU, memory, storage I/O, and network traffic deep packet inspection for detailed analysis and interpretation. 
 
+<div align="center">
+
 <img width="725" height="543" alt="NSTscreen013" src="https://github.com/user-attachments/assets/cf118ed6-64b2-4ed3-bbdd-02fedad4afd5" />
+
+</div>
 
 The ELK stack provides central logging for real-time event tracking and anomaly detection, while Grafana dashboards visualize system and security status.
 SOC integration enables continuous monitoring, advanced threat detection, and prompt response to abnormal activities. 
