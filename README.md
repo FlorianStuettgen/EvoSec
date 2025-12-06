@@ -17,7 +17,7 @@ This wiki provides an overview of EvoSec’s architecture, components, and exper
 | Feature | Description |
 |:------:|:-----------|
 | **Enterprise-Grade** | High-performance servers, storage, and networking for advanced research. |
-| **Segregated Zones** | VLANs create isolated spaces for honeypots, tar pits, DMZs, and management networks for flexible testing. |
+| **Zones** | VLANs create isolated spaces for honeypots, tar pits, DMZs, and management networks. |
 | **AI-Driven** | Large language models orchestrate network, security, and lab operations in real time for rapid responses. |
 | **Automated** | Pipelines streamline VM provisioning, software deployment, and configuration management at scale. |
 | **Full Observability** | Monitoring and dashboards for intrusion detection and logs provide actionable insights. |
