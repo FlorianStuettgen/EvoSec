@@ -1,6 +1,5 @@
+<img width="1024" height="373" alt="logo" src="https://github.com/user-attachments/assets/e039cf91-6e0c-4182-807c-1a5c6d35e06b" />
 
-<img width="452" height="170" alt="M" src="https://github.com/user-attachments/assets/c35d9192-3736-40ba-9d59-d2660507c0c2" />
- 
 ---
 
 ##  Welcome to SOC_Replay
