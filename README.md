@@ -23,7 +23,7 @@ Visit the wiki for a detailed breakdown of EvoSec’s architecture, components, 
 | **Enterprise-Grade** | High-performance servers, storage, and networking for advanced research. |
 | **Zones** | VLANs create isolated spaces for honeypots, tar pits, DMZs, and management networks. |
 | **AI-Driven** | Models orchestrate network, security for rapid responses. |
-| **Automated** | Pipelines streamline VM provisioning, software deployment, and configuration management at scale. |
+| **Automated** | Streamlining of VM provisioning,  deployment, and configuration management at scale. |
 | **Full Observability** | Monitoring and dashboards for intrusion detection and logs provide actionable insights. |
 | **Zero-Trust Security** | Compartmentalized VMs, automated threat response, and SOC integration enforce strict operational security. |
 
