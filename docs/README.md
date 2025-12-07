@@ -1,6 +1,6 @@
-# EvoSec Documentation
+# SOC_Replay Documentation
 
-This documentation mirrors the structure of the EvoSec wiki, reorganized into a file-based docs directory.  
+This documentation mirrors the structure of the SOC_Replay wiki, reorganized into a file-based docs directory.  
 
 ## Contents
 
@@ -19,6 +19,6 @@ This documentation mirrors the structure of the EvoSec wiki, reorganized into a 
 
 ## Quick Start
 
-EvoSec is a cybersecurity research lab environment designed for experimentation, analysis, and demonstration. It combines honeypots, intrusion detection/prevention systems, automated orchestration, monitoring, and secure network segmentation to enable safe, repeatable, and realistic security testing.
+SOC_Replay is a cybersecurity research lab environment designed for experimentation, analysis, and demonstration. It combines honeypots, intrusion detection/prevention systems, automated orchestration, monitoring, and secure network segmentation to enable safe, repeatable, and realistic security testing.
 
 See [01‑Architecture](01-Architecture.md) for an overview of the system architecture.
