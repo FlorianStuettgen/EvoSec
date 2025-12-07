@@ -121,7 +121,7 @@ By bringing together data from multiple sources, EvoSec turns raw information in
 
 <div align="center">
 
-##  Why EvoSec?
+## Why EvoSec?
 
 EvoSec combines enterprise-grade infrastructure, AI-driven automation, 
 and security, making it ideal for professional research and education.
@@ -130,7 +130,11 @@ and security, making it ideal for professional research and education.
 
 As of December 2025, EvoSec is now fully operational!
 
-Stay tuned and visit the wiki for a detailed overview of EvoSec’s architecture, components, and ongoing experiments:
-[EvoSec-Lab Wiki](https://github.com/FlorianStuettgen/EvoSec/wiki).
+Stay tuned or visit us for more details on EvoSec’s architecture, components, and ongoing experiments:
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Florian_Stuettgen-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/florian-stuettgen/)
+[![EvoSec Wiki](https://img.shields.io/badge/EvoSec-Wiki-0A66C2?style=for-the-badge&logo=github)](https://github.com/FlorianStuettgen/EvoSec/wiki)
+
 </div>
+
 
