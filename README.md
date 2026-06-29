@@ -4,11 +4,9 @@
 
 ##  Welcome to SOC_Replay
 
-</div>
-
 SOC_Replay is a cybersecurity research lab built for experimentation and operational analysis. This exciting new platform brings together honeypots, intrusion detection, automation, and monitoring into a unified environment. 
 
-Visit the wiki for a detailed breakdown of SOC_Replay’s architecture, components, and experiments:
+Visit the wiki for a detailed breakdown of SOC_Replay's architecture, components, and experiments:
 [SOC_Replay Wiki](https://github.com/FlorianStuettgen/SOC_Replay/wiki).
 
 ---
@@ -37,16 +35,19 @@ Visit the wiki for a detailed breakdown of SOC_Replay’s architecture, componen
 <details open>
   <summary><strong>SOC_Replay Wiki Table of Contents</strong></summary>
 
-- [01 – Architecture](https://github.com/FlorianStuettgen/SOC_Replay/wiki/01-%E2%80%90-Architecture)
-- [02 – Hardware](https://github.com/FlorianStuettgen/SOC_Replay/wiki/02-%E2%80%90-Hardware)
-- [03 – Software Stack](https://github.com/FlorianStuettgen/SOC_Replay/wiki/03-%E2%80%90-Software-Stack)
-- [04 – Network Topology](https://github.com/FlorianStuettgen/SOC_Replay/wiki/04-%E2%80%90-Network-Topology)
-- [05 – CI/CD & Automation](https://github.com/FlorianStuettgen/SOC_Replay/wiki/05-%E2%80%90-CI-CD-&-Automation)
-- [06 – Monitoring & Telemetry](https://github.com/FlorianStuettgen/SOC_Replay/wiki/06-%E2%80%90-Monitoring-&-Telemetry)
-- [07 – Security Model](https://github.com/FlorianStuettgen/SOC_Replay/wiki/07-%E2%80%90-Security-Model)
-- [08 – Use Cases](https://github.com/FlorianStuettgen/SOC_Replay/wiki/08-%E2%80%90-Use-Cases)
-- [09 – Roadmap](https://github.com/FlorianStuettgen/SOC_Replay/wiki/09-%E2%80%90-Roadmap)
-- [10 – Appendix](https://github.com/FlorianStuettgen/SOC_Replay/wiki/10-%E2%80%90-Appendix)
+- [01 - Architecture](https://github.com/FlorianStuettgen/SOC_Replay/wiki/01-Architecture)
+- [02 - Hardware](https://github.com/FlorianStuettgen/SOC_Replay/wiki/02-Hardware)
+- [03 - Software Stack](https://github.com/FlorianStuettgen/SOC_Replay/wiki/03-Software-Stack)
+- [04 - Network Topology](https://github.com/FlorianStuettgen/SOC_Replay/wiki/04-Network-Topology)
+- [05 - CI/CD and Automation](https://github.com/FlorianStuettgen/SOC_Replay/wiki/05-CI-CD-Automation)
+- [06 - Monitoring and Telemetry](https://github.com/FlorianStuettgen/SOC_Replay/wiki/06-Monitoring-Telemetry)
+- [07 - Security Model](https://github.com/FlorianStuettgen/SOC_Replay/wiki/07-Security-Model)
+- [08 - Use Cases](https://github.com/FlorianStuettgen/SOC_Replay/wiki/08-Use-Cases)
+- [09 - Roadmap](https://github.com/FlorianStuettgen/SOC_Replay/wiki/09-Roadmap)
+- [10 - Appendix](https://github.com/FlorianStuettgen/SOC_Replay/wiki/10-Appendix)
+- [11 - Operations Runbook](https://github.com/FlorianStuettgen/SOC_Replay/wiki/11-Operations-Runbook)
+- [12 - Firewall Policy Reference](https://github.com/FlorianStuettgen/SOC_Replay/wiki/12-Firewall-Policy-Reference)
+- [13 - Experiment Lifecycle](https://github.com/FlorianStuettgen/SOC_Replay/wiki/13-Experiment-Lifecycle)
 
 </details>
 </div>
@@ -129,7 +130,7 @@ As of December 2025, SOC_Replay is now fully operational!
 
 ![test2](https://github.com/user-attachments/assets/7388aa89-6603-4772-b960-438a4a78339b)
 
-Visit us for more details on SOC_Replay’s architecture, components, and ongoing experiments:
+Visit us for more details on SOC_Replay's architecture, components, and ongoing experiments:
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Florian_Stuettgen-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/florian-stuettgen/)
 [![SOC_Replay Wiki](https://img.shields.io/badge/SOC_Replay-Wiki-0A66C2?style=for-the-badge&logo=github)](https://github.com/FlorianStuettgen/SOC_Replay/wiki)
