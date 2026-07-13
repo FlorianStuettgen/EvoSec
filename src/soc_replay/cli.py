@@ -6,10 +6,11 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .adapters import normalize_suricata_file
 from .engine import ReplayResult, run_scenario
 from .io import load_scenario
 from .models import ValidationError
-from .report import write_reports
+from .report import verify_bundle, write_bundle
 
 
 def _catalog(root: Path) -> list[dict[str, object]]:
@@ -59,6 +60,17 @@ def build_parser() -> argparse.ArgumentParser:
     explain_parser.add_argument("scenario")
     explain_parser.add_argument("--json", action="store_true")
 
+    bundle_parser = subparsers.add_parser(
+        "verify-bundle", help="verify report artifact hashes and manifest consistency"
+    )
+    bundle_parser.add_argument("bundle")
+
+    adapter_parser = subparsers.add_parser(
+        "normalize-suricata", help="normalize sanitized Suricata EVE JSONL into the SOC_Replay event contract"
+    )
+    adapter_parser.add_argument("source")
+    adapter_parser.add_argument("destination")
+
     catalog_parser = subparsers.add_parser("catalog", help="list scenarios, including invalid entries")
     catalog_parser.add_argument("--root", default="scenarios")
     catalog_parser.add_argument("--json", action="store_true")
@@ -87,11 +99,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "run":
             result = run_scenario(args.scenario)
-            json_path, markdown_path = write_reports(result, args.output)
+            bundle = write_bundle(result, args.output)
             print(f"replayed {len(result.events)} events; detections={len(result.detections)}")
             _print_verification(result)
-            print(f"json: {json_path}")
-            print(f"markdown: {markdown_path}")
+            print(f"json: {bundle.json_path}")
+            print(f"markdown: {bundle.markdown_path}")
+            print(f"manifest: {bundle.manifest_path}")
             return 0 if result.verification.passed or args.allow_mismatch else 3
         if args.command == "verify":
             result = run_scenario(args.scenario)
@@ -126,6 +139,22 @@ def main(argv: list[str] | None = None) -> int:
                 for rule in loaded.scenario.rules:
                     print(f"rule {rule.rule_id}: {rule.name} [{rule.severity}]")
                 print(f"expected detections: {loaded.scenario.expectations.detection_count}")
+            return 0
+        if args.command == "verify-bundle":
+            verification = verify_bundle(args.bundle)
+            print(f"bundle verification: {'PASS' if verification.passed else 'FAIL'}")
+            for check in verification.checks:
+                print(
+                    f"  {'PASS' if check.passed else 'FAIL'} {check.name}: "
+                    f"expected={check.expected!r} actual={check.actual!r}"
+                )
+            return 0 if verification.passed else 4
+        if args.command == "normalize-suricata":
+            adapter_result = normalize_suricata_file(args.source, args.destination)
+            print(
+                f"normalized Suricata EVE: read={adapter_result.records_read} written={adapter_result.records_written} "
+                f"skipped={adapter_result.records_skipped} output={adapter_result.destination}"
+            )
             return 0
         if args.command == "catalog":
             entries = _catalog(Path(args.root))

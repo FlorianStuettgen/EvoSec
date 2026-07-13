@@ -1,6 +1,6 @@
 # Replay report: Synthetic repeated authentication failures
 
-> **Verification: PASS** · Run ID `eb34e2c23cc54541` · Engine `soc-replay 2.0.0`
+> **Verification: PASS** · Run ID `eb34e2c23cc54541` · Engine `soc-replay 2.1.0`
 
 ## Decision summary
 

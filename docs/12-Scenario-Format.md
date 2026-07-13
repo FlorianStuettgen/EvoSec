@@ -76,3 +76,7 @@ Any other mode is rejected. Response action names are descriptive data, not exec
 Every JSONL record requires `event_id`, timezone-aware `timestamp`, `source`, `category`, and `action`. Optional normalized fields include IPs, destination port, host, user, outcome, tags, and arbitrary nested `details`.
 
 See the machine-readable contracts in [`schemas/`](../schemas/).
+
+## Positive and negative controls
+
+A scenario may expect zero detections. Negative controls should exercise realistic benign activity against the same rule contract used by a positive scenario. This demonstrates false-positive discipline and prevents a catalog made only of guaranteed detections.

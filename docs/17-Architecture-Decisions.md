@@ -39,3 +39,28 @@
 **Rationale:** installed hardware is a differentiator, but unsupported automation claims damage credibility. Separation allows both layers to be evaluated honestly.
 
 **Consequence:** end-to-end platform claims require named measured experiments beyond replay fixtures.
+
+
+## ADR-006: manifest-last evidence bundles
+
+**Decision:** emit JSON and Markdown reports first, then atomically write a manifest containing artifact hashes and sizes.
+
+**Rationale:** the manifest provides a deterministic local completeness and tamper-evidence boundary without introducing runtime cryptography dependencies.
+
+**Consequence:** bundle verification detects artifact modification but does not establish authorship or trusted time.
+
+## ADR-007: adapters remain offline and separate
+
+**Decision:** vendor adapters normalize stored sanitized telemetry and do not connect to live sensors.
+
+**Rationale:** normalization logic, permissions, collection failure, and device access are separate trust concerns from deterministic rule evaluation.
+
+**Consequence:** the Suricata adapter proves a format bridge, not live ingestion reliability or complete EVE coverage.
+
+## ADR-008: catalog includes negative controls
+
+**Decision:** maintain scenarios whose correct result is zero detections.
+
+**Rationale:** a detection catalog that only contains positive fixtures cannot demonstrate false-positive discipline.
+
+**Consequence:** rule changes must preserve both expected detections and expected non-detections.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.0 — 2026-07-13
+
+- Added manifest-backed JSON/Markdown evidence bundles and offline tamper verification.
+- Added a sanitized Suricata EVE adapter for stored `alert` and `flow` records.
+- Added an approved privileged-maintenance negative control with an expected zero-detection result.
+- Added a bundle-manifest JSON Schema and committed manifest references for every scenario.
+- Added a measured experiment template and explicit threat model.
+- Expanded tests across adapter behavior, negative controls, bundle determinism, and tamper detection.
+- Raised the branch-coverage gate and extended repository coherence checks.
+
 ## 2.0.0 — 2026-07-13
 
 - Added machine-verifiable scenario expectations and a `verify` CLI command.

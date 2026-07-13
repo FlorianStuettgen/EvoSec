@@ -40,6 +40,15 @@ jobs:
           soc-replay verify scenarios/network-scan
           soc-replay verify scenarios/privileged-group-change
           soc-replay verify scenarios/failed-authentication-burst
+          soc-replay verify scenarios/benign-privileged-change
+      - name: Exercise evidence bundle integrity
+        run: |
+          soc-replay run scenarios/network-scan --output build/network-scan
+          soc-replay verify-bundle build/network-scan
+      - name: Exercise Suricata normalization
+        run: |
+          soc-replay normalize-suricata examples/adapters/suricata-eve.jsonl build/suricata-normalized.jsonl
+          cmp build/suricata-normalized.jsonl examples/adapters/suricata-normalized.jsonl
       - name: Verify repository coherence
         run: python tools/verify_repository.py
       - name: Build wheel
@@ -50,3 +59,4 @@ jobs:
           path: |
             dist/
             examples/reports/
+            build/network-scan/

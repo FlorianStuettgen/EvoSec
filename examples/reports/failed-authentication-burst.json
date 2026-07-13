@@ -63,7 +63,7 @@
   ],
   "engine": {
     "name": "soc-replay",
-    "version": "2.0.0"
+    "version": "2.1.0"
   },
   "provenance": {
     "events_sha256": "3d6e10b45b05fc16655b4c285b286856233b92127719e517696850ceb80ef779",

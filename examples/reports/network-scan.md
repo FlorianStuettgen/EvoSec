@@ -1,6 +1,6 @@
 # Replay report: Synthetic multi-port scan
 
-> **Verification: PASS** · Run ID `7c3405055d55db4b` · Engine `soc-replay 2.0.0`
+> **Verification: PASS** · Run ID `7c3405055d55db4b` · Engine `soc-replay 2.1.0`
 
 ## Decision summary
 

@@ -4,15 +4,28 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 import tomllib
 from pathlib import Path
 
 from soc_replay import __version__
+from soc_replay.adapters import normalize_suricata_file
 from soc_replay.engine import run_scenario
+from soc_replay.report import verify_bundle, write_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
-SCENARIOS = ("network-scan", "privileged-group-change", "failed-authentication-burst")
-SCHEMAS = ("event.schema.json", "scenario.schema.json", "report.schema.json")
+SCENARIOS = (
+    "network-scan",
+    "privileged-group-change",
+    "failed-authentication-burst",
+    "benign-privileged-change",
+)
+SCHEMAS = (
+    "event.schema.json",
+    "scenario.schema.json",
+    "report.schema.json",
+    "bundle-manifest.schema.json",
+)
 
 
 def fail(message: str) -> None:
@@ -30,10 +43,20 @@ def main() -> int:
         if payload.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
             fail(f"unexpected schema declaration in {schema_name}")
 
-    for scenario_name in SCENARIOS:
-        result = run_scenario(ROOT / "scenarios" / scenario_name)
-        if not result.verification.passed:
-            fail(f"scenario verification failed: {scenario_name}")
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_root = Path(temp_dir)
+        for scenario_name in SCENARIOS:
+            result = run_scenario(ROOT / "scenarios" / scenario_name)
+            if not result.verification.passed:
+                fail(f"scenario verification failed: {scenario_name}")
+            bundle = write_bundle(result, temp_root / scenario_name)
+            if not verify_bundle(bundle.directory).passed:
+                fail(f"bundle verification failed: {scenario_name}")
+
+        normalized = temp_root / "suricata-normalized.jsonl"
+        normalize_suricata_file(ROOT / "examples" / "adapters" / "suricata-eve.jsonl", normalized)
+        if normalized.read_bytes() != (ROOT / "examples" / "adapters" / "suricata-normalized.jsonl").read_bytes():
+            fail("Suricata adapter reference output mismatch")
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for relative in re.findall(r"\]\(([^)]+)\)", readme):
@@ -55,7 +78,7 @@ def main() -> int:
 
     print(
         f"repository verified: version={__version__} schemas={len(SCHEMAS)} "
-        f"scenarios={len(SCENARIOS)} reference_reports=3"
+        f"scenarios={len(SCENARIOS)} reference_bundles={len(SCENARIOS)} adapters=1"
     )
     return 0
 

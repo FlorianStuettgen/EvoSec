@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soc-replay"
-version = "2.0.0"
-description = "Deterministic replay of synthetic SOC telemetry with inspectable rules, expectation verification, and evidence reports."
+version = "2.1.0"
+description = "Evidence-first SOC telemetry replay with deterministic verification, tamper-evident bundles, and sanitized adapters."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -64,6 +64,6 @@ branch = true
 source = ["soc_replay"]
 
 [tool.coverage.report]
-fail_under = 80
+fail_under = 82
 show_missing = true
 skip_covered = true

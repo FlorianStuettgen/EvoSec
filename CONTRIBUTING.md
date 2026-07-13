@@ -1,52 +1,33 @@
 # Contributing
 
-SOC_Replay accepts improvements that strengthen its defensive, evidence-first, and simulation-only boundary.
+SOC_Replay accepts improvements that preserve its defensive and simulation-only boundary.
 
-## Development environment
+## Development
 
 ```bash
 python -m venv .venv
-. .venv/bin/activate              # Windows: .venv\Scripts\activate
-python -m pip install -e ".[dev]"
+. .venv/bin/activate
+python -m pip install -e .
+python -m unittest discover -s tests -v
 ```
 
-Run the same quality gate used by CI:
+## Contribution standard
 
-```bash
-ruff check src tests tools
-mypy
-python -m compileall -q src tests tools
-coverage run -m unittest discover -s tests -v
-coverage report
-python tools/verify_repository.py
-python -m build
-```
+A change should include:
 
-## Engineering standard
+1. A clear operating problem.
+2. Synthetic or sanitized evidence only.
+3. Tests for new parsing, matching, aggregation, or reporting behaviour.
+4. Documentation of limitations and non-claims.
+5. No live-response integrations in the core package.
 
-A code change should include:
+Scenario contributions should include `scenario.json`, `events.jsonl`, an expected outcome, and no real credentials or identifying data.
 
-1. A clearly stated operating problem and invariant.
-2. Tests for success, failure, and boundary behavior.
-3. No hidden I/O, network calls, or live-response side effects.
-4. Deterministic output or a documented reason that determinism is impossible.
-5. Documentation updates when the public contract changes.
-6. An implementation-state update when a capability moves between planned, prototype, evidenced, and implemented.
 
-## Scenario standard
+## Adapter standard
 
-A scenario contribution requires:
+An adapter must operate on stored sanitized input, document its supported vendor record types, validate emitted records through the public event model, expose skipped-record counts, use deterministic output, and include a byte-for-byte reference fixture. Live collection connectors do not belong in the core package.
 
-- synthetic or properly sanitized `events.jsonl`;
-- a precise authorization boundary;
-- inspectable rule conditions;
-- machine-readable expectations;
-- a simulation-only response;
-- a regenerated JSON and Markdown reference report; and
-- tests when it introduces new operators or correlation semantics.
+## Evidence-bundle standard
 
-Run `soc-replay verify <scenario-directory>` before submitting a scenario. Never include credentials, keys, real personal data, sensitive management addresses, or production incident records.
-
-## Documentation and wiki
-
-The versioned files under `docs/` are canonical. Concise GitHub Wiki copy is maintained under `docs/wiki/`; changes to either narrative must preserve the same maturity labels and non-claims.
+Reference scenarios must commit `report.json`, `report.md`, and `manifest.json`. Regenerate them intentionally and run `soc-replay verify-bundle` plus `python tools/check_reference_reports.py` before committing.

@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "benign-privileged-change",
+  "title": "Approved privileged group maintenance",
+  "objective": "Demonstrate a negative control in which authorized administrative activity remains below the unauthorized-change detection contract.",
+  "authorization_boundary": "Synthetic audit records only. No identity provider, endpoint, or account is contacted.",
+  "expected_outcome": "Zero detections and zero simulated actions for approved, ticketed administrative changes.",
+  "expectations": {
+    "detection_count": 0,
+    "rule_ids": [],
+    "severity_counts": {},
+    "simulated_action_count": 0
+  },
+  "rules": [
+    {
+      "id": "IAM-PRIV-001",
+      "name": "Unexpected privileged group membership change",
+      "severity": "critical",
+      "description": "A non-approved actor adds an account to a privileged group without a change ticket.",
+      "match": [
+        {"field": "category", "operator": "eq", "value": "identity_change"},
+        {"field": "action", "operator": "eq", "value": "add_to_privileged_group"},
+        {"field": "outcome", "operator": "eq", "value": "success"},
+        {"field": "tags", "operator": "contains", "value": "unauthorized"},
+        {"field": "details.change_ticket", "operator": "exists", "value": false}
+      ],
+      "response": {
+        "action": "recommend_account_review",
+        "description": "Recommend preserving the audit record and confirming change authorization before any identity action.",
+        "mode": "simulated"
+      }
+    }
+  ]
+}

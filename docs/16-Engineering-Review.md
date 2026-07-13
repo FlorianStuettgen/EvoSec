@@ -7,7 +7,9 @@
 - Strict simulation-only boundary enforced in the data model.
 - Machine-verifiable expected outcomes rather than narrative-only demos.
 - No runtime dependency chain.
-- Atomic reports with input provenance and reference-output checks.
+- Atomic reports with input provenance, manifest-backed integrity checks, and reference-output comparison.
+- Sanitized Suricata normalization kept outside the deterministic core.
+- Positive and negative controls that test both detection and expected non-detection.
 
 ## Deliberate tradeoffs
 
@@ -44,6 +46,7 @@ The core does not ingest live vendor formats. Adapter code should remain separat
 
 1. A sanitized adapter for one real telemetry format with fixture-based contract tests.
 2. A complete physical-lab experiment record tied to source telemetry and measured timestamps.
-3. Signed report envelopes and schema compatibility tests.
+3. Signed report envelopes and external attestation.
 4. Benchmark history across scenario size, group cardinality, and rule count.
 5. Mutation or property-based testing for correlation edge cases.
+6. Additional vendor adapters with conformance fixtures and explicit support matrices.

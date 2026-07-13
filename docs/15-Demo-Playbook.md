@@ -39,3 +39,15 @@ Explain that CI performs the same byte-level reference check across Python 3.11â
 - Input hashes prove identity, not authenticity.
 - Physical lab integration remains separate so the replay package cannot mutate infrastructure.
 - The next meaningful proof is a named physical experiment with source telemetry, timing, containment validation, and recovery evidence.
+
+## Integrity and adapter extension
+
+After the primary replay:
+
+```bash
+soc-replay verify-bundle build/network-scan
+soc-replay normalize-suricata examples/adapters/suricata-eve.jsonl build/suricata-normalized.jsonl
+soc-replay verify scenarios/benign-privileged-change
+```
+
+Use these commands to demonstrate artifact integrity, a real telemetry-normalization boundary, and a zero-detection control.

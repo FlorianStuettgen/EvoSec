@@ -1,6 +1,6 @@
 # Replay report: Synthetic privileged group change
 
-> **Verification: PASS** · Run ID `1f76fcf3b5221c68` · Engine `soc-replay 2.0.0`
+> **Verification: PASS** · Run ID `1f76fcf3b5221c68` · Engine `soc-replay 2.1.0`
 
 ## Decision summary
 

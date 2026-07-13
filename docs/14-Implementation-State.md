@@ -19,3 +19,12 @@ This register is the controlling statement for capability maturity.
 | Predictive maintenance | Roadmap | Roadmap only | Data source, target variable, baseline, and validation plan |
 
 A capability moves only when evidence changes. Marketing language, diagrams, or intended architecture do not change its state.
+
+## Evidence-plane additions
+
+| Capability | State | Evidence |
+| --- | --- | --- |
+| Suricata EVE alert/flow normalization | Implemented | Adapter source, sanitized fixtures, tests, reference output |
+| Manifest-backed report bundles | Implemented | Bundle schema, tamper tests, `verify-bundle` CLI |
+| Negative-control scenarios | Implemented | Approved privileged-maintenance scenario with zero detections |
+| Signed attestations | Not implemented | External signing remains a documented future boundary |

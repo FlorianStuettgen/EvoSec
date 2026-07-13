@@ -1,0 +1,57 @@
+{
+  "detections": [],
+  "engine": {
+    "name": "soc-replay",
+    "version": "2.1.0"
+  },
+  "provenance": {
+    "events_sha256": "d8f7fd8602e576e8c0babd64b4394a879d8327c9b92f764755038897ddd7f430",
+    "run_id": "d1ddeedd82f61237",
+    "scenario_sha256": "38ad522bc081308a353a99845af69d92e505ac5355aea890cce55c8d418642a9"
+  },
+  "report_schema_version": "1.0",
+  "scenario": {
+    "authorization_boundary": "Synthetic audit records only. No identity provider, endpoint, or account is contacted.",
+    "expected_outcome": "Zero detections and zero simulated actions for approved, ticketed administrative changes.",
+    "id": "benign-privileged-change",
+    "objective": "Demonstrate a negative control in which authorized administrative activity remains below the unauthorized-change detection contract.",
+    "schema_version": "1.0",
+    "title": "Approved privileged group maintenance"
+  },
+  "simulated_actions": [],
+  "summary": {
+    "detections": 0,
+    "events_processed": 3,
+    "simulated_actions": 0,
+    "verification_passed": true
+  },
+  "verification": {
+    "checks": [
+      {
+        "actual": 0,
+        "expected": 0,
+        "name": "detection_count",
+        "passed": true
+      },
+      {
+        "actual": [],
+        "expected": [],
+        "name": "rule_ids",
+        "passed": true
+      },
+      {
+        "actual": {},
+        "expected": {},
+        "name": "severity_counts",
+        "passed": true
+      },
+      {
+        "actual": 0,
+        "expected": 0,
+        "name": "simulated_action_count",
+        "passed": true
+      }
+    ],
+    "passed": true
+  }
+}

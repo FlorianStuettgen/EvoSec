@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/bundle-manifest.schema.json",
+  "title": "SOC_Replay report bundle manifest",
+  "type": "object",
+  "required": ["manifest_schema_version", "engine", "run_id", "inputs", "verification_passed", "artifacts"],
+  "properties": {
+    "manifest_schema_version": {"const": "1.0"},
+    "engine": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "soc-replay"},
+        "version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "run_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+    "inputs": {
+      "type": "object",
+      "required": ["scenario_sha256", "events_sha256"],
+      "properties": {
+        "scenario_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "events_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "verification_passed": {"type": "boolean"},
+    "artifacts": {
+      "type": "object",
+      "required": ["report.json", "report.md"],
+      "properties": {
+        "report.json": {"$ref": "#/$defs/artifact"},
+        "report.md": {"$ref": "#/$defs/artifact"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": ["sha256", "bytes"],
+      "properties": {
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bytes": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

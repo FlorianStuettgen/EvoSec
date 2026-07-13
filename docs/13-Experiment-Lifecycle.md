@@ -48,3 +48,7 @@ Review false-positive conditions, omitted telemetry, alternative interpretations
 5. Measured lab experiment: the physical platform exhibited the documented end-to-end behavior.
 
 Higher levels do not erase the limitations of lower ones; they answer different questions.
+
+## Publication artifact
+
+Each replay publication should include the JSON report, Markdown report, and verified manifest. Physical-lab experiments should also use [`templates/experiment-record.md`](../templates/experiment-record.md) to connect replay evidence to measured platform observations.

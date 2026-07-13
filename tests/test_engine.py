@@ -35,6 +35,12 @@ class ReplayEngineTests(unittest.TestCase):
             [("auth-001", "auth-002", "auth-003"), ("auth-004", "auth-005", "auth-006")],
         )
 
+    def test_negative_control_produces_no_detection(self) -> None:
+        result = run_scenario(ROOT / "scenarios" / "benign-privileged-change")
+        self.assertTrue(result.verification.passed)
+        self.assertEqual(result.detections, ())
+        self.assertEqual(result.simulated_actions, ())
+
     def test_run_id_is_deterministic(self) -> None:
         first = run_scenario(ROOT / "scenarios" / "network-scan")
         second = run_scenario(ROOT / "scenarios" / "network-scan")

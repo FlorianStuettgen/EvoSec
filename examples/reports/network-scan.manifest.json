@@ -1,0 +1,23 @@
+{
+  "artifacts": {
+    "report.json": {
+      "bytes": 3095,
+      "sha256": "c323c16f28a5a1fc688d50309b68f0eb686aa65b090db9b19c9de3c664390088"
+    },
+    "report.md": {
+      "bytes": 1990,
+      "sha256": "416daaac178b9db7f01061168ca55b231b4274bb073ddec8f3b5fcd7cdae8432"
+    }
+  },
+  "engine": {
+    "name": "soc-replay",
+    "version": "2.1.0"
+  },
+  "inputs": {
+    "events_sha256": "e7421a5093e510b41f013c8cef4e4d5014764ddfa578cb03352c3415f46dc6dd",
+    "scenario_sha256": "68f1ef584374e0f360d4a7d498a542ddfe7591a4fdca8157936fa9e026a059b4"
+  },
+  "manifest_schema_version": "1.0",
+  "run_id": "7c3405055d55db4b",
+  "verification_passed": true
+}

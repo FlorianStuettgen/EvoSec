@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class RepositoryTests(unittest.TestCase):
     def test_version_is_current(self) -> None:
-        self.assertEqual(__version__, "2.0.0")
+        self.assertEqual(__version__, "2.1.0")
 
     def test_schemas_are_valid_json(self) -> None:
         for path in sorted((ROOT / "schemas").glob("*.json")):

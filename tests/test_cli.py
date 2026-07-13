@@ -33,6 +33,7 @@ class CliTests(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertTrue((Path(temp_dir) / "report.json").exists())
             self.assertTrue((Path(temp_dir) / "report.md").exists())
+            self.assertTrue((Path(temp_dir) / "manifest.json").exists())
             self.assertIn("verification: PASS", output)
 
     def test_catalog_lists_invalid_scenarios(self) -> None:
@@ -49,6 +50,25 @@ class CliTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn('"expectations"', output)
         self.assertIn('"run_id"', output)
+
+    def test_verify_bundle_and_suricata_adapter(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            bundle_dir = Path(temp_dir) / "bundle"
+            code, _, _ = self._call(["run", str(ROOT / "scenarios" / "network-scan"), "--output", str(bundle_dir)])
+            self.assertEqual(code, 0)
+            code, output, _ = self._call(["verify-bundle", str(bundle_dir)])
+            self.assertEqual(code, 0)
+            self.assertIn("bundle verification: PASS", output)
+
+            normalized = Path(temp_dir) / "normalized.jsonl"
+            code, output, _ = self._call([
+                "normalize-suricata",
+                str(ROOT / "examples" / "adapters" / "suricata-eve.jsonl"),
+                str(normalized),
+            ])
+            self.assertEqual(code, 0)
+            self.assertIn("written=2", output)
+            self.assertTrue(normalized.exists())
 
 
 if __name__ == "__main__":

@@ -1,5 +1,14 @@
 # Operations and Evidence
 
-A featured experiment should preserve its objective, boundary, initial state, telemetry, rule, result, response recommendation, validation, recovery path, limitations, and provenance.
+The maintained operating model is:
 
-The replay package never operates infrastructure. Any physical platform change remains human-governed and must retain an independent recovery path.
+1. define the decision question and authorization boundary;
+2. establish initial topology, sensor health, and rollback state;
+3. run bounded activity;
+4. collect and sanitize evidence;
+5. normalize supported telemetry;
+6. replay and verify declared outcomes;
+7. verify the report bundle; and
+8. record containment, recovery, and limitations.
+
+Out-of-band recovery remains separate from experiment traffic. Live changes are human governed and outside the replay package.

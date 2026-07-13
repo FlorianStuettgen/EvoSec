@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The replay engine provides a deterministic evidence plane for defensive experiments. It consumes a scenario contract and normalized JSONL events, evaluates inspectable rules, verifies declared expectations, and emits JSON and Markdown reports.
+The replay engine provides a deterministic evidence plane for defensive experiments. It consumes a scenario contract and normalized JSONL events, evaluates inspectable rules, verifies declared expectations, and emits JSON, Markdown, and manifest-backed evidence bundles.
 
 It is intentionally not a SIEM, packet generator, endpoint agent, or response orchestrator.
 
@@ -24,7 +24,7 @@ field matching + optional time-window correlation
 ordered detections + simulated recommendations
           │
           ▼
-expectation verification + deterministic reports
+expectation verification + deterministic evidence bundle
 ```
 
 ## Determinism
@@ -36,7 +36,8 @@ For identical input bytes and engine version:
 - detection order is stable;
 - run IDs are derived from scenario and event hashes;
 - no wall-clock timestamp is embedded in report content; and
-- committed reference reports can be compared byte for byte.
+- committed reference bundles can be compared byte for byte; and
+- bundle manifests can be verified offline after generation.
 
 ## Correlation semantics
 
@@ -77,4 +78,4 @@ The hashes establish input identity, not authenticity. Signing and external chai
 
 The engine rejects malformed JSON, missing files, duplicate event IDs, naive timestamps, invalid IP addresses, inconsistent aggregation fields, unsupported operators, unknown expected rule IDs, and any response mode other than `simulated`.
 
-Report writes use atomic replacement so a partially written file is not presented as complete evidence.
+Report writes use atomic replacement. The manifest is written last so its presence represents a complete local bundle rather than an in-progress report pair.
