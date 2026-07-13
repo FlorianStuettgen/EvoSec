@@ -12,7 +12,7 @@ python -m compileall -q src tests tools
 coverage run -m unittest discover -s tests -v
 coverage report
 soc-replay doctor
-python tools/check_reference_reports.py
+python tools/verify_deterministic_bundles.py
 python tools/verify_repository.py
 python -m pip wheel . --no-deps -w dist
 ```
@@ -26,11 +26,11 @@ A change should include:
 3. Deterministic output or a documented reason determinism is impossible.
 4. No hidden socket, subprocess, credential, or live-response path.
 5. Schema and documentation updates when public contracts change.
-6. Regenerated reference bundles when result bytes change.
+6. Deterministic bundle-generation checks whenever result bytes or contracts change.
 
 ## Scenario standard
 
-Scenarios require synthetic or properly sanitized telemetry, an authorization boundary, exact expectations, inspectable rules, a simulation-only response, and a committed JSON/Markdown/manifest bundle.
+Scenarios require synthetic or properly sanitized telemetry, an authorization boundary, exact expectations, inspectable rules, and a simulation-only response. CI must generate the JSON/Markdown/manifest bundle twice, verify both copies, and compare them byte for byte.
 
 ## Adapter standard
 

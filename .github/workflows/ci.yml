@@ -51,8 +51,8 @@ jobs:
       - name: Exercise adapter registry
         run: |
           soc-replay normalize --adapter suricata-eve examples/adapters/suricata-eve.jsonl build/suricata-normalized.jsonl
-      - name: Verify deterministic references
-        run: python tools/check_reference_reports.py
+      - name: Verify deterministic bundle generation
+        run: python tools/verify_deterministic_bundles.py
       - name: Verify repository invariants
         run: python tools/verify_repository.py
       - name: Build wheel

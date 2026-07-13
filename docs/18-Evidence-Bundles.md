@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A replay result is delivered as a three-file bundle:
+A completed replay is delivered as a three-file bundle:
 
 ```text
 output-directory/
@@ -11,13 +11,13 @@ output-directory/
 └── manifest.json
 ```
 
-`report.json` is the machine contract. `report.md` is the human review surface. `manifest.json` records the SHA-256 digest and byte count of both artifacts and repeats the engine, input-provenance, run-ID, and verification fields required to detect internal inconsistency.
+`report.json` is the machine contract. `report.md` is the analyst surface. `manifest.json` commits to both artifact byte streams and cross-checks the run ID, input hashes, execution-plan fingerprint, execution-ledger root, engine version, and verification result.
 
-## Write ordering
+## Completion protocol
 
-The two reports are written atomically first. The manifest is written last. A present manifest therefore represents a completed local bundle rather than an in-progress report pair.
+The JSON and Markdown reports are written atomically first. The manifest is written atomically last. The manifest is therefore the local completion marker for the bundle, not merely another report.
 
-## Verification
+## Offline verification
 
 ```bash
 soc-replay verify-bundle build/network-scan
@@ -25,21 +25,29 @@ soc-replay verify-bundle build/network-scan
 
 Verification checks:
 
-- manifest schema version;
-- engine name and version consistency;
-- run ID consistency;
-- scenario and event hash consistency;
-- scenario-verification verdict consistency;
-- exact artifact names;
-- artifact byte counts; and
-- artifact SHA-256 hashes.
+- report and manifest schema versions;
+- engine and run identity;
+- scenario and event provenance hashes;
+- plan fingerprint;
+- the complete execution-ledger hash chain and root;
+- expectation-verification consistency;
+- exact artifact names, byte counts, and SHA-256 hashes; and
+- the bundle ID derived from the canonical manifest body.
 
-A modified or missing report causes a failed bundle verdict and a non-zero CLI exit code.
+A modified, missing, partially written, or internally inconsistent artifact produces a failed verdict and a non-zero CLI exit code.
+
+## Reproducibility test
+
+The repository does not trust stale committed report snapshots. `tools/verify_deterministic_bundles.py` runs every scenario twice in isolated directories, verifies both bundles, and compares `report.json`, `report.md`, and `manifest.json` byte for byte.
+
+This proves deterministic generation from the current source, scenarios, schemas, and engine version.
 
 ## Security meaning
 
-The manifest is tamper-evident, not a digital signature. Anyone able to replace every bundle file can create a new internally consistent manifest. Authorship, trusted timestamps, and legal chain of custody require an external signing or attestation system.
+The ledger and manifest provide tamper evidence relative to their hashes. They are not digital signatures and do not establish authorship, trusted time, external custody, or that source telemetry originated from a live system.
 
-## Machine contract
+## Machine contracts
 
-The manifest schema is [`schemas/bundle-manifest.schema.json`](../schemas/bundle-manifest.schema.json). Committed examples live beside each reference report under [`examples/reports/`](../examples/reports/).
+- [`schemas/report.schema.json`](../schemas/report.schema.json)
+- [`schemas/bundle-manifest.schema.json`](../schemas/bundle-manifest.schema.json)
+- [`schemas/execution-ledger.schema.json`](../schemas/execution-ledger.schema.json)
