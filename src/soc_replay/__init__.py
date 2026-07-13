@@ -1,6 +1,7 @@
-"""SOC_Replay: deterministic replay of synthetic defensive telemetry."""
+"""SOC_Replay: deterministic defensive telemetry evidence pipeline."""
 
 from ._version import __version__
 from .engine import ReplayResult, run_scenario
+from .pipeline import PipelineConfig, ReplayPipeline
 
-__all__ = ["ReplayResult", "run_scenario", "__version__"]
+__all__ = ["PipelineConfig", "ReplayPipeline", "ReplayResult", "__version__", "run_scenario"]

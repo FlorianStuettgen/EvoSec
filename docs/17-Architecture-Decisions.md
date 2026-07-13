@@ -1,66 +1,43 @@
 # 17 — Architecture Decisions
 
-## ADR-001: deterministic offline replay
+## ADR-001 — Standard-library runtime
 
-**Decision:** consume stored normalized events instead of coupling the core to live sensors.
+**Decision:** Keep the runtime dependency-free.
 
-**Rationale:** reproducibility, inspectability, and safe public examples matter more than ingestion breadth in the core package.
+**Why:** The engine remains easy to inspect, install, package, and run in constrained or isolated environments. Development tools remain optional dependencies.
 
-**Consequence:** adapters are separate work and synthetic success does not prove live detection coverage.
+## ADR-002 — Compile rules before evaluation
 
-## ADR-002: simulation-only responses
+**Decision:** Convert rule fields, operators, aggregates, and candidate hints into immutable compiled structures.
 
-**Decision:** reject every response mode except `simulated`.
+**Why:** It removes repeated interpretation from the hot path and creates a stable semantic fingerprint.
 
-**Rationale:** rule evaluation should not silently gain infrastructure authority. Live changes require a different trust boundary, approval model, and rollback design.
+## ADR-003 — Candidate indexes cannot decide matches
 
-**Consequence:** response actions are evidence and analyst guidance, never commands.
+**Decision:** Indexes may narrow candidate events but may never bypass compiled conditions.
 
-## ADR-003: versioned scenario expectations
+**Why:** Performance hints must not become hidden detection semantics.
 
-**Decision:** scenarios declare exact machine-readable expected results.
+## ADR-004 — Deterministic stage ledger
 
-**Rationale:** examples become executable regression contracts and CI can identify semantic drift.
+**Decision:** Record load, compile, index, evaluate, and verify in a hash-linked ledger without wall-clock timestamps or durations.
 
-**Consequence:** expectations must be intentionally updated when rule semantics change.
+**Why:** Non-deterministic timing would make equivalent runs produce different evidence. Performance belongs in separate benchmark records.
 
-## ADR-004: input-derived provenance
+## ADR-005 — Manifest-last bundle commit
 
-**Decision:** hash scenario and event files and derive a stable run ID.
+**Decision:** Write JSON and Markdown artifacts atomically, then write the manifest last.
 
-**Rationale:** reviewers must be able to distinguish reports created from different inputs without introducing nondeterministic timestamps.
+**Why:** The manifest acts as the completion marker for the bundle.
 
-**Consequence:** hashes prove identity, not authorship or chain of custody.
+## ADR-006 — Offline adapter boundary
 
-## ADR-005: physical platform and replay plane remain separate
+**Decision:** Adapters consume stored synthetic or sanitized files and expose no collection credentials or live connections.
 
-**Decision:** document the lab as the project context while keeping the package independent from device control.
+**Why:** Vendor normalization can evolve independently without giving the replay package infrastructure authority.
 
-**Rationale:** installed hardware is a differentiator, but unsupported automation claims damage credibility. Separation allows both layers to be evaluated honestly.
+## ADR-007 — Simulation-only response model
 
-**Consequence:** end-to-end platform claims require named measured experiments beyond replay fixtures.
+**Decision:** Reject every response mode except `simulated` at validation time.
 
-
-## ADR-006: manifest-last evidence bundles
-
-**Decision:** emit JSON and Markdown reports first, then atomically write a manifest containing artifact hashes and sizes.
-
-**Rationale:** the manifest provides a deterministic local completeness and tamper-evidence boundary without introducing runtime cryptography dependencies.
-
-**Consequence:** bundle verification detects artifact modification but does not establish authorship or trusted time.
-
-## ADR-007: adapters remain offline and separate
-
-**Decision:** vendor adapters normalize stored sanitized telemetry and do not connect to live sensors.
-
-**Rationale:** normalization logic, permissions, collection failure, and device access are separate trust concerns from deterministic rule evaluation.
-
-**Consequence:** the Suricata adapter proves a format bridge, not live ingestion reliability or complete EVE coverage.
-
-## ADR-008: catalog includes negative controls
-
-**Decision:** maintain scenarios whose correct result is zero detections.
-
-**Rationale:** a detection catalog that only contains positive fixtures cannot demonstrate false-positive discipline.
-
-**Consequence:** rule changes must preserve both expected detections and expected non-detections.
+**Why:** Detection evaluation and infrastructure control are different trust domains.

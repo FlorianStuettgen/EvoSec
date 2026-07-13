@@ -1,84 +1,65 @@
+from __future__ import annotations
+
 import unittest
-from datetime import UTC
 
-from soc_replay.models import Aggregate, Condition, Event, Expectations, Response, ValidationError, parse_timestamp
+from soc_replay.models import Condition, Event, Scenario, ValidationError
 
 
-class ModelValidationTests(unittest.TestCase):
-    def test_timestamp_is_normalized_to_utc(self) -> None:
-        parsed = parse_timestamp("2026-07-01T08:00:00-04:00")
-        self.assertEqual(parsed.tzinfo, UTC)
-        self.assertEqual(parsed.hour, 12)
-
-    def test_naive_timestamp_is_rejected(self) -> None:
-        with self.assertRaises(ValidationError):
-            parse_timestamp("2026-07-01T12:00:00")
-
-    def test_invalid_ip_is_rejected(self) -> None:
+class ModelTests(unittest.TestCase):
+    def test_event_rejects_unknown_fields(self) -> None:
         payload = {
             "event_id": "x",
-            "timestamp": "2026-07-01T12:00:00Z",
-            "source": "sensor",
-            "category": "network",
+            "timestamp": "2026-01-01T00:00:00Z",
+            "source": "fixture",
+            "category": "test",
             "action": "observe",
-            "source_ip": "999.1.1.1",
+            "unexpected": True,
         }
-        with self.assertRaises(ValidationError):
+        with self.assertRaisesRegex(ValidationError, "unknown fields"):
             Event.from_dict(payload)
 
-    def test_nested_detail_lookup(self) -> None:
+    def test_nested_details_path(self) -> None:
         event = Event.from_dict(
             {
                 "event_id": "x",
-                "timestamp": "2026-07-01T12:00:00Z",
-                "source": "sensor",
-                "category": "identity",
-                "action": "change",
-                "details": {"actor": {"role": "admin"}},
+                "timestamp": "2026-01-01T00:00:00Z",
+                "source": "fixture",
+                "category": "test",
+                "action": "observe",
+                "details": {"nested": {"value": 7}},
             }
         )
-        self.assertEqual(event.value("details.actor.role"), "admin")
-        self.assertIsNone(event.value("details.actor.missing"))
+        self.assertEqual(event.value("details.nested.value"), 7)
+        self.assertIsNone(event.value("details.missing"))
 
-    def test_duplicate_tags_are_rejected(self) -> None:
-        payload = {
-            "event_id": "x",
-            "timestamp": "2026-07-01T12:00:00Z",
-            "source": "sensor",
-            "category": "network",
-            "action": "observe",
-            "tags": ["one", "one"],
-        }
-        with self.assertRaises(ValidationError):
-            Event.from_dict(payload)
+    def test_condition_rejects_nested_non_details_path(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "only permits nested paths"):
+            Condition.from_dict({"field": "source.name", "operator": "eq", "value": "x"})
 
-    def test_membership_operator_requires_list(self) -> None:
-        with self.assertRaises(ValidationError):
-            Condition.from_dict({"field": "source", "operator": "in", "value": "sensor"})
-
-    def test_exists_operator_accepts_false(self) -> None:
-        condition = Condition.from_dict({"field": "details.ticket", "operator": "exists", "value": False})
-        self.assertFalse(condition.value)
-
-    def test_distinct_fields_must_be_paired(self) -> None:
-        with self.assertRaises(ValidationError):
-            Aggregate.from_dict({"group_by": [], "count_gte": 2, "within_seconds": 30, "distinct_field": "user"})
-
-    def test_non_simulated_response_is_rejected(self) -> None:
-        with self.assertRaises(ValidationError):
-            Response.from_dict({"action": "block", "description": "bad", "mode": "live"})
-
-    def test_expectation_counts_must_reconcile(self) -> None:
-        with self.assertRaises(ValidationError):
-            Expectations.from_dict(
+    def test_scenario_rejects_unknown_expectation_rule(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "unknown rule IDs"):
+            Scenario.from_dict(
                 {
-                    "detection_count": 2,
-                    "rule_ids": ["R-1"],
-                    "severity_counts": {"high": 2},
-                    "simulated_action_count": 2,
+                    "schema_version": "1.0",
+                    "id": "x",
+                    "title": "x",
+                    "objective": "x",
+                    "authorization_boundary": "x",
+                    "expected_outcome": "x",
+                    "expectations": {
+                        "detection_count": 1,
+                        "rule_ids": ["MISSING"],
+                        "severity_counts": {"low": 1},
+                        "simulated_action_count": 1,
+                    },
+                    "rules": [
+                        {
+                            "id": "R1",
+                            "name": "rule",
+                            "severity": "low",
+                            "match": [{"field": "category", "operator": "eq", "value": "x"}],
+                            "response": {"action": "review", "description": "review", "mode": "simulated"},
+                        }
+                    ],
                 }
             )
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,77 +1,46 @@
 # Contributing
 
-SOC_Replay accepts improvements that strengthen its defensive, evidence-first, and simulation-only boundary.
+SOC_Replay accepts changes that strengthen its defensive, deterministic, and simulation-only boundary.
 
-## Development environment
+## Local gate
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate              # Windows: .venv\Scripts\activate
 python -m pip install -e ".[dev]"
-```
-
-Run the complete local quality gate before publishing a change:
-
-```bash
 ruff check src tests tools
 mypy
 python -m compileall -q src tests tools
 coverage run -m unittest discover -s tests -v
 coverage report
+soc-replay doctor
+python tools/check_reference_reports.py
 python tools/verify_repository.py
 python -m pip wheel . --no-deps -w dist
 ```
 
 ## Engineering standard
 
-A code change should include:
+A change should include:
 
-1. A clearly stated operating problem and invariant.
-2. Tests for success, failure, and boundary behavior.
-3. No hidden network calls, command execution, or live-response side effects.
-4. Deterministic output, or a documented reason determinism is impossible.
-5. Documentation updates when a public contract or non-claim changes.
-6. An implementation-state update when a capability moves between planned, prototype, evidenced, and implemented.
+1. A clearly stated invariant or operating problem.
+2. Tests for successful, boundary, and failure behavior.
+3. Deterministic output or a documented reason determinism is impossible.
+4. No hidden socket, subprocess, credential, or live-response path.
+5. Schema and documentation updates when public contracts change.
+6. Regenerated reference bundles when result bytes change.
 
 ## Scenario standard
 
-A scenario contribution requires:
-
-- synthetic or properly sanitized `events.jsonl`;
-- a precise authorization boundary;
-- inspectable rule conditions;
-- machine-readable expectations;
-- a simulation-only response;
-- regenerated JSON, Markdown, and manifest reference artifacts; and
-- tests when it introduces new operators or correlation semantics.
-
-Run `soc-replay verify <scenario-directory>` before publishing a scenario. Include negative controls where they materially test false-positive behavior.
+Scenarios require synthetic or properly sanitized telemetry, an authorization boundary, exact expectations, inspectable rules, a simulation-only response, and a committed JSON/Markdown/manifest bundle.
 
 ## Adapter standard
 
-An adapter must:
+Adapters must operate on stored sanitized input, declare supported record types, validate all emitted events through the public model, expose skipped counts and output hashes, write atomically, and include conformance fixtures.
 
-- operate only on stored synthetic or sanitized input;
-- document its supported vendor record types and skipped-record behavior;
-- validate every emitted record through the public event model;
-- expose deterministic output and supported/skipped counts;
-- write output atomically;
-- include byte-for-byte input and output fixtures; and
-- remain separate from live collection, credentials, and sensor permissions.
+## Evidence language
 
-## Evidence-bundle standard
+Use precise terms:
 
-Reference scenarios must commit `report.json`, `report.md`, and `manifest.json`. Regenerate them intentionally and run:
-
-```bash
-soc-replay verify-bundle <bundle-directory>
-python tools/check_reference_reports.py
-```
-
-The manifest is tamper-evident, not a digital signature. Do not describe it as proof of authorship, trusted time, or external chain of custody.
-
-## Documentation and wiki
-
-The versioned files under `docs/` are canonical. Concise GitHub Wiki copy is maintained under `docs/wiki/`; changes to either narrative must preserve the same maturity labels, evidence classes, safety boundaries, and non-claims.
-
-Never publish credentials, keys, real personal data, sensitive management addresses, or production incident records.
+- a hash provides integrity evidence;
+- a signature may provide authorship evidence;
+- a trusted timestamp may provide time evidence;
+- none of these alone proves end-to-end physical behavior.

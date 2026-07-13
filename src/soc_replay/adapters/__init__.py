@@ -1,5 +1,30 @@
-"""Offline adapters that normalize sanitized vendor telemetry into SOC_Replay events."""
+from __future__ import annotations
 
-from .suricata import AdapterResult, normalize_suricata_file
+from pathlib import Path
 
-__all__ = ["AdapterResult", "normalize_suricata_file"]
+from .base import AdapterDescriptor, AdapterRegistry, AdapterResult, TelemetryAdapter
+from .suricata import SuricataAdapter, normalize_eve_record, normalize_suricata_file
+
+_registry = AdapterRegistry()
+_registry.register(SuricataAdapter())
+
+
+def adapter_registry() -> AdapterRegistry:
+    return _registry
+
+
+def normalize_file(adapter: str, source: str | Path, destination: str | Path) -> AdapterResult:
+    return _registry.get(adapter).normalize_file(source, destination)
+
+
+__all__ = [
+    "AdapterDescriptor",
+    "AdapterRegistry",
+    "AdapterResult",
+    "TelemetryAdapter",
+    "SuricataAdapter",
+    "adapter_registry",
+    "normalize_eve_record",
+    "normalize_file",
+    "normalize_suricata_file",
+]

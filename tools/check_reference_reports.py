@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import tempfile
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from soc_replay.engine import run_scenario
-from soc_replay.report import write_bundle
+from soc_replay.report import verify_bundle, write_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = (
@@ -16,26 +16,23 @@ SCENARIOS = (
 
 
 def main() -> int:
-    mismatches: list[str] = []
-    with tempfile.TemporaryDirectory() as temp_dir:
-        temp_root = Path(temp_dir)
-        for scenario_name in SCENARIOS:
-            bundle = write_bundle(run_scenario(ROOT / "scenarios" / scenario_name), temp_root / scenario_name)
-            generated = {
-                "json": bundle.json_path,
-                "md": bundle.markdown_path,
-                "manifest.json": bundle.manifest_path,
-            }
-            for suffix, generated_path in generated.items():
-                expected = ROOT / "examples" / "reports" / f"{scenario_name}.{suffix}"
-                if generated_path.read_bytes() != expected.read_bytes():
-                    mismatches.append(str(expected))
-    if mismatches:
-        print("reference report mismatch:")
-        for mismatch in mismatches:
-            print(f"- {mismatch}")
+    errors: list[str] = []
+    for name in SCENARIOS:
+        result = run_scenario(ROOT / "scenarios" / name)
+        with TemporaryDirectory() as first_dir, TemporaryDirectory() as second_dir:
+            first = write_bundle(result, first_dir)
+            second = write_bundle(result, second_dir)
+            if not verify_bundle(first.directory).passed or not verify_bundle(second.directory).passed:
+                errors.append(f"generated bundle failed verification: {name}")
+                continue
+            for artifact in ("report.json", "report.md", "manifest.json"):
+                if (first.directory / artifact).read_bytes() != (second.directory / artifact).read_bytes():
+                    errors.append(f"non-deterministic generated artifact: {name}/{artifact}")
+    if errors:
+        for error in errors:
+            print(f"ERROR: {error}")
         return 1
-    print(f"reference report bundles verified: {len(SCENARIOS)} scenarios")
+    print(f"deterministic bundle generation: PASS ({len(SCENARIOS)} scenarios)")
     return 0
 
 

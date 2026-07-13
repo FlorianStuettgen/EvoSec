@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/execution-ledger.schema.json",
+  "title": "SOC_Replay deterministic execution ledger",
+  "type": "object",
+  "required": ["schema_version", "genesis_hash", "root_hash", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "genesis_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "root_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "entries": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["sequence", "stage", "status", "input_digest", "output_digest", "records_in", "records_out", "metadata", "previous_hash", "entry_hash"],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1},
+          "stage": {"enum": ["load", "compile", "index", "evaluate", "verify"]},
+          "status": {"enum": ["ok", "failed"]},
+          "input_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "output_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "records_in": {"type": "integer", "minimum": 0},
+          "records_out": {"type": "integer", "minimum": 0},
+          "metadata": {"type": "object"},
+          "previous_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "entry_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

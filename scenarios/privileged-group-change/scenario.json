@@ -16,7 +16,7 @@
       "id": "IAM-PRIV-001",
       "name": "Unexpected privileged group membership change",
       "severity": "critical",
-      "description": "A non-approved actor adds an account to a privileged group.",
+      "description": "A non-approved actor adds an account to a privileged group without a change ticket.",
       "match": [
         {"field": "category", "operator": "eq", "value": "identity_change"},
         {"field": "action", "operator": "eq", "value": "add_to_privileged_group"},

@@ -3,19 +3,19 @@
   "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/bundle-manifest.schema.json",
   "title": "SOC_Replay report bundle manifest",
   "type": "object",
-  "required": ["manifest_schema_version", "engine", "run_id", "inputs", "verification_passed", "artifacts"],
+  "required": ["manifest_schema_version", "bundle_id", "engine", "run_id", "plan_fingerprint", "ledger_root", "inputs", "verification_passed", "artifacts"],
   "properties": {
-    "manifest_schema_version": {"const": "1.0"},
+    "manifest_schema_version": {"const": "2.0"},
+    "bundle_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "engine": {
       "type": "object",
       "required": ["name", "version"],
-      "properties": {
-        "name": {"const": "soc-replay"},
-        "version": {"type": "string", "minLength": 1}
-      },
+      "properties": {"name": {"const": "soc-replay"}, "version": {"type": "string", "minLength": 1}},
       "additionalProperties": false
     },
     "run_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+    "plan_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ledger_root": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "inputs": {
       "type": "object",
       "required": ["scenario_sha256", "events_sha256"],

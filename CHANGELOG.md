@@ -1,31 +1,21 @@
 # Changelog
 
+## 3.0.0 — 2026-07-13
+
+- Replaced the monolithic replay path with an explicit load/compile/index/evaluate/verify pipeline.
+- Added immutable compiled rules, field accessors, operator binding, and semantic plan fingerprints.
+- Added candidate indexing for common equality selectors and tags without changing rule semantics.
+- Added a deterministic hash-chained execution ledger and public ledger schema.
+- Added report and manifest schema version 2.0 with plan, ledger, and bundle identities.
+- Added a generic offline adapter registry while preserving the Suricata compatibility command.
+- Added `doctor`, `graph`, and adapter-discovery CLI surfaces.
+- Added repository self-auditing for scenario, ledger, schema, version, and live-I/O invariants.
+- Expanded branch coverage above 90% across validation, corruption, adapter, CLI, and pipeline paths.
+
 ## 2.1.0 — 2026-07-13
 
-- Added manifest-backed JSON/Markdown evidence bundles and offline tamper verification.
-- Added a sanitized Suricata EVE adapter for stored `alert` and `flow` records.
-- Added an approved privileged-maintenance negative control with an expected zero-detection result.
-- Added a bundle-manifest JSON Schema and committed manifest references for every scenario.
-- Added a measured experiment template and explicit threat model.
-- Expanded tests across adapter behavior, negative controls, bundle determinism, and tamper detection.
-- Raised the branch-coverage gate and extended repository coherence checks.
+- Added manifest-backed evidence bundles, offline Suricata normalization, a negative control, threat model, and experiment template.
 
 ## 2.0.0 — 2026-07-13
 
-- Added machine-verifiable scenario expectations and a `verify` CLI command.
-- Added SHA-256 input provenance and deterministic run identifiers to every report.
-- Added explicit correlation-window policies, including non-overlapping repeated detections.
-- Added a third executable scenario demonstrating repeated authentication-failure windows.
-- Hardened event, condition, aggregate, IP-address, timestamp, and response validation.
-- Added atomic report writes, a report schema, deterministic reference-report checks, and a local benchmark harness.
-- Expanded the test suite across models, engine semantics, CLI behavior, reports, mismatch handling, and safety boundaries.
-- Reframed the README around the system thesis, end-to-end proof, engineering decisions, and evidence hierarchy.
-- Added a version-controlled wiki source and architecture-decision record.
-
-## 1.1.0 — 2026-07-13
-
-- Restored the physical lab documentation and integrated the replay utility as supporting evidence tooling.
-
-## 1.0.0 — 2026-07-13
-
-- Added the initial deterministic replay engine, scenarios, reports, schemas, tests, and CI.
+- Added machine-verifiable expectations, input provenance, explicit correlation policies, strict typing, CI, and deterministic reference reports.

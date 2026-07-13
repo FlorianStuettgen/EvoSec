@@ -27,8 +27,7 @@
         "count_gte": 5,
         "within_seconds": 60,
         "distinct_field": "destination_port",
-        "distinct_gte": 5,
-        "window_policy": "first_per_group"
+        "distinct_gte": 5
       },
       "response": {
         "action": "recommend_segment_isolation",

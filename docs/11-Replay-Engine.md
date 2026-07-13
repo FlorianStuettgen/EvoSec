@@ -1,81 +1,57 @@
 # 11 — Replay Engine
 
-## Purpose
+SOC_Replay 3.0 is a deterministic execution pipeline, not a collection of ad hoc matching functions.
 
-The replay engine provides a deterministic evidence plane for defensive experiments. It consumes a scenario contract and normalized JSONL events, evaluates inspectable rules, verifies declared expectations, and emits JSON, Markdown, and manifest-backed evidence bundles.
+## Public contract
 
-It is intentionally not a SIEM, packet generator, endpoint agent, or response orchestrator.
+A scenario supplies immutable `scenario.json` and `events.jsonl` inputs. The engine returns a `ReplayResult` containing:
 
-## Processing model
+- the validated inputs and provenance hashes;
+- a compiled execution plan;
+- ordered detections;
+- exact expectation checks;
+- simulated analyst recommendations; and
+- a five-stage execution ledger.
+
+## Internal modules
+
+| Module | Responsibility |
+| --- | --- |
+| `models.py` | Strict public data contracts and simulation-only response boundary |
+| `operators.py` | Small inspectable operator registry |
+| `compiler.py` | Field accessors, operator binding, aggregate plans, and fingerprints |
+| `indexing.py` | Immutable candidate indexes for common selectors and tags |
+| `correlation.py` | Single-event and time-window detection semantics |
+| `verification.py` | Exact result-to-expectation comparison |
+| `pipeline.py` | Stage orchestration and deterministic ledger construction |
+| `result.py` | Immutable result and report representation |
+| `report.py` | JSON/Markdown rendering, manifests, and offline bundle verification |
+
+## Execution order
 
 ```text
-scenario.json + events.jsonl
-          │
-          ▼
-strict contract validation
-          │
-          ▼
-chronological normalization + SHA-256 provenance
-          │
-          ▼
-field matching + optional time-window correlation
-          │
-          ▼
-ordered detections + simulated recommendations
-          │
-          ▼
-expectation verification + deterministic evidence bundle
+load → compile → index → evaluate → verify
 ```
 
-## Determinism
+The order is part of the public execution contract and is checked by the repository verifier.
 
-For identical input bytes and engine version:
+## Why compile rules
 
-- events are sorted by UTC timestamp and event ID;
-- rule order is preserved;
-- detection order is stable;
-- run IDs are derived from scenario and event hashes;
-- no wall-clock timestamp is embedded in report content; and
-- committed reference bundles can be compared byte for byte; and
-- bundle manifests can be verified offline after generation.
+Without compilation, every event evaluation repeatedly splits field paths, resolves operators, and reconstructs aggregation behavior. Compilation moves that work into a single deterministic preparation stage. The resulting plan has a fingerprint derived from rule semantics.
 
-## Correlation semantics
+## Why index candidates
 
-An aggregate rule declares:
+Indexes reduce avoidable scans for common equality and tag conditions. They are only candidate selectors: every selected event must still satisfy every compiled condition. A missing hint falls back to a full scan.
 
-- grouping fields;
-- a minimum event count;
-- a time window;
-- an optional distinct-value threshold; and
-- a window policy.
+## Correlation guarantees
 
-`first_per_group` emits the first qualifying window for each group. `all_non_overlapping` emits repeated qualifying windows while preventing evidence events from being reused across detections.
+- Inputs are sorted by timestamp and event ID.
+- Groups are processed in deterministic representation order.
+- Detection IDs are stable within a rule.
+- `first_per_group` emits the first qualifying window.
+- `all_non_overlapping` consumes evidence after each qualifying window.
+- Candidate strategy and counts are preserved in detection metadata.
 
-## Verification
+## Compatibility
 
-Each scenario declares exact expectations for:
-
-- detection count;
-- rule IDs;
-- severity counts; and
-- simulated-action count.
-
-`soc-replay verify` exits with code `3` when the output does not match. This converts example scenarios from prose demonstrations into executable regression tests.
-
-## Provenance
-
-Reports preserve:
-
-- scenario SHA-256;
-- event-file SHA-256;
-- deterministic run ID;
-- engine name and version; and
-- evidence event IDs for every detection.
-
-The hashes establish input identity, not authenticity. Signing and external chain-of-custody controls remain outside the current scope.
-
-## Failure behavior
-
-The engine rejects malformed JSON, missing files, duplicate event IDs, naive timestamps, invalid IP addresses, inconsistent aggregation fields, unsupported operators, unknown expected rule IDs, and any response mode other than `simulated`.
-
-Report writes use atomic replacement. The manifest is written last so its presence represents a complete local bundle rather than an in-progress report pair.
+`engine.run_scenario`, `engine.evaluate_rule`, `report.write_reports`, and `normalize-suricata` remain available as compatibility surfaces. New code should prefer `ReplayPipeline`, `write_bundle`, and the generic adapter registry.

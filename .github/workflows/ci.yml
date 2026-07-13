@@ -33,23 +33,27 @@ jobs:
         run: |
           coverage run -m unittest discover -s tests -v
           coverage report
+      - name: Inspect execution wiring
+        run: |
+          soc-replay doctor
+          soc-replay graph --format mermaid
+          soc-replay adapters
       - name: Verify scenario catalog
-        run: soc-replay catalog
-      - name: Verify expected outcomes
         run: |
           soc-replay verify scenarios/network-scan
           soc-replay verify scenarios/privileged-group-change
           soc-replay verify scenarios/failed-authentication-burst
           soc-replay verify scenarios/benign-privileged-change
-      - name: Exercise evidence bundle integrity
+      - name: Exercise bundle and ledger verification
         run: |
           soc-replay run scenarios/network-scan --output build/network-scan
           soc-replay verify-bundle build/network-scan
-      - name: Exercise Suricata normalization
+      - name: Exercise adapter registry
         run: |
-          soc-replay normalize-suricata examples/adapters/suricata-eve.jsonl build/suricata-normalized.jsonl
-          cmp build/suricata-normalized.jsonl examples/adapters/suricata-normalized.jsonl
-      - name: Verify repository coherence
+          soc-replay normalize --adapter suricata-eve examples/adapters/suricata-eve.jsonl build/suricata-normalized.jsonl
+      - name: Verify deterministic references
+        run: python tools/check_reference_reports.py
+      - name: Verify repository invariants
         run: python tools/verify_repository.py
       - name: Build wheel
         run: python -m pip wheel . --no-deps -w dist
@@ -58,5 +62,4 @@ jobs:
           name: soc-replay-${{ matrix.python-version }}
           path: |
             dist/
-            examples/reports/
             build/network-scan/

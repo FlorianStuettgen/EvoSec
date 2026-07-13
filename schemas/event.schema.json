@@ -10,20 +10,8 @@
     "source": {"type": "string", "minLength": 1},
     "category": {"type": "string", "minLength": 1},
     "action": {"type": "string", "minLength": 1},
-    "source_ip": {
-      "anyOf": [
-        {"type": "string", "format": "ipv4"},
-        {"type": "string", "format": "ipv6"},
-        {"type": "null"}
-      ]
-    },
-    "destination_ip": {
-      "anyOf": [
-        {"type": "string", "format": "ipv4"},
-        {"type": "string", "format": "ipv6"},
-        {"type": "null"}
-      ]
-    },
+    "source_ip": {"anyOf": [{"type": "string", "format": "ipv4"}, {"type": "string", "format": "ipv6"}, {"type": "null"}]},
+    "destination_ip": {"anyOf": [{"type": "string", "format": "ipv4"}, {"type": "string", "format": "ipv6"}, {"type": "null"}]},
     "destination_port": {"type": ["integer", "null"], "minimum": 0, "maximum": 65535},
     "host": {"type": ["string", "null"], "minLength": 1},
     "user": {"type": ["string", "null"], "minLength": 1},
