@@ -62,6 +62,10 @@
               "window_policy": {"enum": ["first_per_group", "all_non_overlapping"]}
             },
             "required": ["group_by", "count_gte", "within_seconds"],
+            "dependentRequired": {
+              "distinct_field": ["distinct_gte"],
+              "distinct_gte": ["distinct_field"]
+            },
             "additionalProperties": false
           },
           "response": {
