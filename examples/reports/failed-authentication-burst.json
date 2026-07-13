@@ -1,0 +1,141 @@
+{
+  "detections": [
+    {
+      "correlation": {
+        "event_count": 3,
+        "threshold": 3,
+        "type": "time_window",
+        "window_policy": "all_non_overlapping",
+        "within_seconds": 90
+      },
+      "detection_id": "AUTH-BURST-001:001",
+      "event_ids": [
+        "auth-001",
+        "auth-002",
+        "auth-003"
+      ],
+      "first_seen": "2026-07-03T10:00:00Z",
+      "group": {
+        "host": "lab-app-01",
+        "user": "analyst.demo"
+      },
+      "last_seen": "2026-07-03T10:00:45Z",
+      "response": {
+        "action": "recommend_authentication_review",
+        "description": "Recommend reviewing the synthetic account and source context before taking any identity action.",
+        "mode": "simulated"
+      },
+      "rule_description": "Three failed authentication attempts for the same user and host occur inside ninety seconds.",
+      "rule_id": "AUTH-BURST-001",
+      "rule_name": "Repeated authentication failures",
+      "severity": "medium"
+    },
+    {
+      "correlation": {
+        "event_count": 3,
+        "threshold": 3,
+        "type": "time_window",
+        "window_policy": "all_non_overlapping",
+        "within_seconds": 90
+      },
+      "detection_id": "AUTH-BURST-001:002",
+      "event_ids": [
+        "auth-004",
+        "auth-005",
+        "auth-006"
+      ],
+      "first_seen": "2026-07-03T10:05:00Z",
+      "group": {
+        "host": "lab-app-01",
+        "user": "analyst.demo"
+      },
+      "last_seen": "2026-07-03T10:05:50Z",
+      "response": {
+        "action": "recommend_authentication_review",
+        "description": "Recommend reviewing the synthetic account and source context before taking any identity action.",
+        "mode": "simulated"
+      },
+      "rule_description": "Three failed authentication attempts for the same user and host occur inside ninety seconds.",
+      "rule_id": "AUTH-BURST-001",
+      "rule_name": "Repeated authentication failures",
+      "severity": "medium"
+    }
+  ],
+  "engine": {
+    "name": "soc-replay",
+    "version": "2.0.0"
+  },
+  "provenance": {
+    "events_sha256": "3d6e10b45b05fc16655b4c285b286856233b92127719e517696850ceb80ef779",
+    "run_id": "eb34e2c23cc54541",
+    "scenario_sha256": "44fea2ea3ac00be9d6003249f312b9bb53667d272ae32c513e5c76354e5ef850"
+  },
+  "report_schema_version": "1.0",
+  "scenario": {
+    "authorization_boundary": "Synthetic authentication records only. No account, endpoint, or identity service is contacted.",
+    "expected_outcome": "Two medium-severity detections, each backed by three failed events inside a ninety-second window.",
+    "id": "failed-authentication-burst",
+    "objective": "Demonstrate non-overlapping correlation windows by identifying two separate bursts of failed authentication activity for the same account.",
+    "schema_version": "1.0",
+    "title": "Synthetic repeated authentication failures"
+  },
+  "simulated_actions": [
+    {
+      "action": "recommend_authentication_review",
+      "description": "Recommend reviewing the synthetic account and source context before taking any identity action.",
+      "detection_id": "AUTH-BURST-001:001",
+      "mode": "simulated"
+    },
+    {
+      "action": "recommend_authentication_review",
+      "description": "Recommend reviewing the synthetic account and source context before taking any identity action.",
+      "detection_id": "AUTH-BURST-001:002",
+      "mode": "simulated"
+    }
+  ],
+  "summary": {
+    "detections": 2,
+    "events_processed": 7,
+    "simulated_actions": 2,
+    "verification_passed": true
+  },
+  "verification": {
+    "checks": [
+      {
+        "actual": 2,
+        "expected": 2,
+        "name": "detection_count",
+        "passed": true
+      },
+      {
+        "actual": [
+          "AUTH-BURST-001",
+          "AUTH-BURST-001"
+        ],
+        "expected": [
+          "AUTH-BURST-001",
+          "AUTH-BURST-001"
+        ],
+        "name": "rule_ids",
+        "passed": true
+      },
+      {
+        "actual": {
+          "medium": 2
+        },
+        "expected": {
+          "medium": 2
+        },
+        "name": "severity_counts",
+        "passed": true
+      },
+      {
+        "actual": 2,
+        "expected": 2,
+        "name": "simulated_action_count",
+        "passed": true
+      }
+    ],
+    "passed": true
+  }
+}

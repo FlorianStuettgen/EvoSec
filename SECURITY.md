@@ -1,16 +1,21 @@
 # Security policy
 
-SOC_Replay is a public record of a private lab. Reports should focus on repository-code vulnerabilities or accidental disclosure risks.
+SOC_Replay is intentionally limited to synthetic or sanitized telemetry and simulated response recommendations.
 
-Do not open a public issue containing:
+## Supported scope
 
-- credentials, keys or session material;
-- public or management addresses tied to the live lab;
-- device serial numbers;
-- private configuration exports;
-- sensitive incident data; or
-- recovery procedures that expose secrets.
+- Scenario parsing and validation
+- Deterministic rule evaluation
+- Evidence report generation
+- Documentation and sample data
 
-The firewall-policy library is sanitized reference material. Placeholder values must remain placeholders, and every example requires environment-specific validation.
+## Out of scope
 
-The replay package processes local JSON/JSONL and writes local reports. It contains no live-response or remote-command path.
+- Live firewall, switch, hypervisor, identity-provider, or endpoint control
+- Offensive payloads or exploit automation
+- Credential collection
+- Production incident response
+
+## Reporting a vulnerability
+
+Do not include secrets, production telemetry, credentials, or sensitive infrastructure details in a public issue. Contact the maintainer privately through the profile contact channel and include a minimal reproduction using synthetic data.

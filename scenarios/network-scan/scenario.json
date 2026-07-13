@@ -1,9 +1,16 @@
 {
+  "schema_version": "1.0",
   "id": "network-scan",
   "title": "Synthetic multi-port scan",
   "objective": "Confirm that a concentrated burst of connection attempts is detected, grouped, and converted into a simulated containment recommendation.",
   "authorization_boundary": "Synthetic telemetry only. No packets are generated and no network device is contacted.",
   "expected_outcome": "One high-severity detection backed by at least five events and five distinct destination ports within sixty seconds.",
+  "expectations": {
+    "detection_count": 1,
+    "rule_ids": ["NET-SCAN-001"],
+    "severity_counts": {"high": 1},
+    "simulated_action_count": 1
+  },
   "rules": [
     {
       "id": "NET-SCAN-001",
@@ -20,7 +27,8 @@
         "count_gte": 5,
         "within_seconds": 60,
         "distinct_field": "destination_port",
-        "distinct_gte": 5
+        "distinct_gte": 5,
+        "window_policy": "first_per_group"
       },
       "response": {
         "action": "recommend_segment_isolation",

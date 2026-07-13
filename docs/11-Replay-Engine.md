@@ -1,34 +1,80 @@
-# 11 — Evidence replay engine
+# 11 — Replay Engine
 
-The replay engine is a supporting utility inside SOC_Replay. It provides a repeatable way to evaluate stored defensive telemetry without pretending to operate the physical lab.
+## Purpose
 
-## Public API
+The replay engine provides a deterministic evidence plane for defensive experiments. It consumes a scenario contract and normalized JSONL events, evaluates inspectable rules, verifies declared expectations, and emits JSON and Markdown reports.
 
-```python
-from soc_replay import run_scenario
+It is intentionally not a SIEM, packet generator, endpoint agent, or response orchestrator.
 
-result = run_scenario("scenarios/network-scan")
-print(result.to_dict())
+## Processing model
+
+```text
+scenario.json + events.jsonl
+          │
+          ▼
+strict contract validation
+          │
+          ▼
+chronological normalization + SHA-256 provenance
+          │
+          ▼
+field matching + optional time-window correlation
+          │
+          ▼
+ordered detections + simulated recommendations
+          │
+          ▼
+expectation verification + deterministic reports
 ```
-
-## Capabilities
-
-- JSONL event loading
-- Scenario validation
-- Inspectable field conditions
-- Count and distinct-value correlation windows
-- Stable ordering and deterministic output
-- JSON and Markdown reports
-- Simulation-only response recommendations
 
 ## Determinism
 
-Events sort by timestamp and event ID. Rules evaluate in scenario order. Reports omit wall-clock generation timestamps and sort keys. Identical inputs therefore produce identical report content.
+For identical input bytes and engine version:
 
-## Platform integration boundary
+- events are sorted by UTC timestamp and event ID;
+- rule order is preserved;
+- detection order is stable;
+- run IDs are derived from scenario and event hashes;
+- no wall-clock timestamp is embedded in report content; and
+- committed reference reports can be compared byte for byte.
 
-A physical experiment may export sanitized events into the replay format. Import adapters should remain read-only and normalize data before evaluation. The engine contains no firewall, switch, hypervisor, endpoint or identity connector.
+## Correlation semantics
 
-## Why it belongs here
+An aggregate rule declares:
 
-The physical lab creates real topology, sensor and recovery questions. The replay utility provides a controlled baseline for testing detection logic and evidence structure before or after a physical exercise. It is one tool in the platform, not the platform itself.
+- grouping fields;
+- a minimum event count;
+- a time window;
+- an optional distinct-value threshold; and
+- a window policy.
+
+`first_per_group` emits the first qualifying window for each group. `all_non_overlapping` emits repeated qualifying windows while preventing evidence events from being reused across detections.
+
+## Verification
+
+Each scenario declares exact expectations for:
+
+- detection count;
+- rule IDs;
+- severity counts; and
+- simulated-action count.
+
+`soc-replay verify` exits with code `3` when the output does not match. This converts example scenarios from prose demonstrations into executable regression tests.
+
+## Provenance
+
+Reports preserve:
+
+- scenario SHA-256;
+- event-file SHA-256;
+- deterministic run ID;
+- engine name and version; and
+- evidence event IDs for every detection.
+
+The hashes establish input identity, not authenticity. Signing and external chain-of-custody controls remain outside the current scope.
+
+## Failure behavior
+
+The engine rejects malformed JSON, missing files, duplicate event IDs, naive timestamps, invalid IP addresses, inconsistent aggregation fields, unsupported operators, unknown expected rule IDs, and any response mode other than `simulated`.
+
+Report writes use atomic replacement so a partially written file is not presented as complete evidence.

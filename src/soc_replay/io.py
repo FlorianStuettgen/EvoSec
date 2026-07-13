@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -19,10 +21,36 @@ def _read_json(path: Path) -> dict[str, Any]:
     return data
 
 
-def load_scenario(directory: str | Path) -> tuple[Scenario, list[Event]]:
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(64 * 1024), b""):
+                digest.update(chunk)
+    except FileNotFoundError as exc:
+        raise ValidationError(f"missing required file: {path}") from exc
+    return digest.hexdigest()
+
+
+@dataclass(frozen=True)
+class LoadedScenario:
+    directory: Path
+    scenario: Scenario
+    events: tuple[Event, ...]
+    scenario_sha256: str
+    events_sha256: str
+
+    @property
+    def run_id(self) -> str:
+        payload = f"{self.scenario.schema_version}:{self.scenario_sha256}:{self.events_sha256}".encode()
+        return hashlib.sha256(payload).hexdigest()[:16]
+
+
+def load_scenario(directory: str | Path) -> LoadedScenario:
     scenario_dir = Path(directory)
-    scenario = Scenario.from_dict(_read_json(scenario_dir / "scenario.json"))
+    scenario_path = scenario_dir / "scenario.json"
     events_path = scenario_dir / "events.jsonl"
+    scenario = Scenario.from_dict(_read_json(scenario_path))
     try:
         lines = events_path.read_text(encoding="utf-8").splitlines()
     except FileNotFoundError as exc:
@@ -48,4 +76,10 @@ def load_scenario(directory: str | Path) -> tuple[Scenario, list[Event]]:
     if not events:
         raise ValidationError("scenario contains no events")
     events.sort(key=lambda item: (item.timestamp, item.event_id))
-    return scenario, events
+    return LoadedScenario(
+        directory=scenario_dir,
+        scenario=scenario,
+        events=tuple(events),
+        scenario_sha256=sha256_file(scenario_path),
+        events_sha256=sha256_file(events_path),
+    )

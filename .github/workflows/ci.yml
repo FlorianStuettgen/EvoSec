@@ -12,6 +12,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
@@ -19,21 +20,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package
-        run: python -m pip install -e .
+          cache: pip
+      - name: Install package and quality tools
+        run: python -m pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check src tests tools
+      - name: Type check
+        run: mypy
       - name: Compile
-        run: python -m compileall -q src tests
-      - name: Test
-        run: python -m unittest discover -s tests -v
-      - name: Validate scenarios
+        run: python -m compileall -q src tests tools
+      - name: Test with branch coverage
         run: |
-          soc-replay validate scenarios/network-scan
-          soc-replay validate scenarios/privileged-group-change
-      - name: Generate evidence reports
+          coverage run -m unittest discover -s tests -v
+          coverage report
+      - name: Verify scenario catalog
+        run: soc-replay catalog
+      - name: Verify expected outcomes
         run: |
-          soc-replay run scenarios/network-scan --output build/network-scan
-          soc-replay run scenarios/privileged-group-change --output build/privileged-group-change
+          soc-replay verify scenarios/network-scan
+          soc-replay verify scenarios/privileged-group-change
+          soc-replay verify scenarios/failed-authentication-burst
+      - name: Verify repository coherence
+        run: python tools/verify_repository.py
+      - name: Build wheel
+        run: python -m pip wheel . --no-deps -w dist
       - uses: actions/upload-artifact@v4
         with:
-          name: replay-reports-${{ matrix.python-version }}
-          path: build/
+          name: soc-replay-${{ matrix.python-version }}
+          path: |
+            dist/
+            examples/reports/

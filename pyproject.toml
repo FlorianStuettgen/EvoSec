@@ -4,16 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soc-replay"
-version = "1.1.0"
-description = "Deterministic replay of synthetic SOC telemetry with inspectable defensive rules and evidence reports."
+version = "2.0.0"
+description = "Deterministic replay of synthetic SOC telemetry with inspectable rules, expectation verification, and evidence reports."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "Florian Stuettgen" }]
-keywords = ["security", "soc", "telemetry", "detection-engineering", "cyber-range"]
+keywords = ["security", "soc", "telemetry", "detection-engineering", "cyber-range", "replay"]
 classifiers = [
   "Development Status :: 4 - Beta",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -30,3 +29,41 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+soc_replay = ["py.typed"]
+
+[project.urls]
+Homepage = "https://github.com/FlorianStuettgen/SOC_Replay"
+Repository = "https://github.com/FlorianStuettgen/SOC_Replay"
+Issues = "https://github.com/FlorianStuettgen/SOC_Replay/issues"
+Documentation = "https://github.com/FlorianStuettgen/SOC_Replay/tree/main/docs"
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2,<2",
+  "coverage[toml]>=7.6,<8",
+  "mypy>=1.10,<2",
+  "ruff>=0.6,<1",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/soc_replay"]
+
+[tool.coverage.run]
+branch = true
+source = ["soc_replay"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true

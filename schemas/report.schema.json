@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/report.schema.json",
+  "title": "SOC_Replay evidence report",
+  "type": "object",
+  "required": ["report_schema_version", "engine", "provenance", "scenario", "summary", "verification", "detections", "simulated_actions"],
+  "properties": {
+    "report_schema_version": {"const": "1.0"},
+    "engine": {"type": "object"},
+    "provenance": {
+      "type": "object",
+      "required": ["run_id", "scenario_sha256", "events_sha256"],
+      "properties": {
+        "run_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+        "scenario_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "events_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "scenario": {"type": "object"},
+    "summary": {"type": "object"},
+    "verification": {"type": "object"},
+    "detections": {"type": "array"},
+    "simulated_actions": {"type": "array"}
+  }
+}

@@ -1,11 +1,11 @@
 # SOC_Replay documentation
 
-SOC_Replay is first a record of an existing physical and virtual cyber range. The deterministic replay utility is one component within that platform.
+This directory is the maintained technical record for SOC_Replay. It separates platform architecture, operating evidence, replay-engine behavior, and future work.
 
-## Platform documentation
+## Platform
 
 1. [Architecture](01-Architecture.md)
-2. [Hardware Inventory](02-Hardware.md)
+2. [Hardware](02-Hardware.md)
 3. [Software Stack](03-Software-Stack.md)
 4. [Network Topology](04-Network-Topology.md)
 5. [CI/CD and Automation](05-CI-CD-Automation.md)
@@ -13,28 +13,18 @@ SOC_Replay is first a record of an existing physical and virtual cyber range. Th
 7. [Security Model](07-Security-Model.md)
 8. [Use Cases](08-Use-Cases.md)
 9. [Roadmap](09-Roadmap.md)
-10. [Appendix and Asset Index](10-Appendix.md)
-11. [Implementation State](14-Implementation-State.md)
+10. [Appendix](10-Appendix.md)
 
-## Evidence replay documentation
+## Replay and evidence
 
-- [Replay Engine](11-Replay-Engine.md)
-- [Scenario Format](12-Scenario-Format.md)
-- [Experiment Lifecycle](13-Experiment-Lifecycle.md)
+11. [Replay Engine](11-Replay-Engine.md)
+12. [Scenario Format](12-Scenario-Format.md)
+13. [Experiment Lifecycle](13-Experiment-Lifecycle.md)
+14. [Implementation State](14-Implementation-State.md)
+15. [Demo Playbook](15-Demo-Playbook.md)
+16. [Engineering Review](16-Engineering-Review.md)
+17. [Architecture Decisions](17-Architecture-Decisions.md)
 
-## Infrastructure references
+## Wiki source
 
-- [Firewall policy library](infra/lab-firewall-policies/)
-- [Playbook concepts](infra/lab-playbooks/README.md)
-- [Script contribution rules](infra/scripts/README.md)
-
-## Evidence hierarchy
-
-1. Physical component photographs and verified inventory
-2. Sanitized configuration exports and measured platform behaviour
-3. Deterministic replay outputs and passing tests
-4. Architecture diagrams and documented operating roles
-5. Prototype descriptions
-6. Roadmap statements
-
-The [Implementation State](14-Implementation-State.md) page controls how each capability may be described.
+The files under [`wiki/`](wiki/) are a concise, version-controlled source for synchronizing or replacing the legacy GitHub Wiki. The repository documentation remains canonical because it is reviewed and versioned with the code.

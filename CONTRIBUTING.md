@@ -1,29 +1,52 @@
 # Contributing
 
-SOC_Replay accepts improvements to both the physical-platform record and the evidence replay utility.
+SOC_Replay accepts improvements that strengthen its defensive, evidence-first, and simulation-only boundary.
 
-## Platform documentation changes
-
-- Preserve the distinction between installed hardware, documented roles, prototypes and roadmap items.
-- Link claims to photographs, sanitized configuration, measured telemetry or experiment records.
-- Never publish credentials, keys, serial numbers, recovery secrets or sensitive management addresses.
-- Update `docs/14-Implementation-State.md` when capability maturity changes.
-
-## Replay utility changes
+## Development environment
 
 ```bash
 python -m venv .venv
-. .venv/bin/activate
-python -m pip install -e .
-python -m unittest discover -s tests -v
+. .venv/bin/activate              # Windows: .venv\Scripts\activate
+python -m pip install -e ".[dev]"
 ```
 
-Code changes should include tests and preserve the simulation-only response boundary.
+Run the same quality gate used by CI:
 
-## Scenario contributions
+```bash
+ruff check src tests tools
+mypy
+python -m compileall -q src tests tools
+coverage run -m unittest discover -s tests -v
+coverage report
+python tools/verify_repository.py
+python -m build
+```
 
-A scenario requires a clear defensive objective, authorization boundary, synthetic or sanitized events, expected outcome, inspectable rule, generated report and limitations.
+## Engineering standard
 
-## Infrastructure references
+A code change should include:
 
-Firewall, playbook and script examples must use placeholders and must be reviewed against the actual device/firmware before application.
+1. A clearly stated operating problem and invariant.
+2. Tests for success, failure, and boundary behavior.
+3. No hidden I/O, network calls, or live-response side effects.
+4. Deterministic output or a documented reason that determinism is impossible.
+5. Documentation updates when the public contract changes.
+6. An implementation-state update when a capability moves between planned, prototype, evidenced, and implemented.
+
+## Scenario standard
+
+A scenario contribution requires:
+
+- synthetic or properly sanitized `events.jsonl`;
+- a precise authorization boundary;
+- inspectable rule conditions;
+- machine-readable expectations;
+- a simulation-only response;
+- a regenerated JSON and Markdown reference report; and
+- tests when it introduces new operators or correlation semantics.
+
+Run `soc-replay verify <scenario-directory>` before submitting a scenario. Never include credentials, keys, real personal data, sensitive management addresses, or production incident records.
+
+## Documentation and wiki
+
+The versioned files under `docs/` are canonical. Concise GitHub Wiki copy is maintained under `docs/wiki/`; changes to either narrative must preserve the same maturity labels and non-claims.

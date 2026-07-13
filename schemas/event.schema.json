@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/soc-replay/event.schema.json",
-  "title": "SOC_Replay event",
+  "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/event.schema.json",
+  "title": "SOC_Replay normalized event",
   "type": "object",
   "required": ["event_id", "timestamp", "source", "category", "action"],
   "properties": {
@@ -10,14 +10,14 @@
     "source": {"type": "string", "minLength": 1},
     "category": {"type": "string", "minLength": 1},
     "action": {"type": "string", "minLength": 1},
-    "source_ip": {"type": ["string", "null"]},
-    "destination_ip": {"type": ["string", "null"]},
+    "source_ip": {"type": ["string", "null"], "format": "ip"},
+    "destination_ip": {"type": ["string", "null"], "format": "ip"},
     "destination_port": {"type": ["integer", "null"], "minimum": 0, "maximum": 65535},
-    "host": {"type": ["string", "null"]},
-    "user": {"type": ["string", "null"]},
-    "outcome": {"type": ["string", "null"]},
-    "tags": {"type": "array", "items": {"type": "string"}},
+    "host": {"type": ["string", "null"], "minLength": 1},
+    "user": {"type": ["string", "null"], "minLength": 1},
+    "outcome": {"type": ["string", "null"], "minLength": 1},
+    "tags": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "details": {"type": "object"}
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

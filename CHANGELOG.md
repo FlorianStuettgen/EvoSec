@@ -1,17 +1,21 @@
 # Changelog
 
+## 2.0.0 — 2026-07-13
+
+- Added machine-verifiable scenario expectations and a `verify` CLI command.
+- Added SHA-256 input provenance and deterministic run identifiers to every report.
+- Added explicit correlation-window policies, including non-overlapping repeated detections.
+- Added a third executable scenario demonstrating repeated authentication-failure windows.
+- Hardened event, condition, aggregate, IP-address, timestamp, and response validation.
+- Added atomic report writes, a report schema, deterministic reference-report checks, and a local benchmark harness.
+- Expanded the test suite across models, engine semantics, CLI behavior, reports, mismatch handling, and safety boundaries.
+- Reframed the README around the system thesis, end-to-end proof, engineering decisions, and evidence hierarchy.
+- Added a version-controlled wiki source and architecture-decision record.
+
 ## 1.1.0 — 2026-07-13
 
-- Restored the original SOC_Replay identity as a documented physical and virtual cyber range.
-- Reinstated the rack/component photographs, original diagrams, firewall-policy library, playbook guidance and script guidance removed during the repository rebuild.
-- Rebuilt the platform architecture, hardware, software, network, monitoring, security, use-case and roadmap chapters from the pre-edit repository and wiki record.
-- Added an implementation-state register separating installed hardware, documented roles, partial evidence, prototypes and roadmap work.
-- Repositioned the Python replay engine as a supporting evidence utility rather than the repository’s primary identity.
-- Preserved the replay source, scenarios, reports, tests, schemas and CI.
+- Restored the physical lab documentation and integrated the replay utility as supporting evidence tooling.
 
 ## 1.0.0 — 2026-07-13
 
-- Added a dependency-free Python replay engine.
-- Added deterministic event parsing, rule matching, threshold correlation, distinct-value aggregation and simulation-only response recommendations.
-- Added two synthetic scenarios with JSON and Markdown reports.
-- Added schemas, tests, CI, security policy and contribution guidance.
+- Added the initial deterministic replay engine, scenarios, reports, schemas, tests, and CI.

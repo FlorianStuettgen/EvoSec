@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "failed-authentication-burst",
+  "title": "Synthetic repeated authentication failures",
+  "objective": "Demonstrate non-overlapping correlation windows by identifying two separate bursts of failed authentication activity for the same account.",
+  "authorization_boundary": "Synthetic authentication records only. No account, endpoint, or identity service is contacted.",
+  "expected_outcome": "Two medium-severity detections, each backed by three failed events inside a ninety-second window.",
+  "expectations": {
+    "detection_count": 2,
+    "rule_ids": ["AUTH-BURST-001", "AUTH-BURST-001"],
+    "severity_counts": {"medium": 2},
+    "simulated_action_count": 2
+  },
+  "rules": [
+    {
+      "id": "AUTH-BURST-001",
+      "name": "Repeated authentication failures",
+      "severity": "medium",
+      "description": "Three failed authentication attempts for the same user and host occur inside ninety seconds.",
+      "match": [
+        {"field": "category", "operator": "eq", "value": "authentication"},
+        {"field": "outcome", "operator": "eq", "value": "failure"}
+      ],
+      "aggregate": {
+        "group_by": ["user", "host"],
+        "count_gte": 3,
+        "within_seconds": 90,
+        "window_policy": "all_non_overlapping"
+      },
+      "response": {
+        "action": "recommend_authentication_review",
+        "description": "Recommend reviewing the synthetic account and source context before taking any identity action.",
+        "mode": "simulated"
+      }
+    }
+  ]
+}

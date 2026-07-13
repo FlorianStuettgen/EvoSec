@@ -1,6 +1,10 @@
 {
   "detections": [
     {
+      "correlation": {
+        "event_count": 1,
+        "type": "single_event"
+      },
       "detection_id": "IAM-PRIV-001:001",
       "event_ids": [
         "iam-002"
@@ -13,16 +17,28 @@
         "description": "Recommend reviewing the synthetic actor and target accounts, preserving the audit record, and confirming change authorization.",
         "mode": "simulated"
       },
+      "rule_description": "A non-approved actor adds an account to a privileged group.",
       "rule_id": "IAM-PRIV-001",
       "rule_name": "Unexpected privileged group membership change",
       "severity": "critical"
     }
   ],
+  "engine": {
+    "name": "soc-replay",
+    "version": "2.0.0"
+  },
+  "provenance": {
+    "events_sha256": "b0bdecbea452eff3538bb5d57ae33f60f9ca9dc292ad5d81b1dc0d9056f82b3d",
+    "run_id": "1f76fcf3b5221c68",
+    "scenario_sha256": "9576611eddb3f3248a4fe9d74389a5f1ce1fbc7f59176cb3686d571a7372bd2d"
+  },
+  "report_schema_version": "1.0",
   "scenario": {
     "authorization_boundary": "Synthetic audit records only. No identity provider or host is modified.",
     "expected_outcome": "One critical detection associated with the unauthorized group-change event.",
     "id": "privileged-group-change",
     "objective": "Detect an unexpected administrative group membership change and produce an evidence-preserving simulated response.",
+    "schema_version": "1.0",
     "title": "Synthetic privileged group change"
   },
   "simulated_actions": [
@@ -36,6 +52,44 @@
   "summary": {
     "detections": 1,
     "events_processed": 3,
-    "simulated_actions": 1
+    "simulated_actions": 1,
+    "verification_passed": true
+  },
+  "verification": {
+    "checks": [
+      {
+        "actual": 1,
+        "expected": 1,
+        "name": "detection_count",
+        "passed": true
+      },
+      {
+        "actual": [
+          "IAM-PRIV-001"
+        ],
+        "expected": [
+          "IAM-PRIV-001"
+        ],
+        "name": "rule_ids",
+        "passed": true
+      },
+      {
+        "actual": {
+          "critical": 1
+        },
+        "expected": {
+          "critical": 1
+        },
+        "name": "severity_counts",
+        "passed": true
+      },
+      {
+        "actual": 1,
+        "expected": 1,
+        "name": "simulated_action_count",
+        "passed": true
+      }
+    ],
+    "passed": true
   }
 }
