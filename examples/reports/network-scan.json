@@ -1,0 +1,48 @@
+{
+  "detections": [
+    {
+      "detection_id": "NET-SCAN-001:001",
+      "event_ids": [
+        "net-001",
+        "net-002",
+        "net-003",
+        "net-004",
+        "net-005"
+      ],
+      "first_seen": "2026-07-01T12:00:00Z",
+      "group": {
+        "destination_ip": "10.20.40.10",
+        "source_ip": "10.20.30.77"
+      },
+      "last_seen": "2026-07-01T12:00:31Z",
+      "response": {
+        "action": "recommend_segment_isolation",
+        "description": "Recommend isolating the synthetic source segment and preserving the matched event set for analyst review.",
+        "mode": "simulated"
+      },
+      "rule_id": "NET-SCAN-001",
+      "rule_name": "Multi-port connection burst",
+      "severity": "high"
+    }
+  ],
+  "scenario": {
+    "authorization_boundary": "Synthetic telemetry only. No packets are generated and no network device is contacted.",
+    "expected_outcome": "One high-severity detection backed by at least five events and five distinct destination ports within sixty seconds.",
+    "id": "network-scan",
+    "objective": "Confirm that a concentrated burst of connection attempts is detected, grouped, and converted into a simulated containment recommendation.",
+    "title": "Synthetic multi-port scan"
+  },
+  "simulated_actions": [
+    {
+      "action": "recommend_segment_isolation",
+      "description": "Recommend isolating the synthetic source segment and preserving the matched event set for analyst review.",
+      "detection_id": "NET-SCAN-001:001",
+      "mode": "simulated"
+    }
+  ],
+  "summary": {
+    "detections": 1,
+    "events_processed": 7,
+    "simulated_actions": 1
+  }
+}

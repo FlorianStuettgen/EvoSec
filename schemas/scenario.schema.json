@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/soc-replay/scenario.schema.json",
+  "title": "SOC_Replay scenario",
+  "type": "object",
+  "required": ["id", "title", "objective", "authorization_boundary", "expected_outcome", "rules"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "objective": {"type": "string", "minLength": 1},
+    "authorization_boundary": {"type": "string", "minLength": 1},
+    "expected_outcome": {"type": "string", "minLength": 1},
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "severity", "match", "response"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "severity": {"enum": ["informational", "low", "medium", "high", "critical"]},
+          "description": {"type": "string"},
+          "match": {"type": "array", "minItems": 1},
+          "aggregate": {"type": ["object", "null"]},
+          "response": {
+            "type": "object",
+            "required": ["action", "description", "mode"],
+            "properties": {
+              "action": {"type": "string"},
+              "description": {"type": "string"},
+              "mode": {"const": "simulated"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/soc-replay/event.schema.json",
+  "title": "SOC_Replay event",
+  "type": "object",
+  "required": ["event_id", "timestamp", "source", "category", "action"],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "source": {"type": "string", "minLength": 1},
+    "category": {"type": "string", "minLength": 1},
+    "action": {"type": "string", "minLength": 1},
+    "source_ip": {"type": ["string", "null"]},
+    "destination_ip": {"type": ["string", "null"]},
+    "destination_port": {"type": ["integer", "null"], "minimum": 0, "maximum": 65535},
+    "host": {"type": ["string", "null"]},
+    "user": {"type": ["string", "null"]},
+    "outcome": {"type": ["string", "null"]},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "details": {"type": "object"}
+  },
+  "additionalProperties": true
+}

@@ -1,22 +1,40 @@
-# SOC_Replay Documentation
+# SOC_Replay documentation
 
-This directory mirrors the structure of the SOC_Replay wiki in a file-based documentation tree.
+SOC_Replay is first a record of an existing physical and virtual cyber range. The deterministic replay utility is one component within that platform.
 
-## Contents
+## Platform documentation
 
-- [01 - Architecture](01-Architecture.md) - overall system architecture
-- [02 - Hardware](02-Hardware.md) - hardware infrastructure used
-- [03 - Software Stack](03-Software-Stack.md) - software components and orchestration
-- [04 - Network Topology](04-Network-Topology.md) - network layout, segmentation, and zones
-- [05 - CI/CD and Automation](05-CI-CD-Automation.md) - deployment pipelines and automation workflows
-- [06 - Monitoring and Telemetry](06-Monitoring-Telemetry.md) - logging, metrics, dashboards, and observability
-- [07 - Security Model](07-Security-Model.md) - zero-trust design, segmentation, containment, and threat response
-- [08 - Use Cases](08-Use-Cases.md) - typical usages, lab experiments, and demonstrations
-- [09 - Roadmap](09-Roadmap.md) - planned future enhancements and features
-- [10 - Appendix](10-Appendix.md) - reference diagrams, notes, and glossary
+1. [Architecture](01-Architecture.md)
+2. [Hardware Inventory](02-Hardware.md)
+3. [Software Stack](03-Software-Stack.md)
+4. [Network Topology](04-Network-Topology.md)
+5. [CI/CD and Automation](05-CI-CD-Automation.md)
+6. [Monitoring and Telemetry](06-Monitoring-Telemetry.md)
+7. [Security Model](07-Security-Model.md)
+8. [Use Cases](08-Use-Cases.md)
+9. [Roadmap](09-Roadmap.md)
+10. [Appendix and Asset Index](10-Appendix.md)
+11. [Implementation State](14-Implementation-State.md)
 
-## Quick Start
+## Evidence replay documentation
 
-SOC_Replay is a cybersecurity research lab environment designed for experimentation, analysis, and demonstration. It combines honeypots, intrusion detection and prevention, automation, monitoring, and secure network segmentation to enable safe, repeatable, and realistic security testing.
+- [Replay Engine](11-Replay-Engine.md)
+- [Scenario Format](12-Scenario-Format.md)
+- [Experiment Lifecycle](13-Experiment-Lifecycle.md)
 
-See [01 - Architecture](01-Architecture.md) for an overview of the system architecture.
+## Infrastructure references
+
+- [Firewall policy library](infra/lab-firewall-policies/)
+- [Playbook concepts](infra/lab-playbooks/README.md)
+- [Script contribution rules](infra/scripts/README.md)
+
+## Evidence hierarchy
+
+1. Physical component photographs and verified inventory
+2. Sanitized configuration exports and measured platform behaviour
+3. Deterministic replay outputs and passing tests
+4. Architecture diagrams and documented operating roles
+5. Prototype descriptions
+6. Roadmap statements
+
+The [Implementation State](14-Implementation-State.md) page controls how each capability may be described.

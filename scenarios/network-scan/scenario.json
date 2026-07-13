@@ -1,0 +1,32 @@
+{
+  "id": "network-scan",
+  "title": "Synthetic multi-port scan",
+  "objective": "Confirm that a concentrated burst of connection attempts is detected, grouped, and converted into a simulated containment recommendation.",
+  "authorization_boundary": "Synthetic telemetry only. No packets are generated and no network device is contacted.",
+  "expected_outcome": "One high-severity detection backed by at least five events and five distinct destination ports within sixty seconds.",
+  "rules": [
+    {
+      "id": "NET-SCAN-001",
+      "name": "Multi-port connection burst",
+      "severity": "high",
+      "description": "A single source touches several destination ports in a short window.",
+      "match": [
+        {"field": "category", "operator": "eq", "value": "network_connection"},
+        {"field": "outcome", "operator": "eq", "value": "blocked"},
+        {"field": "tags", "operator": "contains", "value": "reconnaissance"}
+      ],
+      "aggregate": {
+        "group_by": ["source_ip", "destination_ip"],
+        "count_gte": 5,
+        "within_seconds": 60,
+        "distinct_field": "destination_port",
+        "distinct_gte": 5
+      },
+      "response": {
+        "action": "recommend_segment_isolation",
+        "description": "Recommend isolating the synthetic source segment and preserving the matched event set for analyst review.",
+        "mode": "simulated"
+      }
+    }
+  ]
+}

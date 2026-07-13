@@ -1,0 +1,41 @@
+{
+  "detections": [
+    {
+      "detection_id": "IAM-PRIV-001:001",
+      "event_ids": [
+        "iam-002"
+      ],
+      "first_seen": "2026-07-02T09:12:20Z",
+      "group": {},
+      "last_seen": "2026-07-02T09:12:20Z",
+      "response": {
+        "action": "recommend_account_review",
+        "description": "Recommend reviewing the synthetic actor and target accounts, preserving the audit record, and confirming change authorization.",
+        "mode": "simulated"
+      },
+      "rule_id": "IAM-PRIV-001",
+      "rule_name": "Unexpected privileged group membership change",
+      "severity": "critical"
+    }
+  ],
+  "scenario": {
+    "authorization_boundary": "Synthetic audit records only. No identity provider or host is modified.",
+    "expected_outcome": "One critical detection associated with the unauthorized group-change event.",
+    "id": "privileged-group-change",
+    "objective": "Detect an unexpected administrative group membership change and produce an evidence-preserving simulated response.",
+    "title": "Synthetic privileged group change"
+  },
+  "simulated_actions": [
+    {
+      "action": "recommend_account_review",
+      "description": "Recommend reviewing the synthetic actor and target accounts, preserving the audit record, and confirming change authorization.",
+      "detection_id": "IAM-PRIV-001:001",
+      "mode": "simulated"
+    }
+  ],
+  "summary": {
+    "detections": 1,
+    "events_processed": 3,
+    "simulated_actions": 1
+  }
+}

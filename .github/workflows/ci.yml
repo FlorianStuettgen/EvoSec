@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package
+        run: python -m pip install -e .
+      - name: Compile
+        run: python -m compileall -q src tests
+      - name: Test
+        run: python -m unittest discover -s tests -v
+      - name: Validate scenarios
+        run: |
+          soc-replay validate scenarios/network-scan
+          soc-replay validate scenarios/privileged-group-change
+      - name: Generate evidence reports
+        run: |
+          soc-replay run scenarios/network-scan --output build/network-scan
+          soc-replay run scenarios/privileged-group-change --output build/privileged-group-change
+      - uses: actions/upload-artifact@v4
+        with:
+          name: replay-reports-${{ matrix.python-version }}
+          path: build/
