@@ -99,6 +99,8 @@ jobs:
           python tools/verify_index_equivalence.py --json > build/index-equivalence.json
       - name: Validate real schema instances
         run: python tools/validate_contracts.py
+      - name: Verify committed reference evidence
+        run: soc-replay verify-bundle reference/network-scan --source scenarios/network-scan
       - name: Exercise standalone and source-bound bundle verification
         run: |
           soc-replay run scenarios/network-scan --output build/network-scan
