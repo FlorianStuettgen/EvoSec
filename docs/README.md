@@ -1,6 +1,17 @@
 # SOC_Replay documentation
 
-The version-controlled documentation is the canonical technical record. Wiki material is a convenience surface and must not contradict implementation state, contract versions, or measured evidence.
+The version-controlled documentation is the canonical technical record. Wiki material is a convenience surface and must not contradict implementation state, contract versions, security boundaries, or measured evidence.
+
+## Start by goal
+
+| Goal | Recommended path |
+| --- | --- |
+| Evaluate the project in five minutes | [Implementation State](14-Implementation-State.md) → [Engineering Review](16-Engineering-Review.md) → [Threat Model](21-Threat-Model.md) |
+| Run the maintained demonstration | [Demo Playbook](15-Demo-Playbook.md) → [Scenario Format](12-Scenario-Format.md) → [Experiment Lifecycle](13-Experiment-Lifecycle.md) |
+| Understand evidence integrity | [Evidence Bundles](18-Evidence-Bundles.md) → [Execution Ledger](23-Execution-Ledger.md) → [Contract Validation](24-Contract-Validation.md) |
+| Review correctness and performance | [Differential Correctness](25-Differential-Correctness.md) → [Performance Methodology](26-Performance-Methodology.md) → [Reproducible Builds](27-Reproducible-Builds.md) |
+| Understand the physical lab | [Architecture](01-Architecture.md) → [Hardware](02-Hardware.md) → [Network Topology](04-Network-Topology.md) → [Monitoring and Telemetry](06-Monitoring-Telemetry.md) |
+| Extend the engine | [Replay Engine](11-Replay-Engine.md) → [Execution Core](22-Execution-Core.md) → [Architecture Decisions](17-Architecture-Decisions.md) → [Contributing](../CONTRIBUTING.md) |
 
 ## System and platform
 
@@ -33,3 +44,11 @@ The version-controlled documentation is the canonical technical record. Wiki mat
 - [17 — Architecture Decisions](17-Architecture-Decisions.md)
 - [20 — Measured Experiment Record](20-Experiment-Record.md)
 - [21 — Threat Model](21-Threat-Model.md)
+
+## Documentation rules
+
+1. [Implementation State](14-Implementation-State.md) controls capability maturity.
+2. Deterministic replay evidence does not prove live physical behavior.
+3. Standalone bundle verification proves internal consistency; source-bound verification proves reproduction from the supplied scenario under the installed engine.
+4. Hashes are not signatures, and timestamps are not trusted merely because they appear in a report.
+5. Historical wiki language must be corrected here before it is treated as a current project claim.

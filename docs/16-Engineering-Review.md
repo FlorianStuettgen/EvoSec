@@ -9,7 +9,7 @@
 - Every rule produces a deterministic execution trace, including zero-result rules.
 - Maintained scenarios assert exact evidence windows, grouping values, severity, and response action.
 - The execution ledger enforces stage order, types, digest shape, counts, chain continuity, and completion.
-- Bundle verification checks artifacts and the internal agreement of plan, traces, detections, summary, actions, ledger, and manifest.
+- Bundle verification recomputes internal identities and relationships; optional source-bound verification reproduces all three artifacts from the supplied scenario.
 - JSON Schemas are validated and then used against real repository and generated instances.
 - Benchmark workloads are deterministic while environment-dependent timing remains outside replay evidence identities.
 - Wheel construction is checked for byte reproducibility under fixed build inputs.
@@ -38,9 +38,9 @@ Timing results depend on interpreter, host, load, and toolchain. CI uses the ben
 
 Exact assertions are powerful regression contracts but are not a substitute for production false-positive analysis, noisy-data evaluation, or probabilistic quality measurement.
 
-### Internal integrity without external attestation
+### Internal and source-bound integrity without external attestation
 
-The ledger and manifest make internal contradiction and post-generation alteration observable. Anyone able to replace every file can create a new internally consistent bundle. External authorship and trusted time require signatures or an attestation service.
+Standalone verification makes internal contradiction and post-generation alteration observable. Source-bound verification additionally proves that the supplied scenario reproduces the complete bundle under the installed engine. A party able to replace both source and artifacts can still create a new consistent evidence set. External authorship and trusted time require signatures or an attestation service.
 
 ## Failure modes covered
 
@@ -59,6 +59,8 @@ The ledger and manifest make internal contradiction and post-generation alterati
 - invalid ledger stages, types, digests, counts, sequence, chain, or root;
 - ordinary artifact tampering;
 - rehashed but internally contradictory bundles;
+- coherent report rewrites that fail source-bound reproduction;
+- non-scalar ledger stages or statuses and other malformed JSON-valid structures;
 - schema/document/runtime version drift;
 - non-reproducible wheel bytes;
 - unknown or post-freeze adapter registration; and

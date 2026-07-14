@@ -16,8 +16,9 @@ This register is the controlling statement for capability maturity.
 | Per-rule execution traces | Implemented | Report traces including zero-detection rules |
 | Exact detection contracts | Implemented | Maintained schema 1.1 scenarios and verification tests |
 | Strict deterministic execution ledger | Implemented | Typed stage contract, hash chain, corruption tests |
-| Standalone bundle consistency verification | Implemented | Recomputed identities, verification values, stage digests, and adversarial rehash tests |
-| Source-bound bundle reproduction | Implemented | Exact regeneration and byte comparison of all three artifacts |
+| Standalone bundle consistency verification | Implemented | Recomputed identities, relationships, stage digests, hashes, and adversarial rehash tests |
+| Source-bound bundle reproduction | Implemented | Exact regeneration and byte comparison of JSON, Markdown, and manifest artifacts |
+| Controlled malformed-bundle rejection | Implemented | JSON-valid type-mutation tests and fail-closed ledger validation |
 | Real schema-instance validation | Implemented | Draft 2020-12 validation of inputs, outputs, proofs, and benchmarks |
 | Deterministic benchmark workload | Implemented | Expanded-event workload identity and schema-valid result artifacts |
 | Reproducible wheel verification | Implemented | Two isolated builds with byte-level comparison |
