@@ -46,7 +46,16 @@ jobs:
           echo "status=${status}" >> "${GITHUB_OUTPUT}"
           exit "${status}"
       - name: Compile
-        run: python -m compileall -q src tests tools
+        id: compile
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p build/diagnostics
+          set +e
+          python -m compileall src tests tools 2>&1 | tee build/diagnostics/compile.txt
+          status=${PIPESTATUS[0]}
+          echo "status=${status}" >> "${GITHUB_OUTPUT}"
+          exit "${status}"
       - name: Test with branch coverage
         id: tests
         continue-on-error: true
@@ -122,5 +131,5 @@ jobs:
             build/diagnostics/
             build/reproducibility/
       - name: Enforce captured quality results
-        if: always() && (steps.lint.outcome == 'failure' || steps.typing.outcome == 'failure' || steps.tests.outcome == 'failure')
+        if: always() && (steps.lint.outcome == 'failure' || steps.typing.outcome == 'failure' || steps.compile.outcome == 'failure' || steps.tests.outcome == 'failure')
         run: exit 1
