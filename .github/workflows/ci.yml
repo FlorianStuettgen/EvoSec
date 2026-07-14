@@ -24,7 +24,16 @@ jobs:
       - name: Install package and quality tools
         run: python -m pip install -e ".[dev]"
       - name: Lint
-        run: ruff check src tests tools
+        id: lint
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p build/diagnostics
+          set +e
+          ruff check src tests tools --output-format=concise 2>&1 | tee build/diagnostics/ruff.txt
+          status=${PIPESTATUS[0]}
+          echo "status=${status}" >> "${GITHUB_OUTPUT}"
+          exit "${status}"
       - name: Type check
         run: mypy
       - name: Compile
@@ -76,6 +85,7 @@ jobs:
             --warmups 1 \
             --output build/benchmarks
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: soc-replay-${{ matrix.python-version }}
           if-no-files-found: warn
@@ -84,3 +94,7 @@ jobs:
             build/network-scan/
             build/index-equivalence.json
             build/benchmarks/
+            build/diagnostics/
+      - name: Enforce lint result
+        if: always() && steps.lint.outcome == 'failure'
+        run: exit 1
