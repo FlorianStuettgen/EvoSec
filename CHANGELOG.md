@@ -1,9 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- Added source-bound bundle verification through `verify_bundle(..., source_directory=...)`, with deterministic re-execution and exact byte comparison of JSON, Markdown, and manifest artifacts.
+- Strengthened standalone verification by recomputing run IDs, plan fingerprints, candidate strategies, verification outcomes, rule/detection accounting, and load/compile/evaluate/verify ledger digests.
+- Added correlation-to-trace checks, sequential detection identity checks, exact schema 1.1 contract verification, and adversarial tests for rehashed semantic tampering and coherent report-only rewrites.
+- Hardened execution-ledger verification so JSON-valid non-scalar stage and status values fail cleanly instead of raising uncaught runtime exceptions.
+- Added concise, verbose, and JSON output modes to `soc-replay verify-bundle`; successful default output is now summary-first.
+- Required source-bound verification in deterministic bundle auditing and the CI smoke path.
+- Reworked the repository landing page and documentation map around visitor goals, evidence guarantees, and explicit non-claims.
+- Updated the security policy, threat model, implementation register, engineering review, and contributor guidance to match standalone and source-bound verification.
+- Pinned GitHub Actions by commit, aligned isolated and no-isolation build tooling, cancelled superseded workflow runs, and expanded cache/build-output exclusions.
+
 ## 3.2.1 — 2026-07-14
 
 - Resolved all Ruff failures across the recursive immutability, serialization, and compatibility-wrapper surfaces.
-- Made CI preserve and upload lint, build, benchmark, bundle, and proof diagnostics even when an earlier gate fails.
+- Made CI preserve and upload lint, test, coverage, build, benchmark, bundle, and proof diagnostics even when an earlier gate fails.
 - Confirmed the Python 3.11 and 3.12 matrices pass every quality, contract, proof, schema, bundle, adapter, determinism, audit, and package-build gate.
 - Confirmed the Python 3.13 benchmark smoke run produces schema-valid artifacts with embedded passing semantic-equivalence proofs.
 - Corrected the reproducible-wheel verifier to build from two independent clean source copies rather than one mutable source tree.
