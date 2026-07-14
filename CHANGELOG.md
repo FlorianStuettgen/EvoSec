@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.2.0 — 2026-07-14
+
+- Added differential correctness proofs comparing indexed execution with a full-scan reference path.
+- Added per-rule semantic proof digests and candidate-reduction accounting.
+- Added deterministic workload expansion and environment-labelled benchmark artifacts.
+- Added public JSON Schemas for index-equivalence proofs and benchmark results.
+- Added CI gates for indexed/full-scan equivalence, benchmark smoke execution, and reproducible wheel bytes.
+- Added a reproducible-build auditor using fixed build epoch and hash seed inputs.
+- Documented correctness-proof methodology, performance interpretation, and supply-chain boundaries.
+
 ## 3.1.0 — 2026-07-13
 
 - Made all nested runtime state deeply immutable while preserving ordinary JSON serialization.

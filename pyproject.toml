@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soc-replay"
-version = "3.1.0"
-description = "Evidence-first defensive telemetry pipeline with compiled rules, deterministic execution ledgers, and verifiable bundles."
+version = "3.2.0"
+description = "Contract-complete defensive telemetry replay with differential correctness proofs and verifiable evidence bundles."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

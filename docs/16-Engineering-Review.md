@@ -5,11 +5,14 @@
 - Runtime objects are deeply immutable, not merely frozen at the dataclass shell.
 - Rule fingerprints cover every behavior- and report-affecting field.
 - Candidate selectors are composed and intersected without changing rule semantics.
+- Indexed execution is differentially compared with a full-scan reference path for every maintained scenario.
 - Every rule produces a deterministic execution trace, including zero-result rules.
 - Maintained scenarios assert exact evidence windows, grouping values, severity, and response action.
 - The execution ledger enforces stage order, types, digest shape, counts, chain continuity, and completion.
 - Bundle verification checks artifacts and the internal agreement of plan, traces, detections, summary, actions, ledger, and manifest.
 - JSON Schemas are validated and then used against real repository and generated instances.
+- Benchmark workloads are deterministic while environment-dependent timing remains outside replay evidence identities.
+- Wheel construction is checked for byte reproducibility under fixed build inputs.
 - Runtime dependencies remain zero.
 - The package has no live-I/O, credential, command-execution, or infrastructure-control authority.
 
@@ -22,6 +25,14 @@ The eight operators are intentionally constrained. Arbitrary executable expressi
 ### In-memory index
 
 The index is appropriate for bounded experiments and portfolio-scale replay. It is not a distributed stream processor. `max_events` remains the explicit volume guard.
+
+### Differential rather than formal proof
+
+The index-equivalence layer compares two implementations on maintained scenarios and deterministic expanded workloads. It does not exhaust the entire input domain or prove that a rule is operationally useful.
+
+### Environment-bound benchmarks
+
+Timing results depend on interpreter, host, load, and toolchain. CI uses the benchmark as a schema-valid smoke test and does not impose shared-runner latency thresholds.
 
 ### Exact deterministic scenarios
 
@@ -39,6 +50,8 @@ The ledger and manifest make internal contradiction and post-generation alterati
 - attempted nested mutation after validation;
 - incomplete fingerprints;
 - candidate selector intersections and empty pools;
+- indexed/full-scan semantic divergence;
+- optimization metadata accidentally treated as detection semantics;
 - unhashable nested group/distinct values;
 - repeated-window evidence reuse;
 - zero-detection trace loss;
@@ -47,6 +60,7 @@ The ledger and manifest make internal contradiction and post-generation alterati
 - ordinary artifact tampering;
 - rehashed but internally contradictory bundles;
 - schema/document/runtime version drift;
+- non-reproducible wheel bytes;
 - unknown or post-freeze adapter registration; and
 - accidental live-I/O imports.
 
@@ -54,5 +68,5 @@ The ledger and manifest make internal contradiction and post-generation alterati
 
 1. Publish one complete measured physical-lab experiment with synchronized source telemetry, analyst decision, containment validation, rollback, and recovery evidence.
 2. Add an optional signed external envelope around the deterministic unsigned bundle.
-3. Publish benchmark history across event count, rule count, group cardinality, and selector selectivity.
+3. Publish benchmark history across event count, rule count, group cardinality, and selector selectivity using controlled hosts.
 4. Add a second offline vendor adapter and conformance fixture.

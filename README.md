@@ -2,13 +2,14 @@
 
 # SOC_Replay
 
-### A contract-complete defensive telemetry engine with compiled rules, exact scenario assertions, deterministic execution traces, and verifiable evidence bundles
+### A proof-oriented defensive telemetry engine with compiled rules, exact scenario contracts, differential correctness checks, deterministic execution traces, and verifiable evidence bundles
 
 [![CI](https://github.com/FlorianStuettgen/SOC_Replay/actions/workflows/ci.yml/badge.svg)](https://github.com/FlorianStuettgen/SOC_Replay/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.11–3.13-3776AB?logo=python&logoColor=white)
 ![Coverage](https://img.shields.io/badge/branch%20coverage-90%25%2B-16a34a)
 ![Runtime](https://img.shields.io/badge/runtime-zero%20dependencies-0f766e)
 ![Contracts](https://img.shields.io/badge/contracts-schema%20validated-7c3aed)
+![Correctness](https://img.shields.io/badge/indexing-differentially%20proved-2563eb)
 ![Boundary](https://img.shields.io/badge/response-simulation%20only-b45309)
 ![License](https://img.shields.io/badge/license-MIT-0f172a)
 
@@ -23,9 +24,7 @@ SOC_Replay joins two systems that security portfolios usually present separately
 
 The project is built around one principle:
 
-> **A diagram proves architecture. A screenshot proves visibility. A reproducible, contract-validated experiment proves behavior.**
-
-SOC_Replay preserves those evidence classes without pretending they are interchangeable.
+> **A diagram proves architecture. A screenshot proves visibility. A reproducible experiment proves behavior. A differential proof shows that an optimization did not change meaning.**
 
 ## The 90-second proof
 
@@ -37,6 +36,7 @@ python -m pip install -e .
 soc-replay doctor
 soc-replay run scenarios/network-scan --output build/network-scan
 soc-replay verify-bundle build/network-scan
+python tools/verify_index_equivalence.py
 ```
 
 Expected result:
@@ -48,6 +48,7 @@ plan: <64-character semantic fingerprint>
 ledger: <64-character execution root>
 bundle: <64-character bundle identity>
 bundle verification: PASS
+PASS network-scan: ... proof=<64-character proof identity>
 ```
 
 The generated bundle contains:
@@ -63,8 +64,6 @@ build/network-scan/
 
 ![SOC_Replay execution core](docs/assets/execution-core.svg)
 
-The engine is an explicit five-stage pipeline:
-
 | Stage | Responsibility | Deterministic output |
 | --- | --- | --- |
 | **Load** | Validate and deeply freeze scenario and JSONL event inputs | Provenance hashes and run ID |
@@ -73,50 +72,90 @@ The engine is an explicit five-stage pipeline:
 | **Evaluate** | Execute every rule and preserve positive or zero-detection traces | Ordered detections and rule executions |
 | **Verify** | Compare results with exact declared detection contracts | Machine-readable PASS/FAIL |
 
-Every stage appends an entry to a strictly typed, cryptographically linked execution ledger. The verifier enforces the exact stage order, digest formats, count types, metadata shape, hash continuity, completion state, and root identity.
+Every stage appends an entry to a strictly typed, cryptographically linked execution ledger. The verifier enforces exact stage order, digest formats, count types, metadata shape, hash continuity, completion state, and root identity.
 
-See [Execution Core](docs/22-Execution-Core.md), [Execution Ledger](docs/23-Execution-Ledger.md), and [Contract Validation](docs/24-Contract-Validation.md).
+## The proof layer
 
-## What “contract-complete” means
+Candidate indexes are useful only if they preserve rule semantics. SOC_Replay therefore treats the unoptimized full-scan path as a reference implementation and compares it with indexed execution for every maintained scenario.
+
+For each rule, the proof records:
+
+- indexed and full-scan candidate counts;
+- indexed strategy;
+- matched, grouped, window, and detection counts;
+- normalized semantic detection output;
+- a semantic digest; and
+- a pass/fail verdict with explicit failure reasons.
+
+Optimization-only fields such as candidate strategy and candidate count are excluded from the semantic comparison. Detection identity, severity, evidence events, grouping, response, correlation thresholds, and timestamps remain part of the comparison.
+
+```bash
+python tools/verify_index_equivalence.py
+python tools/verify_index_equivalence.py --json > build/index-equivalence.json
+```
+
+This is a differential correctness proof relative to the full-scan implementation. It is not a mathematical proof of the detection rules themselves and does not establish the origin of telemetry.
+
+## Performance evidence without performance theatre
+
+Benchmark inputs are deterministic; elapsed time is not. SOC_Replay keeps benchmark measurements outside the replay ledger and evidence bundle so environment noise cannot contaminate deterministic identities.
+
+```bash
+python tools/benchmark_scenarios.py \
+  --copies 100 \
+  --iterations 15 \
+  --warmups 3 \
+  --output build/benchmarks
+```
+
+Each benchmark artifact records:
+
+- source and expanded event counts;
+- deterministic workload ID;
+- plan and rule fingerprints;
+- environment metadata;
+- index-build, indexed-evaluation, and full-scan timing summaries;
+- candidate-reduction ratios;
+- measured median speedup; and
+- an embedded semantic-equivalence proof.
+
+The benchmark schema validates structure, not speed. CI deliberately avoids brittle latency thresholds on shared runners.
+
+## Reproducible package construction
+
+The project verifies that two isolated wheel builds produce byte-identical artifacts when supplied the same source tree, fixed build epoch, and hash seed:
+
+```bash
+python tools/verify_reproducible_wheel.py
+```
+
+This establishes reproducibility under the tested toolchain and environment. It does not replace artifact signing, trusted timestamps, or independent provenance attestation.
+
+## Contract-complete internals
 
 ### Deeply immutable runtime state
 
-Frozen dataclasses alone do not make nested mappings and lists immutable. SOC_Replay recursively freezes event details, condition values, expectation maps, detection groups, correlation metadata, verification values, and ledger metadata. Serialized output remains conventional JSON.
+Nested event details, condition values, expectations, detection groups, correlation metadata, verification values, and ledger metadata are recursively frozen. Serialized output remains ordinary JSON.
 
 ### Complete semantic fingerprints
 
-A rule fingerprint commits to every output-affecting field:
-
-- identity, display name, severity, and description;
-- all match conditions and values;
-- aggregate grouping, threshold, duration, distinct-value, and window policy;
-- simulated response action, description, and mode.
-
-Changing behavior or report-visible meaning changes the fingerprint.
+A rule fingerprint commits to identity, display text, severity, conditions, aggregate behavior, and the simulated response contract. Changing behavior or report-visible meaning changes the fingerprint.
 
 ### Composite candidate plans
 
-The compiler extracts every safe indexed selector, not merely the first one. The index intersects equality and tag pools deterministically, then applies the complete compiled predicate set. Candidate selection changes cost, never truth conditions.
+The compiler extracts every safe indexed selector. The index intersects equality and tag pools deterministically, then applies the complete compiled predicate set. Candidate selection changes cost, never truth conditions.
 
 ### Every rule leaves a trace
 
-Each rule execution records:
-
-- candidate strategy and candidate count;
-- matched-event count;
-- group count;
-- windows considered; and
-- detection count.
-
-A zero-detection rule is therefore visible evidence, not an absence of evidence.
+A zero-detection rule records the same candidate, match, group, window, and detection accounting as a firing rule. Zero detections are therefore visible evidence rather than an unexplained absence.
 
 ### Exact scenario assertions
 
-Maintained scenario schema `1.1` declares the exact expected detections: rule, severity, evidence-event IDs, group values, and simulated action. Schema `1.0` remains readable for compatibility, but `doctor` rejects legacy scenarios from the maintained catalog.
+Maintained scenario schema `1.1` declares exact expected detections: rule, severity, evidence-event IDs, group values, and simulated action. Schema `1.0` remains readable only for compatibility.
 
 ### Runtime and schemas agree
 
-CI validates actual scenario, event, report, manifest, and ledger instances against Draft 2020-12 JSON Schemas. Runtime validation, schema validation, bundle verification, and repository auditing use the same contract vocabulary.
+CI validates real scenario, event, report, manifest, ledger, proof, benchmark, and normalized-adapter instances against Draft 2020-12 JSON Schemas.
 
 ## Evidence identity hierarchy
 
@@ -124,6 +163,7 @@ CI validates actual scenario, event, report, manifest, and ledger instances agai
 input bytes
   └── run ID
        └── semantic execution plan
+            ├── indexed/full-scan equivalence proof
             └── per-rule execution traces
                  └── ordered detections
                       └── expectation verdict
@@ -132,7 +172,7 @@ input bytes
                                      └── bundle ID
 ```
 
-A bundle can be internally consistent only when these identities agree. The verifier rejects ordinary file tampering and rehashed bundles whose report, traces, ledger, summary, actions, or manifest contradict one another.
+A bundle is accepted only when these identities agree. The verifier rejects ordinary file tampering and rehashed bundles whose report, traces, ledger, summary, actions, or manifest contradict one another.
 
 ## Included experiments
 
@@ -142,8 +182,6 @@ A bundle can be internally consistent only when these identities agree. The veri
 | [Privileged group change](scenarios/privileged-group-change) | Positive nested-field control | One critical detection backed by `iam-002` |
 | [Failed authentication burst](scenarios/failed-authentication-burst) | Repeated-window control | Two medium detections with non-overlapping evidence windows |
 | [Approved privileged maintenance](scenarios/benign-privileged-change) | Negative control | Zero detections and a preserved zero-result rule trace |
-
-Every maintained scenario contains synthetic telemetry, a precise authorization boundary, inspectable rules, exact detection contracts, and repeatably verified bundle generation.
 
 ## Offline telemetry adapters
 
@@ -171,23 +209,6 @@ The global adapter registry is frozen after startup. The Suricata adapter consum
 
 Photographs prove installation. Configurations prove intended policy. Replay bundles prove deterministic rule behavior. Measured lab records prove end-to-end platform behavior.
 
-## Command surface
-
-```text
-soc-replay validate <scenario>
-soc-replay explain <scenario> [--json]
-soc-replay run <scenario> --output <directory>
-soc-replay verify <scenario>
-soc-replay verify-bundle <directory>
-soc-replay catalog [--json]
-soc-replay adapters [--json]
-soc-replay normalize --adapter <name> <source> <destination>
-soc-replay graph --format text|json|mermaid
-soc-replay doctor [--json]
-```
-
-`doctor` audits the pipeline, contract versions, registries, and maintained scenario maturity. `explain` exposes the compiled selector plan and observed execution counts. `graph` exposes the stage wiring rather than leaving architecture implicit.
-
 ## Repository architecture
 
 ```text
@@ -195,24 +216,20 @@ SOC_Replay/
 ├── src/soc_replay/
 │   ├── contracts.py            # shared schema and pipeline vocabulary
 │   ├── immutability.py         # recursive freeze boundary
-│   ├── model_common.py         # shared validation vocabulary
 │   ├── event_models.py         # events, conditions, aggregates, rules
 │   ├── scenario_models.py      # exact expectations and scenarios
-│   ├── result_models.py        # detections and verification records
 │   ├── compiler.py             # executable plans and semantic fingerprints
 │   ├── indexing.py             # immutable composite candidate routing
 │   ├── correlation.py          # detections and per-rule execution traces
+│   ├── proofs.py               # indexed/full-scan differential correctness
 │   ├── pipeline.py             # five-stage orchestration
 │   ├── ledger.py               # strict deterministic hash chain
-│   ├── report_render.py        # JSON and analyst-readable rendering
-│   ├── bundle.py               # manifests and internal-consistency verification
-│   ├── report.py               # stable reporting façade
-│   ├── adapters/               # frozen offline normalization registry
-│   └── cli.py                  # operational command surface
+│   ├── bundle.py               # manifests and consistency verification
+│   └── adapters/               # frozen offline normalization registry
 ├── scenarios/                  # exact positive, repeated-window, and negative controls
-├── schemas/                    # event, scenario, report, manifest, and ledger contracts
-├── tests/                      # behavior, corruption, immutability, schema, and CLI tests
-├── tools/                      # contract, determinism, and repository auditors
+├── schemas/                    # runtime, evidence, proof, and benchmark contracts
+├── tests/                      # behavior, corruption, immutability, proof, and CLI tests
+├── tools/                      # contract, proof, benchmark, build, and repository auditors
 ├── assets/                     # physical build evidence
 └── docs/                       # architecture, operations, decisions, and threat model
 ```
@@ -228,12 +245,14 @@ coverage run -m unittest discover -s tests -v
 coverage report
 soc-replay doctor
 python tools/validate_contracts.py
+python tools/verify_index_equivalence.py
 python tools/verify_deterministic_bundles.py
 python tools/verify_repository.py
-python -m pip wheel . --no-deps -w dist
+python tools/verify_reproducible_wheel.py
+python tools/benchmark_scenarios.py --copies 4 --iterations 2 --warmups 1
 ```
 
-The gate enforces strict typing, lint, compilation, at least 90% branch coverage, exact scenario verification, real schema-instance validation, repeated deterministic bundle generation, strict ledger validity, deep immutability tests, repository invariants, absence of live-I/O imports, and wheel construction.
+The gate verifies code quality, exact scenario behavior, schema-instance validity, differential index correctness, deterministic bundle bytes, strict ledger consistency, repository invariants, reproducible package bytes, and a schema-valid benchmark smoke run.
 
 ## Documentation
 
@@ -242,30 +261,29 @@ Start with:
 - [Documentation map](docs/README.md)
 - [System architecture](docs/01-Architecture.md)
 - [Replay engine](docs/11-Replay-Engine.md)
-- [Implementation state](docs/14-Implementation-State.md)
 - [Engineering review](docs/16-Engineering-Review.md)
-- [Architecture decisions](docs/17-Architecture-Decisions.md)
-- [Evidence bundles](docs/18-Evidence-Bundles.md)
 - [Execution core](docs/22-Execution-Core.md)
 - [Execution ledger](docs/23-Execution-Ledger.md)
 - [Contract validation](docs/24-Contract-Validation.md)
+- [Differential correctness](docs/25-Differential-Correctness.md)
+- [Performance methodology](docs/26-Performance-Methodology.md)
+- [Reproducible builds](docs/27-Reproducible-Builds.md)
 
-The version-controlled `docs/` directory is canonical. Wiki copy under `docs/wiki/` is secondary and must not overrule implementation-state records or measured evidence.
+The version-controlled `docs/` directory is canonical. Wiki copy is secondary and must not overrule implementation-state records or measured evidence.
 
 ## Scope and non-claims
 
 SOC_Replay is a personally operated defensive research and demonstration environment. It does not generate traffic, deploy payloads, bypass controls, modify accounts, operate infrastructure, or execute response commands.
 
-The execution ledger and bundle manifest provide tamper evidence relative to their hashes. They do **not** establish authorship, trusted time, external custody, or that telemetry originated from a live production system.
+The execution ledger and bundle manifest provide tamper evidence relative to their hashes. Differential proofs establish equivalence to the full-scan reference implementation for tested inputs. Benchmarks describe measured execution in a recorded environment. None of these establishes authorship, trusted time, external custody, or production telemetry origin.
 
 ## Current state
 
-**Version:** 3.1.0  
-**Physical platform:** installed and documented  
+**Version:** 3.2.0  
 **Execution engine:** deeply immutable, compiled, composite-indexed, traced, and packaged  
-**Execution identity:** complete semantic plan fingerprint plus strict five-stage hash ledger  
+**Correctness assurance:** indexed execution differentially checked against full scan  
 **Experiment evidence:** four exact deterministic contracts, including a zero-detection control  
-**Schema assurance:** maintained inputs and generated outputs validated as real Draft 2020-12 instances  
+**Schema assurance:** inputs, outputs, proofs, and benchmark artifacts validated as real Draft 2020-12 instances  
+**Build assurance:** deterministic bundle generation and reproducible wheel verification  
 **Adapter surface:** frozen, offline, sanitized Suricata EVE normalization  
-**Quality gate:** 42 tests, 93% branch coverage, strict typing, contract audit, determinism audit, and wheel build  
 **Live response:** deliberately outside the package

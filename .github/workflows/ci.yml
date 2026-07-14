@@ -44,6 +44,11 @@ jobs:
           soc-replay verify scenarios/privileged-group-change
           soc-replay verify scenarios/failed-authentication-burst
           soc-replay verify scenarios/benign-privileged-change
+      - name: Prove indexed and full-scan equivalence
+        run: |
+          mkdir -p build
+          python tools/verify_index_equivalence.py
+          python tools/verify_index_equivalence.py --json > build/index-equivalence.json
       - name: Validate real schema instances
         run: python tools/validate_contracts.py
       - name: Exercise bundle and strict-ledger verification
@@ -59,9 +64,23 @@ jobs:
         run: python tools/verify_repository.py
       - name: Build wheel
         run: python -m pip wheel . --no-deps -w dist
+      - name: Verify reproducible wheel bytes
+        if: matrix.python-version == '3.13'
+        run: python tools/verify_reproducible_wheel.py
+      - name: Run schema-valid benchmark smoke test
+        if: matrix.python-version == '3.13'
+        run: |
+          python tools/benchmark_scenarios.py \
+            --copies 4 \
+            --iterations 2 \
+            --warmups 1 \
+            --output build/benchmarks
       - uses: actions/upload-artifact@v4
         with:
           name: soc-replay-${{ matrix.python-version }}
+          if-no-files-found: warn
           path: |
             dist/
             build/network-scan/
+            build/index-equivalence.json
+            build/benchmarks/

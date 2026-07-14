@@ -21,6 +21,9 @@ The version-controlled documentation is the canonical technical record. Wiki mat
 - [22 — Execution Core](22-Execution-Core.md)
 - [23 — Execution Ledger](23-Execution-Ledger.md)
 - [24 — Contract Validation](24-Contract-Validation.md)
+- [25 — Differential Correctness](25-Differential-Correctness.md)
+- [26 — Performance Methodology](26-Performance-Methodology.md)
+- [27 — Reproducible Builds](27-Reproducible-Builds.md)
 
 ## Governance and review
 

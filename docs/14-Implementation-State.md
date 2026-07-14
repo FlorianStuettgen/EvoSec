@@ -10,14 +10,18 @@ This register is the controlling statement for capability maturity.
 | Strict event and scenario contracts | Implemented | Runtime validators, JSON Schemas, contract-validation tool |
 | Deeply immutable runtime state | Implemented | Recursive freeze boundary and mutation tests |
 | Complete rule fingerprints | Implemented | Output-sensitive compiler tests |
-| Composite candidate indexing | Implemented | Selector-intersection implementation and equivalence tests |
+| Composite candidate indexing | Implemented | Selector-intersection implementation and index tests |
+| Indexed/full-scan differential proof | Implemented | Per-rule semantic comparison and proof schema |
 | Single-event and window correlation | Implemented | Positive and repeated-window controls |
 | Per-rule execution traces | Implemented | Report traces including zero-detection rules |
 | Exact detection contracts | Implemented | Maintained schema 1.1 scenarios and verification tests |
 | Strict deterministic execution ledger | Implemented | Typed stage contract, hash chain, corruption tests |
 | Verifiable report bundles | Implemented | JSON/Markdown/manifest artifacts and offline verification |
-| Real schema-instance validation | Implemented | Draft 2020-12 validation of maintained inputs and generated outputs |
+| Real schema-instance validation | Implemented | Draft 2020-12 validation of inputs, outputs, proofs, and benchmarks |
+| Deterministic benchmark workload | Implemented | Expanded-event workload identity and schema-valid result artifacts |
+| Reproducible wheel verification | Implemented | Two isolated builds with byte-level comparison |
 | Offline Suricata normalization | Implemented | Frozen registry, fixture validation, output digest |
+| Historical benchmark trend series | Roadmap | Harness exists; controlled longitudinal dataset not yet published |
 | Live sensor collection | Not implemented | Deliberately outside the deterministic package |
 | Autonomous containment | Not claimed | Response mode is validation-locked to `simulated` |
 | Signed external attestation | Roadmap | Hashes do not prove authorship or trusted time |

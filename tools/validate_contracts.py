@@ -10,6 +10,7 @@ from referencing import Registry, Resource
 
 from soc_replay.adapters import normalize_file
 from soc_replay.engine import run_scenario
+from soc_replay.proofs import prove_index_equivalence
 from soc_replay.report import write_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +26,8 @@ SCHEMA_FILES = (
     "execution-ledger.schema.json",
     "report.schema.json",
     "bundle-manifest.schema.json",
+    "index-equivalence-proof.schema.json",
+    "benchmark-result.schema.json",
 )
 
 
@@ -73,6 +76,7 @@ def validate_repository_contracts(root: Path = ROOT) -> list[str]:
     report_validator = _validator(schemas["report.schema.json"], registry)
     manifest_validator = _validator(schemas["bundle-manifest.schema.json"], registry)
     ledger_validator = _validator(schemas["execution-ledger.schema.json"], registry)
+    proof_validator = _validator(schemas["index-equivalence-proof.schema.json"], registry)
 
     for name in SCENARIOS:
         scenario_dir = root / "scenarios" / name
@@ -112,8 +116,10 @@ def validate_repository_contracts(root: Path = ROOT) -> list[str]:
                     f"{name}/execution-ledger",
                     errors,
                 )
+            proof_payload = prove_index_equivalence(scenario_dir).to_dict()
+            _collect_errors(proof_validator, proof_payload, f"{name}/index-equivalence-proof", errors)
         except Exception as exc:  # repository auditor must aggregate failures
-            errors.append(f"{name}/generated-bundle: {type(exc).__name__}: {exc}")
+            errors.append(f"{name}/generated-evidence: {type(exc).__name__}: {exc}")
 
     adapter_source = root / "examples" / "adapters" / "suricata-eve.jsonl"
     if adapter_source.exists():

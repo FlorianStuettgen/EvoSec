@@ -8,14 +8,17 @@ from pathlib import Path
 from soc_replay import __version__
 from soc_replay.adapters import adapter_registry
 from soc_replay.contracts import (
+    BENCHMARK_SCHEMA_VERSION,
     CURRENT_SCENARIO_SCHEMA_VERSION,
     INDEX_FIELDS,
     PIPELINE_STAGES,
+    PROOF_SCHEMA_VERSION,
 )
 from soc_replay.engine import run_scenario
 from soc_replay.ledger import verify_ledger_payload
 from soc_replay.operators import operator_catalog
 from soc_replay.pipeline import ReplayPipeline
+from soc_replay.proofs import prove_index_equivalence
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = (
@@ -33,6 +36,9 @@ REQUIRED_DOCS = (
     "docs/22-Execution-Core.md",
     "docs/23-Execution-Ledger.md",
     "docs/24-Contract-Validation.md",
+    "docs/25-Differential-Correctness.md",
+    "docs/26-Performance-Methodology.md",
+    "docs/27-Reproducible-Builds.md",
 )
 REQUIRED_SCHEMAS = (
     "schemas/event.schema.json",
@@ -40,10 +46,15 @@ REQUIRED_SCHEMAS = (
     "schemas/report.schema.json",
     "schemas/bundle-manifest.schema.json",
     "schemas/execution-ledger.schema.json",
+    "schemas/index-equivalence-proof.schema.json",
+    "schemas/benchmark-result.schema.json",
 )
 REQUIRED_TOOLS = (
     "tools/validate_contracts.py",
     "tools/verify_deterministic_bundles.py",
+    "tools/verify_index_equivalence.py",
+    "tools/benchmark_scenarios.py",
+    "tools/verify_reproducible_wheel.py",
 )
 
 
@@ -76,6 +87,8 @@ def main() -> int:
         errors.append("pyproject and package versions differ")
     if ReplayPipeline.DESCRIPTION.stages != PIPELINE_STAGES:
         errors.append("pipeline stage contract changed unexpectedly")
+    if PROOF_SCHEMA_VERSION != "1.0" or BENCHMARK_SCHEMA_VERSION != "1.0":
+        errors.append("proof or benchmark contract version changed unexpectedly")
     if len(operator_catalog()) != 8:
         errors.append("operator registry is incomplete")
     registry = adapter_registry()
@@ -96,7 +109,8 @@ def main() -> int:
             errors.append(f"schema is not draft 2020-12: {schema}")
 
     for name in SCENARIOS:
-        result = run_scenario(ROOT / "scenarios" / name)
+        scenario_dir = ROOT / "scenarios" / name
+        result = run_scenario(scenario_dir)
         if result.scenario.schema_version != CURRENT_SCENARIO_SCHEMA_VERSION:
             errors.append(f"maintained scenario is not current schema version: {name}")
         if result.scenario.expectations.detection_contracts is None:
@@ -115,6 +129,11 @@ def main() -> int:
         index_fields = result.ledger.entries[2].metadata.get("index_fields")
         if list(index_fields) != [*INDEX_FIELDS, "tags"]:
             errors.append(f"index-field contract drift: {name}")
+        proof = prove_index_equivalence(scenario_dir)
+        if not proof.passed:
+            errors.append(f"indexed/full-scan semantic drift: {name}")
+        if proof.plan_fingerprint != result.plan.fingerprint:
+            errors.append(f"proof plan fingerprint drift: {name}")
 
     errors.extend(_check_import_safety())
     if errors:
@@ -124,7 +143,7 @@ def main() -> int:
     print(
         "repository verification: PASS "
         f"({len(SCENARIOS)} exact scenarios, {len(operator_catalog())} operators, "
-        f"{len(registry.descriptors())} frozen adapters)"
+        f"{len(registry.descriptors())} frozen adapters, differential index proof)"
     )
     return 0
 
