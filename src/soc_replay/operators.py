@@ -39,7 +39,7 @@ def _contains(actual: Any, expected: Any) -> bool:
             return expected in actual
         except TypeError:
             return False
-    if isinstance(actual, (str, Sequence, Set)) and not isinstance(actual, (bytes, bytearray)):
+    if isinstance(actual, str | Sequence | Set) and not isinstance(actual, bytes | bytearray):
         try:
             return expected in actual
         except TypeError:

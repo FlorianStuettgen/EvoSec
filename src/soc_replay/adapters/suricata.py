@@ -32,7 +32,7 @@ def _stable_event_id(payload: dict[str, Any], line_number: int) -> str:
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     digest = hashlib.sha256(canonical).hexdigest()[:12]
     flow_id = payload.get("flow_id")
-    prefix = str(flow_id) if isinstance(flow_id, (int, str)) else digest
+    prefix = str(flow_id) if isinstance(flow_id, int | str) else digest
     return f"suricata-{prefix}-{line_number:06d}"
 
 

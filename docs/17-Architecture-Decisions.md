@@ -50,7 +50,7 @@
 
 ## ADR-009 — Verify internal bundle agreement
 
-**Decision:** Bundle verification cross-checks plan rules, rule traces, detections, summary, actions, ledger counts, artifact hashes, and manifest identity.
+**Decision:** Bundle verification recomputes run and plan identities, verification outcomes, candidate strategies, rule/detection relationships, ledger stage digests, artifact hashes, and manifest identity.
 
 **Reason:** Recomputing a file hash must not conceal contradictions inside the evidence set.
 
@@ -65,3 +65,9 @@
 **Decision:** Reject every response mode except `simulated`.
 
 **Reason:** Detection evaluation and infrastructure control are separate trust domains.
+
+## ADR-012 — Separate standalone consistency from source-bound identity
+
+**Decision:** Retain standalone bundle verification for offline internal-consistency checks and add an optional source-bound mode that reruns the scenario and byte-compares all generated artifacts.
+
+**Reason:** Some report fields cannot be independently reconstructed from a bundle that does not contain its original inputs. Source-bound reproduction makes that limitation explicit and provides a stronger verification path without embedding potentially sensitive telemetry in every bundle.
