@@ -17,9 +17,21 @@ SOC_Replay compiles inspectable detection rules, evaluates stored synthetic or s
 
 The repository also documents the segmented physical lab that provides the project context. The shipped Python package remains deliberately offline: it does not collect live telemetry, generate traffic, execute commands, or control infrastructure.
 
-**Start here:** [Run the demo](#quickstart) · [Understand the evidence](#evidence-guarantees) · [Review implementation state](docs/14-Implementation-State.md) · [Read the security boundary](SECURITY.md) · [Browse the docs](docs/README.md)
+**Start here:** [See the reference evidence](reference/network-scan/report.md) · [Run the demo](#quickstart) · [Read the project guide](docs/00-Start-Here.md) · [Review implementation state](docs/14-Implementation-State.md) · [Read the security boundary](SECURITY.md)
 
 ![SOC_Replay execution core](docs/assets/execution-core.svg)
+
+```text
+Segmented physical lab
+  └─ produces and contextualizes stored, sanitized telemetry
+       └─ SOC_Replay evidence engine
+            ├─ validates exact scenario contracts
+            ├─ replays detections deterministically
+            ├─ compares indexed and full-scan execution
+            └─ publishes verifiable evidence bundles
+```
+
+The physical platform is the research context. The Python package is the offline evidence engine; it has no live collection or infrastructure-control authority.
 
 ## What is in this repository
 
@@ -80,6 +92,16 @@ build/network-scan/
 ```
 
 Use `soc-replay verify-bundle ... --verbose` for every check or `--json` for machine-readable verification output.
+
+## See the evidence before reading the theory
+
+A complete bundle for the maintained network-scan scenario is committed under [`reference/network-scan/`](reference/network-scan). Open the human-readable [`report.md`](reference/network-scan/report.md) first, then inspect the exact [`report.json`](reference/network-scan/report.json) and [`manifest.json`](reference/network-scan/manifest.json).
+
+```bash
+soc-replay verify-bundle reference/network-scan --source scenarios/network-scan
+```
+
+This reference bundle is checked in so a visitor can inspect a real result without installing anything. CI and the repository auditor require it to reproduce byte for byte from the maintained source scenario.
 
 ## Evidence guarantees
 
@@ -166,7 +188,7 @@ CI runs the gate on Python 3.11, 3.12, and 3.13 and preserves diagnostics and ge
 
 | Goal | Start with |
 | --- | --- |
-| Evaluate the project quickly | [Implementation State](docs/14-Implementation-State.md) and [Engineering Review](docs/16-Engineering-Review.md) |
+| Evaluate the project quickly | [Start Here](docs/00-Start-Here.md), [Reference Report](reference/network-scan/report.md), and [Implementation State](docs/14-Implementation-State.md) |
 | Run a demonstration | [Demo Playbook](docs/15-Demo-Playbook.md) |
 | Understand the engine | [Execution Core](docs/22-Execution-Core.md) and [Execution Ledger](docs/23-Execution-Ledger.md) |
 | Review evidence integrity | [Evidence Bundles](docs/18-Evidence-Bundles.md) and [Threat Model](docs/21-Threat-Model.md) |
