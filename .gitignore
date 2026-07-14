@@ -2,9 +2,15 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+.python-version
 build/
 dist/
+htmlcov/
+coverage.xml
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
 .coverage
 .DS_Store
 Thumbs.db
