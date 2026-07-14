@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from soc_replay import __version__
 from soc_replay.indexing import CandidateSet, EventIndex
 from soc_replay.io import load_scenario
 from soc_replay.proofs import RuleEquivalenceProof, prove_index_equivalence
@@ -22,7 +23,7 @@ class ProofTests(unittest.TestCase):
                 payload = proof.to_dict()
                 self.assertEqual(len(proof.proof_id), 64)
                 self.assertEqual(payload["proof_id"], proof.proof_id)
-                self.assertEqual(payload["engine"]["version"], "3.2.0")
+                self.assertEqual(payload["engine"]["version"], __version__)
                 self.assertEqual(payload["passed"], True)
 
     def test_network_scan_index_reduces_candidates(self) -> None:
