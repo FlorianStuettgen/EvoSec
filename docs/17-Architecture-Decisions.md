@@ -71,3 +71,9 @@
 **Decision:** Retain standalone bundle verification for offline internal-consistency checks and add an optional source-bound mode that reruns the scenario and byte-compares all generated artifacts.
 
 **Reason:** Some report fields cannot be independently reconstructed from a bundle that does not contain its original inputs. Source-bound reproduction makes that limitation explicit and provides a stronger verification path without embedding potentially sensitive telemetry in every bundle.
+
+## ADR-013 — Fail closed on malformed evidence structures
+
+**Decision:** Treat report bundles and execution ledgers as untrusted structured data. Invalid scalar types, object/array boundaries, stages, statuses, counts, or digest fields must produce a controlled failed verdict or `ValidationError`, never an uncaught runtime exception.
+
+**Reason:** The verifier is an integrity boundary. Robust rejection behavior is part of the public contract, not merely defensive implementation detail.
