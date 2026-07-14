@@ -4,7 +4,7 @@ This walkthrough is designed for a technical reviewer with five minutes.
 
 ## Minute 0–1: establish the thesis
 
-Open the README and explain that SOC_Replay joins a real segmented lab with a contract-validated evidence engine. Point out the evidence hierarchy: installation, policy, telemetry, deterministic replay, differential correctness, and measured physical experiment.
+Open the checked-in [`reference/network-scan/report.md`](../reference/network-scan/report.md) before discussing architecture. Show the PASS decision summary, exact evidence events, rule trace, execution ledger, and simulated response. Then use the README relationship diagram to explain that the physical lab provides context and stored telemetry while the Python package remains an offline evidence engine.
 
 ## Minute 1–2: inspect the wiring
 
@@ -19,11 +19,12 @@ Show the contract versions, five stages, execution invariants, frozen adapter re
 ## Minute 2–3: execute and verify
 
 ```bash
+soc-replay verify-bundle reference/network-scan --source scenarios/network-scan
 soc-replay run scenarios/network-scan --output build/network-scan
-soc-replay verify-bundle build/network-scan
+soc-replay verify-bundle build/network-scan --source scenarios/network-scan
 ```
 
-Highlight the PASS verdict, exact evidence-event IDs, rule execution trace, candidate intersection, distinct-port threshold, plan fingerprint, ledger root, bundle ID, and simulation-only response.
+Highlight that the committed reference bundle reproduces byte for byte before generating a fresh copy. Then show the PASS verdict, exact evidence-event IDs, rule execution trace, candidate intersection, distinct-port threshold, plan fingerprint, ledger root, bundle ID, and simulation-only response.
 
 ## Minute 3–4: prove optimization correctness
 
