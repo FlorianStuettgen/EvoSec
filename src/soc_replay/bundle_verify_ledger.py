@@ -73,7 +73,7 @@ def check_ledger(state: BundleState, derived: DerivedState, checks: CheckCollect
     checks.add("load_records_in", 2, load_entry.get("records_in"))
     checks.add("load_records_out", events_processed, load_entry.get("records_out"))
     checks.add("compile_records_in", len(derived.plan_rules), compile_entry.get("records_in"))
-    checks.add("compile_records_out", len(derived.plan_rules), compile_entry.get("records_out")
+    checks.add("compile_records_out", len(derived.plan_rules), compile_entry.get("records_out"))
     checks.add("index_records_in", events_processed, index_entry.get("records_in"))
     checks.add("index_records_out", events_processed, index_entry.get("records_out"))
     checks.add("evaluate_records_in", events_processed, evaluate_entry.get("records_in"))
