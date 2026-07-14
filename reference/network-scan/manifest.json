@@ -1,3 +1,26 @@
 {
-  "placeholder": true
+  "artifacts": {
+    "report.json": {
+      "bytes": 9704,
+      "sha256": "f08a399b03c897394d671e4c57db04d641b95ad2f761fea031c84244ea435c46"
+    },
+    "report.md": {
+      "bytes": 3754,
+      "sha256": "86ffc590d14d5732b8f4c78b3f7086cd6bf772344400687238126fe4a285f841"
+    }
+  },
+  "bundle_id": "aa0c74c3c1b011d25b1009f941a4468c5bd08d5506808ea81d4b7227f1e9f06c",
+  "engine": {
+    "name": "soc-replay",
+    "version": "3.2.1"
+  },
+  "inputs": {
+    "events_sha256": "e7421a5093e510b41f013c8cef4e4d5014764ddfa578cb03352c3415f46dc6dd",
+    "scenario_sha256": "defa19d6af50f8335bae607271c780f1b7aea998b47baee3f605a9693d431817"
+  },
+  "ledger_root": "2e051d78d6adfac1e71af2debbe525258bb4ca97815daa902b02dbb4edb7f84a",
+  "manifest_schema_version": "2.1",
+  "plan_fingerprint": "1a8be1ed446db27f0bd5bf7306165b53f0f67c0ff4e4934638e33ad27e339e94",
+  "run_id": "686f91bca3c385b6",
+  "verification_passed": true
 }
