@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "id": "network-scan",
   "title": "Synthetic multi-port scan",
   "objective": "Confirm that a concentrated burst of connection attempts is detected, grouped, and converted into a simulated containment recommendation.",
@@ -7,9 +7,31 @@
   "expected_outcome": "One high-severity detection backed by at least five events and five distinct destination ports within sixty seconds.",
   "expectations": {
     "detection_count": 1,
-    "rule_ids": ["NET-SCAN-001"],
-    "severity_counts": {"high": 1},
-    "simulated_action_count": 1
+    "rule_ids": [
+      "NET-SCAN-001"
+    ],
+    "severity_counts": {
+      "high": 1
+    },
+    "simulated_action_count": 1,
+    "detections": [
+      {
+        "rule_id": "NET-SCAN-001",
+        "severity": "high",
+        "event_ids": [
+          "net-001",
+          "net-002",
+          "net-003",
+          "net-004",
+          "net-005"
+        ],
+        "group": {
+          "source_ip": "10.20.30.77",
+          "destination_ip": "10.20.40.10"
+        },
+        "action": "recommend_segment_isolation"
+      }
+    ]
   },
   "rules": [
     {
@@ -18,12 +40,27 @@
       "severity": "high",
       "description": "A single source touches several destination ports in a short window.",
       "match": [
-        {"field": "category", "operator": "eq", "value": "network_connection"},
-        {"field": "outcome", "operator": "eq", "value": "blocked"},
-        {"field": "tags", "operator": "contains", "value": "reconnaissance"}
+        {
+          "field": "category",
+          "operator": "eq",
+          "value": "network_connection"
+        },
+        {
+          "field": "outcome",
+          "operator": "eq",
+          "value": "blocked"
+        },
+        {
+          "field": "tags",
+          "operator": "contains",
+          "value": "reconnaissance"
+        }
       ],
       "aggregate": {
-        "group_by": ["source_ip", "destination_ip"],
+        "group_by": [
+          "source_ip",
+          "destination_ip"
+        ],
         "count_gte": 5,
         "within_seconds": 60,
         "distinct_field": "destination_port",

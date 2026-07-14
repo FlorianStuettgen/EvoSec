@@ -3,46 +3,118 @@
   "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/bundle-manifest.schema.json",
   "title": "SOC_Replay report bundle manifest",
   "type": "object",
-  "required": ["manifest_schema_version", "bundle_id", "engine", "run_id", "plan_fingerprint", "ledger_root", "inputs", "verification_passed", "artifacts"],
+  "required": [
+    "manifest_schema_version",
+    "bundle_id",
+    "engine",
+    "run_id",
+    "plan_fingerprint",
+    "ledger_root",
+    "inputs",
+    "verification_passed",
+    "artifacts"
+  ],
   "properties": {
-    "manifest_schema_version": {"const": "2.0"},
-    "bundle_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "manifest_schema_version": {
+      "const": "2.1"
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "engine": {
       "type": "object",
-      "required": ["name", "version"],
-      "properties": {"name": {"const": "soc-replay"}, "version": {"type": "string", "minLength": 1}},
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "const": "soc-replay"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
       "additionalProperties": false
     },
-    "run_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
-    "plan_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "ledger_root": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$"
+    },
+    "plan_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ledger_root": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "inputs": {
       "type": "object",
-      "required": ["scenario_sha256", "events_sha256"],
+      "required": [
+        "scenario_sha256",
+        "events_sha256"
+      ],
       "properties": {
-        "scenario_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "events_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        "scenario_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "events_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
       },
       "additionalProperties": false
     },
-    "verification_passed": {"type": "boolean"},
+    "verification_passed": {
+      "type": "boolean"
+    },
     "artifacts": {
       "type": "object",
-      "required": ["report.json", "report.md"],
+      "required": [
+        "report.json",
+        "report.md"
+      ],
       "properties": {
-        "report.json": {"$ref": "#/$defs/artifact"},
-        "report.md": {"$ref": "#/$defs/artifact"}
-      },
-      "additionalProperties": false
-    }
-  },
-  "$defs": {
-    "artifact": {
-      "type": "object",
-      "required": ["sha256", "bytes"],
-      "properties": {
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "bytes": {"type": "integer", "minimum": 0}
+        "report.json": {
+          "type": "object",
+          "required": [
+            "sha256",
+            "bytes"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        },
+        "report.md": {
+          "type": "object",
+          "required": [
+            "sha256",
+            "bytes"
+          ],
+          "properties": {
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        }
       },
       "additionalProperties": false
     }

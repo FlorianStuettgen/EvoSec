@@ -8,8 +8,11 @@ from tempfile import TemporaryDirectory
 from soc_replay.io import load_scenario, sha256_file
 from soc_replay.ledger import LedgerBuilder, require_valid_ledger, verify_ledger_payload
 from soc_replay.models import ValidationError
+from soc_replay.serialization import digest_object
 
 ROOT = Path(__file__).resolve().parents[1]
+D = "a" * 64
+E = "b" * 64
 
 
 class IoLedgerErrorTests(unittest.TestCase):
@@ -56,15 +59,41 @@ class IoLedgerErrorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "missing required file"):
             sha256_file(ROOT / "missing")
 
-    def test_ledger_builder_and_corruption_matrix(self) -> None:
+    def test_ledger_builder_enforces_stage_and_type_contract(self) -> None:
         builder = LedgerBuilder()
-        with self.assertRaisesRegex(ValueError, "stage"):
-            builder.append(stage="", input_digest="a", output_digest="b", records_in=0, records_out=0)
-        with self.assertRaisesRegex(ValueError, "status"):
-            builder.append(stage="x", status="bad", input_digest="a", output_digest="b", records_in=0, records_out=0)
-        builder.append(stage="x", input_digest="a", output_digest="b", records_in=1, records_out=1)
+        with self.assertRaisesRegex(ValueError, "must be 'load'"):
+            builder.append(stage="compile", input_digest=D, output_digest=E, records_in=0, records_out=0)
+        with self.assertRaisesRegex(ValueError, "digests"):
+            builder.append(stage="load", input_digest="a", output_digest=E, records_in=0, records_out=0)
+        with self.assertRaisesRegex(ValueError, "record counts"):
+            builder.append(stage="load", input_digest=D, output_digest=E, records_in=-1, records_out=0)
+        builder.append(stage="load", input_digest=D, output_digest=E, records_in=2, records_out=3)
         payload = builder.freeze().to_dict()
-        self.assertTrue(verify_ledger_payload(payload)[0])
+        self.assertTrue(verify_ledger_payload(payload, require_complete=False)[0])
+        self.assertFalse(verify_ledger_payload(payload, require_complete=True)[0])
+
+    def test_rehashed_invalid_stage_order_is_rejected(self) -> None:
+        from soc_replay.engine import run_scenario
+
+        payload = run_scenario(ROOT / "scenarios" / "network-scan").ledger.to_dict()
+        payload["entries"][1]["stage"] = "index"
+        previous = payload["entries"][0]["entry_hash"]
+        for entry in payload["entries"][1:]:
+            entry["previous_hash"] = previous
+            core = {key: value for key, value in entry.items() if key != "entry_hash"}
+            entry["entry_hash"] = digest_object(core)
+            previous = entry["entry_hash"]
+        payload["root_hash"] = previous
+        passed, errors = verify_ledger_payload(payload)
+        self.assertFalse(passed)
+        self.assertTrue(any("stage order" in error for error in errors))
+        with self.assertRaisesRegex(ValidationError, "invalid execution ledger"):
+            require_valid_ledger(payload)
+
+    def test_ledger_corruption_matrix(self) -> None:
+        from soc_replay.engine import run_scenario
+
+        payload = run_scenario(ROOT / "scenarios" / "network-scan").ledger.to_dict()
         cases = [
             (None, "object"),
             ({**payload, "schema_version": "9"}, "schema_version"),
@@ -77,8 +106,3 @@ class IoLedgerErrorTests(unittest.TestCase):
                 passed, errors = verify_ledger_payload(candidate)
                 self.assertFalse(passed)
                 self.assertTrue(any(message in error for error in errors))
-        broken = builder.freeze().to_dict()
-        broken["entries"][0].pop("stage")
-        self.assertFalse(verify_ledger_payload(broken)[0])
-        with self.assertRaisesRegex(ValidationError, "invalid execution ledger"):
-            require_valid_ledger(broken)

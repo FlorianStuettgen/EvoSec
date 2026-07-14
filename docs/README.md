@@ -1,8 +1,8 @@
 # SOC_Replay documentation
 
-The repository documentation is the canonical technical record. The GitHub Wiki is a convenience surface and must not contradict these files.
+The version-controlled documentation is the canonical technical record. Wiki material is a convenience surface and must not contradict implementation state, contract versions, or measured evidence.
 
-## System
+## System and platform
 
 - [01 — Architecture](01-Architecture.md)
 - [02 — Hardware](02-Hardware.md)
@@ -20,8 +20,9 @@ The repository documentation is the canonical technical record. The GitHub Wiki 
 - [19 — Suricata Adapter](19-Suricata-Adapter.md)
 - [22 — Execution Core](22-Execution-Core.md)
 - [23 — Execution Ledger](23-Execution-Ledger.md)
+- [24 — Contract Validation](24-Contract-Validation.md)
 
-## Governance
+## Governance and review
 
 - [14 — Implementation State](14-Implementation-State.md)
 - [15 — Demo Playbook](15-Demo-Playbook.md)

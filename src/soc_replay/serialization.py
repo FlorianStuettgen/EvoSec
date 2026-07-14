@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping, Sequence, Set
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -12,12 +13,13 @@ def to_primitive(value: Any) -> Any:
         return value.isoformat().replace("+00:00", "Z")
     if isinstance(value, Path):
         return str(value)
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         return {str(key): to_primitive(item) for key, item in value.items()}
-    if isinstance(value, (list, tuple)):
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         return [to_primitive(item) for item in value]
-    if isinstance(value, set):
-        return sorted(to_primitive(item) for item in value)
+    if isinstance(value, Set) and not isinstance(value, (str, bytes, bytearray)):
+        converted = [to_primitive(item) for item in value]
+        return sorted(converted, key=lambda item: json.dumps(item, sort_keys=True, ensure_ascii=False))
     return value
 
 

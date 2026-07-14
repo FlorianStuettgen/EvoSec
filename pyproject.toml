@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "soc-replay"
-version = "3.0.0"
+version = "3.1.0"
 description = "Evidence-first defensive telemetry pipeline with compiled rules, deterministic execution ledgers, and verifiable bundles."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -43,6 +43,7 @@ Documentation = "https://github.com/FlorianStuettgen/SOC_Replay/tree/main/docs"
 dev = [
   "build>=1.2,<2",
   "coverage[toml]>=7.6,<8",
+  "jsonschema[format]>=4.23,<5",
   "mypy>=1.10,<2",
   "ruff>=0.6,<1",
 ]

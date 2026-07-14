@@ -2,42 +2,66 @@
 
 ## ADR-001 — Standard-library runtime
 
-**Decision:** Keep the runtime dependency-free.
+**Decision:** Keep runtime dependencies at zero.
 
-**Why:** The engine remains easy to inspect, install, package, and run in constrained or isolated environments. Development tools remain optional dependencies.
+**Reason:** The engine remains portable, inspectable, packageable, and usable in isolated environments. Schema tooling is a development dependency.
 
-## ADR-002 — Compile rules before evaluation
+## ADR-002 — Deep freeze at model boundaries
 
-**Decision:** Convert rule fields, operators, aggregates, and candidate hints into immutable compiled structures.
+**Decision:** Recursively freeze JSON-like values when constructing public runtime models.
 
-**Why:** It removes repeated interpretation from the hot path and creates a stable semantic fingerprint.
+**Reason:** A frozen dataclass containing mutable dictionaries is not immutable. Stage invariants must survive nested references.
 
-## ADR-003 — Candidate indexes cannot decide matches
+## ADR-003 — Complete semantic fingerprints
 
-**Decision:** Indexes may narrow candidate events but may never bypass compiled conditions.
+**Decision:** Fingerprints commit to every rule field capable of changing evaluation or report output.
 
-**Why:** Performance hints must not become hidden detection semantics.
+**Reason:** Execution identity must not treat two meaningfully different rules as equivalent.
 
-## ADR-004 — Deterministic stage ledger
+## ADR-004 — Composite selectors are performance plans, not truth conditions
 
-**Decision:** Record load, compile, index, evaluate, and verify in a hash-linked ledger without wall-clock timestamps or durations.
+**Decision:** Compile all safe equality/tag selectors and intersect their candidate pools. Always evaluate the full compiled predicate afterward.
 
-**Why:** Non-deterministic timing would make equivalent runs produce different evidence. Performance belongs in separate benchmark records.
+**Reason:** The execution plan should be genuinely useful while indexes remain incapable of changing semantics.
 
-## ADR-005 — Manifest-last bundle commit
+## ADR-005 — Preserve zero-result execution traces
 
-**Decision:** Write JSON and Markdown artifacts atomically, then write the manifest last.
+**Decision:** Emit one trace for every rule, regardless of whether it detects anything.
 
-**Why:** The manifest acts as the completion marker for the bundle.
+**Reason:** Negative controls and non-firing rules are evidence about engine behavior and should be inspectable.
 
-## ADR-006 — Offline adapter boundary
+## ADR-006 — Exact contracts for maintained scenarios
 
-**Decision:** Adapters consume stored synthetic or sanitized files and expose no collection credentials or live connections.
+**Decision:** Introduce scenario schema 1.1 with ordered exact detection assertions while retaining 1.0 read compatibility.
 
-**Why:** Vendor normalization can evolve independently without giving the replay package infrastructure authority.
+**Reason:** Aggregate counts alone can pass when the wrong events, groups, or actions are produced.
 
-## ADR-007 — Simulation-only response model
+## ADR-007 — Strict deterministic stage ledger
 
-**Decision:** Reject every response mode except `simulated` at validation time.
+**Decision:** Enforce the exact load/compile/index/evaluate/verify sequence, typed fields, digest formats, counts, statuses, and hash chain.
 
-**Why:** Detection evaluation and infrastructure control are different trust domains.
+**Reason:** A rehashed but structurally invalid ledger must not be considered valid.
+
+## ADR-008 — Validate real instances against schemas
+
+**Decision:** CI validates repository inputs and generated outputs using Draft 2020-12 validators and a local schema registry.
+
+**Reason:** A syntactically valid schema file is not evidence that runtime artifacts conform to it.
+
+## ADR-009 — Verify internal bundle agreement
+
+**Decision:** Bundle verification cross-checks plan rules, rule traces, detections, summary, actions, ledger counts, artifact hashes, and manifest identity.
+
+**Reason:** Recomputing a file hash must not conceal contradictions inside the evidence set.
+
+## ADR-010 — Freeze the global adapter registry
+
+**Decision:** Register built-in adapters during startup and then freeze the shared registry.
+
+**Reason:** Runtime extension should be explicit; global behavior must not mutate after initialization.
+
+## ADR-011 — Simulation-only response model
+
+**Decision:** Reject every response mode except `simulated`.
+
+**Reason:** Detection evaluation and infrastructure control are separate trust domains.

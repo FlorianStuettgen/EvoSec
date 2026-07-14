@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import unittest
+from types import MappingProxyType
 
 from soc_replay.models import ValidationError
 from soc_replay.operators import get_operator, operator_catalog
@@ -14,12 +15,12 @@ class OperatorTests(unittest.TestCase):
             ("exists", "x", False, False),
             ("eq", 2, 2, True),
             ("ne", 2, 3, True),
-            ("in", "a", ["a", "b"], True),
+            ("in", "a", ("a", "b"), True),
             ("in", [], {"a": 1}, False),
-            ("not_in", "z", ["a"], True),
+            ("not_in", "z", ("a",), True),
             ("contains", "abcdef", "bcd", True),
-            ("contains", [1, 2], 2, True),
-            ("contains", {"key": 1}, "key", True),
+            ("contains", (1, 2), 2, True),
+            ("contains", MappingProxyType({"key": 1}), "key", True),
             ("contains", 7, 7, False),
             ("contains", {"a": 1}, [], False),
             ("gte", 5, 4, True),

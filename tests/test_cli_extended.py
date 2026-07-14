@@ -21,12 +21,12 @@ class CliExtendedTests(unittest.TestCase):
     def test_validate_verify_explain_catalog_and_adapters(self) -> None:
         scenario = str(ROOT / "scenarios" / "network-scan")
         for args, fragment in [
-            (("validate", scenario), "valid: network-scan"),
-            (("verify", scenario), "verification: PASS"),
-            (("explain", scenario), "candidate="),
-            (("explain", scenario, "--json"), '"plan"'),
-            (("catalog", "--root", str(ROOT / "scenarios")), "network-scan"),
-            (("catalog", "--root", str(ROOT / "scenarios"), "--json"), '"valid": true'),
+            (("validate", scenario), "exact_contracts=True"),
+            (("verify", scenario), "detection_contracts"),
+            (("explain", scenario), "selectors="),
+            (("explain", scenario, "--json"), '"rule_executions"'),
+            (("catalog", "--root", str(ROOT / "scenarios")), "schema=1.1"),
+            (("catalog", "--root", str(ROOT / "scenarios"), "--json"), '"exact_detection_contracts": true'),
             (("adapters",), "suricata-eve"),
             (("adapters", "--json"), '"supported_record_types"'),
             (("graph", "--format", "json"), '"invariants"'),

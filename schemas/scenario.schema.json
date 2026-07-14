@@ -3,26 +3,89 @@
   "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/scenario.schema.json",
   "title": "SOC_Replay scenario",
   "type": "object",
-  "required": ["schema_version", "id", "title", "objective", "authorization_boundary", "expected_outcome", "expectations", "rules"],
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "objective",
+    "authorization_boundary",
+    "expected_outcome",
+    "expectations",
+    "rules"
+  ],
   "properties": {
-    "schema_version": {"const": "1.0"},
-    "id": {"type": "string", "minLength": 1},
-    "title": {"type": "string", "minLength": 1},
-    "objective": {"type": "string", "minLength": 1},
-    "authorization_boundary": {"type": "string", "minLength": 1},
-    "expected_outcome": {"type": "string", "minLength": 1},
+    "schema_version": {
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authorization_boundary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected_outcome": {
+      "type": "string",
+      "minLength": 1
+    },
     "expectations": {
       "type": "object",
-      "required": ["detection_count", "rule_ids", "severity_counts", "simulated_action_count"],
+      "required": [
+        "detection_count",
+        "rule_ids",
+        "severity_counts",
+        "simulated_action_count"
+      ],
       "properties": {
-        "detection_count": {"type": "integer", "minimum": 0},
-        "rule_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "detection_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "severity_counts": {
           "type": "object",
-          "propertyNames": {"enum": ["informational", "low", "medium", "high", "critical"]},
-          "additionalProperties": {"type": "integer", "minimum": 0}
+          "propertyNames": {
+            "enum": [
+              "informational",
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
         },
-        "simulated_action_count": {"type": "integer", "minimum": 0}
+        "simulated_action_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "detections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/expected_detection"
+          }
+        }
       },
       "additionalProperties": false
     },
@@ -31,53 +94,212 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "name", "severity", "match", "response"],
+        "required": [
+          "id",
+          "name",
+          "severity",
+          "match",
+          "response"
+        ],
         "properties": {
-          "id": {"type": "string", "minLength": 1},
-          "name": {"type": "string", "minLength": 1},
-          "severity": {"enum": ["informational", "low", "medium", "high", "critical"]},
-          "description": {"type": "string"},
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": [
+              "informational",
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
           "match": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "object",
-              "required": ["field", "operator"],
+              "required": [
+                "field",
+                "operator"
+              ],
               "properties": {
-                "field": {"type": "string", "minLength": 1},
-                "operator": {"enum": ["eq", "ne", "in", "not_in", "contains", "gte", "lte", "exists"]},
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "operator": {
+                  "enum": [
+                    "eq",
+                    "ne",
+                    "in",
+                    "not_in",
+                    "contains",
+                    "gte",
+                    "lte",
+                    "exists"
+                  ]
+                },
                 "value": {}
               },
               "additionalProperties": false
             }
           },
           "aggregate": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
-              "group_by": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "count_gte": {"type": "integer", "minimum": 1},
-              "within_seconds": {"type": "integer", "minimum": 1},
-              "distinct_field": {"type": "string", "minLength": 1},
-              "distinct_gte": {"type": "integer", "minimum": 1},
-              "window_policy": {"enum": ["first_per_group", "all_non_overlapping"]}
+              "group_by": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "count_gte": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "within_seconds": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "distinct_field": {
+                "type": "string",
+                "minLength": 1
+              },
+              "distinct_gte": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "window_policy": {
+                "enum": [
+                  "first_per_group",
+                  "all_non_overlapping"
+                ]
+              }
             },
-            "required": ["group_by", "count_gte", "within_seconds"],
-            "dependentRequired": {"distinct_field": ["distinct_gte"], "distinct_gte": ["distinct_field"]},
+            "required": [
+              "group_by",
+              "count_gte",
+              "within_seconds"
+            ],
+            "dependentRequired": {
+              "distinct_field": [
+                "distinct_gte"
+              ],
+              "distinct_gte": [
+                "distinct_field"
+              ]
+            },
             "additionalProperties": false
           },
           "response": {
-            "type": "object",
-            "required": ["action", "description", "mode"],
-            "properties": {
-              "action": {"type": "string", "minLength": 1},
-              "description": {"type": "string", "minLength": 1},
-              "mode": {"const": "simulated"}
-            },
-            "additionalProperties": false
+            "$ref": "#/$defs/response"
           }
         },
         "additionalProperties": false
       }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "1.1"
+          }
+        },
+        "required": [
+          "schema_version"
+        ]
+      },
+      "then": {
+        "properties": {
+          "expectations": {
+            "required": [
+              "detections"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "response": {
+      "type": "object",
+      "required": [
+        "action",
+        "description",
+        "mode"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "const": "simulated"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expected_detection": {
+      "type": "object",
+      "required": [
+        "rule_id",
+        "severity",
+        "event_ids",
+        "group",
+        "action"
+      ],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "informational",
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "event_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "group": {
+          "type": "object"
+        },
+        "action": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

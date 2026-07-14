@@ -1,52 +1,49 @@
 # 23 — Execution Ledger
 
-## What it is
+## Contract
 
-The execution ledger is a deterministic hash chain over the five pipeline stages. It records internal execution identity without introducing timestamps, machine names, or performance measurements that would break reproducibility.
+The ledger is a deterministic five-entry hash chain:
 
-## Entry contract
-
-Each entry contains:
-
-```json
-{
-  "sequence": 3,
-  "stage": "index",
-  "status": "ok",
-  "input_digest": "...",
-  "output_digest": "...",
-  "records_in": 7,
-  "records_out": 7,
-  "metadata": {"index_fields": ["category", "action", "outcome"]},
-  "previous_hash": "...",
-  "entry_hash": "..."
-}
+```text
+load → compile → index → evaluate → verify
 ```
 
-`entry_hash` is the SHA-256 digest of the canonical entry body excluding `entry_hash`. `previous_hash` links the entry to the prior stage. The first entry links to a 64-character zero genesis hash.
+Each entry contains sequence, stage, status, input/output digest, record counts, immutable metadata, prior hash, and entry hash.
 
-## Root identity
+## Builder enforcement
 
-The final verification entry hash becomes the ledger root. The root is embedded in:
+The builder rejects:
 
-- `report.json`;
-- `report.md`; and
-- `manifest.json`.
+- an unexpected stage;
+- a stage after completion;
+- a stage after a failed entry;
+- invalid status;
+- non-hex or incorrectly sized digests;
+- booleans or negative values used as counts; and
+- non-mapping metadata.
 
-Bundle verification recalculates every entry, checks the chain, confirms the root, and cross-checks it with the manifest.
+## Verification enforcement
 
-## What it proves
+The verifier checks:
 
-The ledger detects internal report modification and inconsistent stage records relative to the recorded hashes.
+- the exact top-level field set;
+- ledger schema and zero genesis hash;
+- exactly five entries for a completed run;
+- exact sequence and stage at each position;
+- `ok` status for a completed evidence bundle;
+- SHA-256 shape for every digest and hash;
+- integer, nonnegative record counts;
+- object metadata;
+- prior-hash continuity;
+- each recalculated entry hash; and
+- final root identity.
 
-## What it does not prove
+A ledger with altered fields cannot become valid merely by recalculating its hashes if its structure violates the stage contract.
 
-It does not establish:
+## Determinism
 
-- authorship;
-- trusted time;
-- external custody;
-- hardware identity; or
-- that the source telemetry came from a live production system.
+The ledger deliberately excludes wall-clock timestamps, durations, hostnames, process IDs, and machine-dependent measurements. Performance evidence belongs in separate benchmark records.
 
-Those require a separate signing or attestation layer.
+## Meaning
+
+The root commits to the engine’s recorded stage transitions. It does not prove authorship, trusted time, source authenticity, or physical execution.

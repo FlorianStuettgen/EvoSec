@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping, Sequence, Set
 from dataclasses import dataclass
 from typing import Any
 
@@ -34,7 +34,12 @@ def _not_in(actual: Any, expected: Any) -> bool:
 
 
 def _contains(actual: Any, expected: Any) -> bool:
-    if isinstance(actual, (str, list, tuple, set, dict)):
+    if isinstance(actual, Mapping):
+        try:
+            return expected in actual
+        except TypeError:
+            return False
+    if isinstance(actual, (str, Sequence, Set)) and not isinstance(actual, (bytes, bytearray)):
         try:
             return expected in actual
         except TypeError:
@@ -64,7 +69,7 @@ class OperatorSpec:
 
 
 _SPECS = {
-    "exists": OperatorSpec("exists", _exists, "Field presence or absence."),
+    "exists": OperatorSpec("exists", _exists, "Field has or lacks a non-null value."),
     "eq": OperatorSpec("eq", _eq, "Equality comparison."),
     "ne": OperatorSpec("ne", _ne, "Inequality comparison."),
     "in": OperatorSpec("in", _in, "Value is a member of the configured collection."),

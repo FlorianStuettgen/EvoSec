@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "id": "failed-authentication-burst",
   "title": "Synthetic repeated authentication failures",
   "objective": "Demonstrate non-overlapping correlation windows by identifying two separate bursts of failed authentication activity for the same account.",
@@ -7,9 +7,44 @@
   "expected_outcome": "Two medium-severity detections, each backed by three failed events inside a ninety-second window.",
   "expectations": {
     "detection_count": 2,
-    "rule_ids": ["AUTH-BURST-001", "AUTH-BURST-001"],
-    "severity_counts": {"medium": 2},
-    "simulated_action_count": 2
+    "rule_ids": [
+      "AUTH-BURST-001",
+      "AUTH-BURST-001"
+    ],
+    "severity_counts": {
+      "medium": 2
+    },
+    "simulated_action_count": 2,
+    "detections": [
+      {
+        "rule_id": "AUTH-BURST-001",
+        "severity": "medium",
+        "event_ids": [
+          "auth-001",
+          "auth-002",
+          "auth-003"
+        ],
+        "group": {
+          "user": "analyst.demo",
+          "host": "lab-app-01"
+        },
+        "action": "recommend_authentication_review"
+      },
+      {
+        "rule_id": "AUTH-BURST-001",
+        "severity": "medium",
+        "event_ids": [
+          "auth-004",
+          "auth-005",
+          "auth-006"
+        ],
+        "group": {
+          "user": "analyst.demo",
+          "host": "lab-app-01"
+        },
+        "action": "recommend_authentication_review"
+      }
+    ]
   },
   "rules": [
     {
@@ -18,11 +53,22 @@
       "severity": "medium",
       "description": "Three failed authentication attempts for the same user and host occur inside ninety seconds.",
       "match": [
-        {"field": "category", "operator": "eq", "value": "authentication"},
-        {"field": "outcome", "operator": "eq", "value": "failure"}
+        {
+          "field": "category",
+          "operator": "eq",
+          "value": "authentication"
+        },
+        {
+          "field": "outcome",
+          "operator": "eq",
+          "value": "failure"
+        }
       ],
       "aggregate": {
-        "group_by": ["user", "host"],
+        "group_by": [
+          "user",
+          "host"
+        ],
         "count_gte": 3,
         "within_seconds": 90,
         "window_policy": "all_non_overlapping"

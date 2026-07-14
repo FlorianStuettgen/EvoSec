@@ -3,11 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .contracts import INDEX_FIELDS
 from .models import Aggregate, Condition, Event, Rule, Scenario
 from .operators import OperatorFn, get_operator
-from .serialization import digest_object
-
-_INDEXABLE_FIELDS = ("category", "action", "outcome", "source", "host", "user")
+from .serialization import digest_object, to_primitive
 
 
 @dataclass(frozen=True, slots=True)
@@ -34,10 +33,13 @@ class CompiledCondition:
 
 
 @dataclass(frozen=True, slots=True)
-class CandidateHint:
+class CandidateSelector:
     field: str
     value: str
     mode: str
+
+    def to_dict(self) -> dict[str, str]:
+        return {"field": self.field, "value": self.value, "mode": self.mode}
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,7 +54,7 @@ class CompiledRule:
     source: Rule
     conditions: tuple[CompiledCondition, ...]
     aggregate: CompiledAggregate | None
-    candidate_hint: CandidateHint | None
+    candidate_selectors: tuple[CandidateSelector, ...]
     fingerprint: str
 
     def matches(self, event: Event) -> bool:
@@ -73,29 +75,29 @@ class ExecutionPlan:
                 {
                     "id": rule.source.rule_id,
                     "fingerprint": rule.fingerprint,
-                    "candidate_hint": None
-                    if rule.candidate_hint is None
-                    else {
-                        "field": rule.candidate_hint.field,
-                        "value": rule.candidate_hint.value,
-                        "mode": rule.candidate_hint.mode,
-                    },
+                    "candidate_selectors": [selector.to_dict() for selector in rule.candidate_selectors],
                 }
                 for rule in self.rules
             ],
         }
 
 
-def _candidate_hint(conditions: tuple[Condition, ...]) -> CandidateHint | None:
-    by_field = {condition.field: condition for condition in conditions}
-    for field in _INDEXABLE_FIELDS:
-        condition = by_field.get(field)
-        if condition is not None and condition.operator == "eq" and isinstance(condition.value, str):
-            return CandidateHint(field, condition.value, "eq")
+def _candidate_selectors(conditions: tuple[Condition, ...]) -> tuple[CandidateSelector, ...]:
+    selectors: list[CandidateSelector] = []
+    seen: set[tuple[str, str, str]] = set()
     for condition in conditions:
-        if condition.field == "tags" and condition.operator == "contains" and isinstance(condition.value, str):
-            return CandidateHint("tags", condition.value, "contains")
-    return None
+        selector: CandidateSelector | None = None
+        if condition.field in INDEX_FIELDS and condition.operator == "eq" and isinstance(condition.value, str):
+            selector = CandidateSelector(condition.field, condition.value, "eq")
+        elif condition.field == "tags" and condition.operator == "contains" and isinstance(condition.value, str):
+            selector = CandidateSelector("tags", condition.value, "contains")
+        if selector is None:
+            continue
+        key = (selector.field, selector.value, selector.mode)
+        if key not in seen:
+            selectors.append(selector)
+            seen.add(key)
+    return tuple(selectors)
 
 
 def compile_rule(rule: Rule) -> CompiledRule:
@@ -114,9 +116,11 @@ def compile_rule(rule: Rule) -> CompiledRule:
         )
     semantic_payload = {
         "id": rule.rule_id,
+        "name": rule.name,
         "severity": rule.severity,
+        "description": rule.description,
         "conditions": [
-            {"field": condition.field, "operator": condition.operator, "value": condition.value}
+            {"field": condition.field, "operator": condition.operator, "value": to_primitive(condition.value)}
             for condition in rule.conditions
         ],
         "aggregate": None
@@ -129,13 +133,17 @@ def compile_rule(rule: Rule) -> CompiledRule:
             "distinct_gte": rule.aggregate.distinct_gte,
             "window_policy": rule.aggregate.window_policy,
         },
-        "response": {"action": rule.response.action, "mode": rule.response.mode},
+        "response": {
+            "action": rule.response.action,
+            "description": rule.response.description,
+            "mode": rule.response.mode,
+        },
     }
     return CompiledRule(
         source=rule,
         conditions=compiled_conditions,
         aggregate=compiled_aggregate,
-        candidate_hint=_candidate_hint(rule.conditions),
+        candidate_selectors=_candidate_selectors(rule.conditions),
         fingerprint=digest_object(semantic_payload),
     )
 

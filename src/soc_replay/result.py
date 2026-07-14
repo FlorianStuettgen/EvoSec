@@ -5,6 +5,8 @@ from typing import Any
 
 from ._version import __version__
 from .compiler import ExecutionPlan
+from .contracts import ENGINE_NAME, REPORT_SCHEMA_VERSION
+from .correlation import RuleExecution
 from .io import LoadedScenario
 from .ledger import ExecutionLedger
 from .models import Detection, Event, Scenario, VerificationResult
@@ -14,6 +16,7 @@ from .models import Detection, Event, Scenario, VerificationResult
 class ReplayResult:
     loaded: LoadedScenario
     plan: ExecutionPlan
+    rule_executions: tuple[RuleExecution, ...]
     detections: tuple[Detection, ...]
     verification: VerificationResult
     ledger: ExecutionLedger
@@ -40,8 +43,8 @@ class ReplayResult:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "report_schema_version": "2.0",
-            "engine": {"name": "soc-replay", "version": __version__},
+            "report_schema_version": REPORT_SCHEMA_VERSION,
+            "engine": {"name": ENGINE_NAME, "version": __version__},
             "provenance": {
                 "run_id": self.loaded.run_id,
                 "scenario_sha256": self.loaded.scenario_sha256,
@@ -49,6 +52,7 @@ class ReplayResult:
             },
             "execution": {
                 "plan": self.plan.to_dict(),
+                "rules": [execution.to_dict() for execution in self.rule_executions],
                 "ledger": self.ledger.to_dict(),
             },
             "scenario": {
@@ -61,6 +65,7 @@ class ReplayResult:
             },
             "summary": {
                 "events_processed": len(self.events),
+                "rules_executed": len(self.rule_executions),
                 "detections": len(self.detections),
                 "simulated_actions": len(self.simulated_actions),
                 "verification_passed": self.verification.passed,

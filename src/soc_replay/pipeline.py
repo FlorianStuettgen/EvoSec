@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Any
 
 from .compiler import ExecutionPlan, compile_scenario
-from .correlation import evaluate_compiled_rule
+from .contracts import INDEX_FIELDS, PIPELINE_NAME, PIPELINE_STAGES
+from .correlation import RuleExecution, evaluate_compiled_rule
 from .indexing import EventIndex
 from .io import LoadedScenario, load_scenario
 from .ledger import LedgerBuilder
@@ -36,12 +37,13 @@ class PipelineDescription:
 
 class ReplayPipeline:
     DESCRIPTION = PipelineDescription(
-        name="soc-replay-evidence-pipeline",
-        stages=("load", "compile", "index", "evaluate", "verify"),
+        name=PIPELINE_NAME,
+        stages=PIPELINE_STAGES,
         invariants=(
-            "inputs are immutable after load",
+            "inputs and parsed JSON values are deeply immutable after load",
             "rules are compiled before evaluation",
-            "candidate indexes never change rule semantics",
+            "candidate indexes can reduce cost but never change rule semantics",
+            "every maintained scenario declares exact detection contracts",
             "responses remain simulation-only",
             "every stage is linked in a deterministic hash ledger",
         ),
@@ -87,6 +89,7 @@ class ReplayPipeline:
             {
                 "event_ids": [event.event_id for event in loaded.events],
                 "event_count": len(loaded.events),
+                "index_fields": [*INDEX_FIELDS, "tags"],
             }
         )
         ledger.append(
@@ -95,36 +98,48 @@ class ReplayPipeline:
             output_digest=index_digest,
             records_in=len(loaded.events),
             records_out=len(loaded.events),
-            metadata={"index_fields": ["category", "action", "outcome", "source", "host", "user", "tags"]},
+            metadata={"index_fields": [*INDEX_FIELDS, "tags"]},
         )
 
+        executions: list[RuleExecution] = []
         detections: list[Detection] = []
-        strategies: dict[str, str] = {}
         for rule in plan.rules:
-            candidates = event_index.candidates(rule)
-            strategies[rule.source.rule_id] = candidates.strategy
-            detections.extend(evaluate_compiled_rule(rule, candidates))
+            execution = evaluate_compiled_rule(rule, event_index.candidates(rule))
+            executions.append(execution)
+            detections.extend(execution.detections)
         detections.sort(key=lambda item: (item.first_seen, item.rule_id, item.detection_id))
+        frozen_executions = tuple(executions)
         frozen_detections = tuple(detections)
-        detection_digest = digest_object([detection.to_dict() for detection in frozen_detections])
+        evaluation_payload = {
+            "rules": [execution.to_dict() for execution in frozen_executions],
+            "detections": [detection.to_dict() for detection in frozen_detections],
+        }
+        evaluation_digest = digest_object(evaluation_payload)
         ledger.append(
             stage="evaluate",
             input_digest=digest_object([plan.fingerprint, index_digest]),
-            output_digest=detection_digest,
+            output_digest=evaluation_digest,
             records_in=len(loaded.events),
             records_out=len(frozen_detections),
-            metadata={"candidate_strategies": strategies},
+            metadata={"rule_executions": [execution.to_dict() for execution in frozen_executions]},
         )
 
         verification = verify_result(loaded.scenario, frozen_detections)
         verification_digest = digest_object(verification.to_dict())
         ledger.append(
             stage="verify",
-            input_digest=detection_digest,
+            input_digest=evaluation_digest,
             output_digest=verification_digest,
             records_in=len(frozen_detections),
             records_out=len(verification.checks),
             metadata={"passed": verification.passed},
         )
 
-        return ReplayResult(loaded, plan, frozen_detections, verification, ledger.freeze())
+        return ReplayResult(
+            loaded,
+            plan,
+            frozen_executions,
+            frozen_detections,
+            verification,
+            ledger.freeze(),
+        )

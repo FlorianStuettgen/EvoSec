@@ -3,21 +3,104 @@
   "$id": "https://github.com/FlorianStuettgen/SOC_Replay/blob/main/schemas/event.schema.json",
   "title": "SOC_Replay normalized event",
   "type": "object",
-  "required": ["event_id", "timestamp", "source", "category", "action"],
+  "required": [
+    "event_id",
+    "timestamp",
+    "source",
+    "category",
+    "action"
+  ],
   "properties": {
-    "event_id": {"type": "string", "minLength": 1},
-    "timestamp": {"type": "string", "format": "date-time"},
-    "source": {"type": "string", "minLength": 1},
-    "category": {"type": "string", "minLength": 1},
-    "action": {"type": "string", "minLength": 1},
-    "source_ip": {"anyOf": [{"type": "string", "format": "ipv4"}, {"type": "string", "format": "ipv6"}, {"type": "null"}]},
-    "destination_ip": {"anyOf": [{"type": "string", "format": "ipv4"}, {"type": "string", "format": "ipv6"}, {"type": "null"}]},
-    "destination_port": {"type": ["integer", "null"], "minimum": 0, "maximum": 65535},
-    "host": {"type": ["string", "null"], "minLength": 1},
-    "user": {"type": ["string", "null"], "minLength": 1},
-    "outcome": {"type": ["string", "null"], "minLength": 1},
-    "tags": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-    "details": {"type": "object"}
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_ip": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "ipv4"
+        },
+        {
+          "type": "string",
+          "format": "ipv6"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "destination_ip": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "ipv4"
+        },
+        {
+          "type": "string",
+          "format": "ipv6"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "destination_port": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 65535
+    },
+    "host": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "user": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "outcome": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "details": {
+      "type": "object"
+    }
   },
   "additionalProperties": false
 }

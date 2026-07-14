@@ -23,6 +23,7 @@ class CliTests(unittest.TestCase):
         code, output, _ = self.run_cli("doctor", "--scenarios", str(ROOT / "scenarios"))
         self.assertEqual(code, 0)
         self.assertIn("doctor: PASS", output)
+        self.assertIn("scenario=1.1", output)
         code, output, _ = self.run_cli("graph", "--format", "mermaid")
         self.assertEqual(code, 0)
         self.assertIn("flowchart LR", output)

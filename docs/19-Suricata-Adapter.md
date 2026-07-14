@@ -1,38 +1,36 @@
-# 19 — Sanitized Suricata EVE Adapter
-
-## Purpose
-
-The adapter bridges stored Suricata EVE JSONL and the normalized SOC_Replay event contract without introducing a live sensor dependency into the core engine.
-
-```bash
-soc-replay normalize-suricata input/eve.jsonl output/events.jsonl
-```
-
-## Supported records
-
-The current adapter supports:
-
-- `alert` records, normalized as `network_alert`; and
-- `flow` records, normalized as `network_connection`.
-
-Other EVE record types are counted as skipped. The CLI reports total records read, written, and skipped so unsupported data is visible rather than silently implied to be covered.
-
-## Mapping principles
-
-- EVE timestamps are normalized to canonical UTC.
-- Source and destination IPs and destination ports pass through the public event validator.
-- Alert signatures and flow counters remain in `details`.
-- Output event IDs are deterministic for the same input ordering.
-- Alert actions are represented as evidence; no response is executed.
-- Writes use atomic replacement.
-
-## Example
-
-- Sanitized input: [`examples/adapters/suricata-eve.jsonl`](../examples/adapters/suricata-eve.jsonl)
-- Expected output: [`examples/adapters/suricata-normalized.jsonl`](../examples/adapters/suricata-normalized.jsonl)
-
-CI regenerates the normalized output and compares it byte for byte with the committed reference.
+# 19 — Suricata Adapter
 
 ## Boundary
 
-This adapter does not connect to SELKS, read a live socket, manage capture permissions, or claim complete Suricata schema coverage. Live collection belongs in a separately reviewed ingestion boundary.
+The adapter consumes stored synthetic or sanitized Suricata EVE JSONL. It does not connect to a sensor, request credentials, open a socket, or alter Suricata configuration.
+
+## Registry
+
+The built-in `suricata-eve` adapter is registered during package initialization. The shared registry is then frozen so global adapter behavior cannot change after startup.
+
+## Supported records
+
+- `alert`
+- `flow`
+
+Unsupported record types are counted and skipped. A file containing no supported records fails validation.
+
+## Command
+
+```bash
+soc-replay normalize --adapter suricata-eve \
+  examples/adapters/suricata-eve.jsonl \
+  build/suricata-normalized.jsonl
+```
+
+## Guarantees
+
+- every emitted record passes through the same deeply immutable event model used by scenarios;
+- output order follows input order;
+- event IDs are deterministic;
+- timestamps are normalized to UTC;
+- writes are atomic;
+- read, written, and skipped counts are returned; and
+- the final output SHA-256 digest is reported.
+
+`tools/validate_contracts.py` also validates each normalized fixture record against `event.schema.json`.

@@ -8,12 +8,19 @@ from typing import Any
 
 from . import __version__
 from .adapters import adapter_registry, normalize_file, normalize_suricata_file
+from .contracts import (
+    CURRENT_SCENARIO_SCHEMA_VERSION,
+    LEDGER_SCHEMA_VERSION,
+    MANIFEST_SCHEMA_VERSION,
+    REPORT_SCHEMA_VERSION,
+)
 from .engine import ReplayResult, run_scenario
 from .io import load_scenario
 from .models import ValidationError
 from .operators import operator_catalog
 from .pipeline import ReplayPipeline
 from .report import verify_bundle, write_bundle
+from .serialization import to_primitive
 
 
 def _catalog(root: Path) -> list[dict[str, object]]:
@@ -31,6 +38,8 @@ def _catalog(root: Path) -> list[dict[str, object]]:
                 "id": loaded.scenario.scenario_id,
                 "title": loaded.scenario.title,
                 "path": str(scenario_file.parent),
+                "schema_version": loaded.scenario.schema_version,
+                "exact_detection_contracts": loaded.scenario.expectations.detection_contracts is not None,
                 "events": len(loaded.events),
                 "rules": len(loaded.scenario.rules),
                 "run_id": loaded.run_id,
@@ -44,7 +53,8 @@ def _print_verification(result: ReplayResult) -> None:
     print(f"verification: {'PASS' if result.verification.passed else 'FAIL'}")
     for check in result.verification.checks:
         print(
-            f"  {'PASS' if check.passed else 'FAIL'} {check.name}: expected={check.expected!r} actual={check.actual!r}"
+            f"  {'PASS' if check.passed else 'FAIL'} {check.name}: "
+            f"expected={to_primitive(check.expected)!r} actual={to_primitive(check.actual)!r}"
         )
 
 
@@ -115,14 +125,31 @@ def _doctor(root: Path) -> dict[str, Any]:
     catalog = _catalog(root)
     checks = {
         "version": __version__,
+        "contracts": {
+            "scenario": CURRENT_SCENARIO_SCHEMA_VERSION,
+            "report": REPORT_SCHEMA_VERSION,
+            "manifest": MANIFEST_SCHEMA_VERSION,
+            "ledger": LEDGER_SCHEMA_VERSION,
+        },
         "pipeline_stages": list(ReplayPipeline.DESCRIPTION.stages),
         "pipeline_invariants": list(ReplayPipeline.DESCRIPTION.invariants),
         "operators": [operator.name for operator in operator_catalog()],
         "adapters": [descriptor.name for descriptor in adapter_registry().descriptors()],
         "scenario_count": len(catalog),
         "invalid_scenarios": [entry for entry in catalog if not entry["valid"]],
+        "legacy_scenarios": [
+            entry for entry in catalog if entry["valid"] and entry["schema_version"] != CURRENT_SCENARIO_SCHEMA_VERSION
+        ],
+        "scenarios_without_exact_contracts": [
+            entry for entry in catalog if entry["valid"] and not entry["exact_detection_contracts"]
+        ],
     }
-    checks["passed"] = bool(catalog) and not checks["invalid_scenarios"]
+    checks["passed"] = (
+        bool(catalog)
+        and not checks["invalid_scenarios"]
+        and not checks["legacy_scenarios"]
+        and not checks["scenarios_without_exact_contracts"]
+    )
     return checks
 
 
@@ -132,9 +159,11 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "validate":
             loaded = load_scenario(args.scenario)
+            exact = loaded.scenario.expectations.detection_contracts is not None
             print(
                 f"valid: {loaded.scenario.scenario_id} "
-                f"({len(loaded.events)} events, {len(loaded.scenario.rules)} rules, run_id={loaded.run_id})"
+                f"(schema={loaded.scenario.schema_version}, exact_contracts={exact}, "
+                f"{len(loaded.events)} events, {len(loaded.scenario.rules)} rules, run_id={loaded.run_id})"
             )
             return 0
         if args.command == "run":
@@ -153,38 +182,48 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if result.verification.passed else 3
         if args.command == "explain":
             result = run_scenario(args.scenario)
-            payload = {
+            explain_payload = {
                 "scenario": {
+                    "schema_version": result.scenario.schema_version,
                     "id": result.scenario.scenario_id,
                     "title": result.scenario.title,
                     "objective": result.scenario.objective,
                     "authorization_boundary": result.scenario.authorization_boundary,
                 },
                 "plan": result.plan.to_dict(),
+                "rule_executions": [execution.to_dict() for execution in result.rule_executions],
                 "expectations": {
                     "detection_count": result.scenario.expectations.detection_count,
                     "rule_ids": list(result.scenario.expectations.rule_ids),
-                    "severity_counts": result.scenario.expectations.severity_counts,
+                    "severity_counts": to_primitive(result.scenario.expectations.severity_counts),
                     "simulated_action_count": result.scenario.expectations.simulated_action_count,
+                    "detections": None
+                    if result.scenario.expectations.detection_contracts is None
+                    else [contract.to_dict() for contract in result.scenario.expectations.detection_contracts],
                 },
                 "run_id": result.loaded.run_id,
                 "ledger_root": result.ledger.root_hash,
             }
             if args.json:
-                print(json.dumps(payload, indent=2, sort_keys=True))
+                print(json.dumps(explain_payload, indent=2, sort_keys=True))
             else:
                 print(f"{result.scenario.scenario_id}: {result.scenario.title}")
+                print(f"schema: {result.scenario.schema_version}")
                 print(f"objective: {result.scenario.objective}")
                 print(f"boundary: {result.scenario.authorization_boundary}")
                 print(f"run_id: {result.loaded.run_id}")
                 print(f"plan: {result.plan.fingerprint}")
-                for rule in result.plan.rules:
-                    hint = (
+                for rule, execution in zip(result.plan.rules, result.rule_executions, strict=True):
+                    selectors = (
                         "full_scan"
-                        if rule.candidate_hint is None
-                        else f"{rule.candidate_hint.mode}:{rule.candidate_hint.field}"
+                        if not rule.candidate_selectors
+                        else ",".join(f"{selector.mode}:{selector.field}" for selector in rule.candidate_selectors)
                     )
-                    print(f"rule {rule.source.rule_id}: {rule.source.name} [{rule.source.severity}] candidate={hint}")
+                    print(
+                        f"rule {rule.source.rule_id}: {rule.source.name} [{rule.source.severity}] "
+                        f"selectors={selectors} candidates={execution.candidate_count} "
+                        f"matched={execution.matched_count} detections={execution.detection_count}"
+                    )
                 print(f"expected detections: {result.scenario.expectations.detection_count}")
             return 0
         if args.command == "verify-bundle":
@@ -193,7 +232,7 @@ def main(argv: list[str] | None = None) -> int:
             for check in verification.checks:
                 print(
                     f"  {'PASS' if check.passed else 'FAIL'} {check.name}: "
-                    f"expected={check.expected!r} actual={check.actual!r}"
+                    f"expected={to_primitive(check.expected)!r} actual={to_primitive(check.actual)!r}"
                 )
             return 0 if verification.passed else 4
         if args.command == "normalize":
@@ -241,17 +280,21 @@ def main(argv: list[str] | None = None) -> int:
                     print(f"  invariant: {invariant}")
             return 0
         if args.command == "doctor":
-            payload = _doctor(Path(args.scenarios))
+            doctor_payload = _doctor(Path(args.scenarios))
             if args.json:
-                print(json.dumps(payload, indent=2, sort_keys=True))
+                print(json.dumps(doctor_payload, indent=2, sort_keys=True))
             else:
-                print(f"doctor: {'PASS' if payload['passed'] else 'FAIL'}")
-                print(f"version: {payload['version']}")
-                print(f"stages: {' -> '.join(payload['pipeline_stages'])}")
-                print(f"operators: {', '.join(payload['operators'])}")
-                print(f"adapters: {', '.join(payload['adapters'])}")
-                print(f"scenarios: {payload['scenario_count']}")
-            return 0 if payload["passed"] else 5
+                print(f"doctor: {'PASS' if doctor_payload['passed'] else 'FAIL'}")
+                print(f"version: {doctor_payload['version']}")
+                print(
+                    "contracts: "
+                    + ", ".join(f"{name}={version}" for name, version in doctor_payload["contracts"].items())
+                )
+                print(f"stages: {' -> '.join(doctor_payload['pipeline_stages'])}")
+                print(f"operators: {', '.join(doctor_payload['operators'])}")
+                print(f"adapters: {', '.join(doctor_payload['adapters'])}")
+                print(f"scenarios: {doctor_payload['scenario_count']}")
+            return 0 if doctor_payload["passed"] else 5
         if args.command == "catalog":
             entries = _catalog(Path(args.root))
             if args.json:
@@ -261,7 +304,8 @@ def main(argv: list[str] | None = None) -> int:
                     if entry["valid"]:
                         print(
                             f"{entry['id']}: {entry['title']} "
-                            f"[{entry['events']} events, {entry['rules']} rules, run_id={entry['run_id']}]"
+                            f"[schema={entry['schema_version']}, exact={entry['exact_detection_contracts']}, "
+                            f"{entry['events']} events, {entry['rules']} rules, run_id={entry['run_id']}]"
                         )
                     else:
                         print(f"INVALID: {entry['path']} — {entry['error']}")

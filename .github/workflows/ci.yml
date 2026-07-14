@@ -33,22 +33,24 @@ jobs:
         run: |
           coverage run -m unittest discover -s tests -v
           coverage report
-      - name: Inspect execution wiring
+      - name: Inspect execution and contract wiring
         run: |
           soc-replay doctor
           soc-replay graph --format mermaid
           soc-replay adapters
-      - name: Verify scenario catalog
+      - name: Verify exact scenario contracts
         run: |
           soc-replay verify scenarios/network-scan
           soc-replay verify scenarios/privileged-group-change
           soc-replay verify scenarios/failed-authentication-burst
           soc-replay verify scenarios/benign-privileged-change
-      - name: Exercise bundle and ledger verification
+      - name: Validate real schema instances
+        run: python tools/validate_contracts.py
+      - name: Exercise bundle and strict-ledger verification
         run: |
           soc-replay run scenarios/network-scan --output build/network-scan
           soc-replay verify-bundle build/network-scan
-      - name: Exercise adapter registry
+      - name: Exercise frozen adapter registry
         run: |
           soc-replay normalize --adapter suricata-eve examples/adapters/suricata-eve.jsonl build/suricata-normalized.jsonl
       - name: Verify deterministic bundle generation

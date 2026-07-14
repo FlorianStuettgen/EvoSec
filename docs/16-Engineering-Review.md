@@ -2,54 +2,57 @@
 
 ## Strengths
 
-- The execution model is explicit, staged, and inspectable.
-- Rules are compiled once into semantic execution plans.
-- Candidate indexes improve cost without changing rule truth conditions.
-- Every stage is represented in a deterministic hash chain.
-- Positive, repeated-window, and negative controls verify both firing and non-firing behavior.
-- Bundle verification checks artifacts, cross-document identity, plan fingerprint, ledger root, and bundle ID.
-- Runtime remains dependency-free while development quality gates remain strict.
-- The package has no live-I/O or command-execution authority.
+- Runtime objects are deeply immutable, not merely frozen at the dataclass shell.
+- Rule fingerprints cover every behavior- and report-affecting field.
+- Candidate selectors are composed and intersected without changing rule semantics.
+- Every rule produces a deterministic execution trace, including zero-result rules.
+- Maintained scenarios assert exact evidence windows, grouping values, severity, and response action.
+- The execution ledger enforces stage order, types, digest shape, counts, chain continuity, and completion.
+- Bundle verification checks artifacts and the internal agreement of plan, traces, detections, summary, actions, ledger, and manifest.
+- JSON Schemas are validated and then used against real repository and generated instances.
+- Runtime dependencies remain zero.
+- The package has no live-I/O, credential, command-execution, or infrastructure-control authority.
 
 ## Deliberate trade-offs
 
 ### Small rule language
 
-The operator set is intentionally constrained. Arbitrary expressions would increase flexibility but weaken inspectability and create an execution surface that is harder to secure and reason about.
+The eight operators are intentionally constrained. Arbitrary executable expressions would increase flexibility at the cost of inspectability, deterministic serialization, and security.
 
-### In-memory event index
+### In-memory index
 
-The current index is optimized for bounded experiments and portfolio-scale replay. It is not a distributed stream processor. The `max_events` guard prevents accidental unbounded ingestion.
+The index is appropriate for bounded experiments and portfolio-scale replay. It is not a distributed stream processor. `max_events` remains the explicit volume guard.
 
-### Deterministic ledger without trusted attestation
+### Exact deterministic scenarios
 
-The ledger proves internal consistency relative to its hashes. It does not prove who produced the bundle or when it was produced.
+Exact assertions are powerful regression contracts but are not a substitute for production false-positive analysis, noisy-data evaluation, or probabilistic quality measurement.
 
-### Exact fixtures
+### Internal integrity without external attestation
 
-Scenario expectations are exact. That is appropriate for regression controls but insufficient for production detection quality, noisy telemetry, or probabilistic analysis.
+The ledger and manifest make internal contradiction and post-generation alteration observable. Anyone able to replace every file can create a new internally consistent bundle. External authorship and trusted time require signatures or an attestation service.
 
 ## Failure modes covered
 
-- malformed or missing JSON;
-- unknown contract fields;
+- missing, malformed, or unknown input fields;
+- invalid timestamps, IPs, ports, nested paths, operators, and aggregate contracts;
 - duplicate event IDs;
-- invalid timestamps, IP addresses, ports, and nested paths;
-- operator type mismatches;
-- invalid aggregate configurations;
+- attempted nested mutation after validation;
+- incomplete fingerprints;
+- candidate selector intersections and empty pools;
+- unhashable nested group/distinct values;
 - repeated-window evidence reuse;
-- expectation drift;
-- partial report writes;
-- artifact tampering;
-- ledger-chain corruption;
-- unknown adapters and unsupported vendor records;
-- event-volume limit violations; and
+- zero-detection trace loss;
+- aggregate expectation drift and exact detection drift;
+- invalid ledger stages, types, digests, counts, sequence, chain, or root;
+- ordinary artifact tampering;
+- rehashed but internally contradictory bundles;
+- schema/document/runtime version drift;
+- unknown or post-freeze adapter registration; and
 - accidental live-I/O imports.
 
 ## Highest-value next proofs
 
-1. Publish one complete measured physical-lab experiment with synchronized timestamps, source telemetry, analyst decision, containment validation, rollback, and recovery.
-2. Add an optional signed envelope or external attestation path around the deterministic unsigned bundle.
-3. Publish benchmark history across event count, group cardinality, rule count, and adapter throughput.
-4. Add another offline vendor adapter with a conformance fixture.
-5. Automate synchronization or retirement of the legacy GitHub Wiki.
+1. Publish one complete measured physical-lab experiment with synchronized source telemetry, analyst decision, containment validation, rollback, and recovery evidence.
+2. Add an optional signed external envelope around the deterministic unsigned bundle.
+3. Publish benchmark history across event count, rule count, group cardinality, and selector selectivity.
+4. Add a second offline vendor adapter and conformance fixture.

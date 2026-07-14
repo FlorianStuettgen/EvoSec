@@ -1,31 +1,40 @@
 # 11 — Replay Engine
 
-SOC_Replay 3.0 is a deterministic execution pipeline, not a collection of ad hoc matching functions.
+SOC_Replay 3.1 is a deterministic, contract-complete execution pipeline rather than a collection of matching helpers.
 
-## Public contract
+## Public result
 
 A scenario supplies immutable `scenario.json` and `events.jsonl` inputs. The engine returns a `ReplayResult` containing:
 
-- the validated inputs and provenance hashes;
-- a compiled execution plan;
+- validated input objects and provenance hashes;
+- a compiled semantic execution plan;
+- one execution trace for every rule;
 - ordered detections;
 - exact expectation checks;
-- simulated analyst recommendations; and
-- a five-stage execution ledger.
+- simulation-only recommendations; and
+- a complete five-stage execution ledger.
 
-## Internal modules
+## Core modules
 
 | Module | Responsibility |
 | --- | --- |
-| `models.py` | Strict public data contracts and simulation-only response boundary |
-| `operators.py` | Small inspectable operator registry |
-| `compiler.py` | Field accessors, operator binding, aggregate plans, and fingerprints |
-| `indexing.py` | Immutable candidate indexes for common selectors and tags |
-| `correlation.py` | Single-event and time-window detection semantics |
-| `verification.py` | Exact result-to-expectation comparison |
-| `pipeline.py` | Stage orchestration and deterministic ledger construction |
-| `result.py` | Immutable result and report representation |
-| `report.py` | JSON/Markdown rendering, manifests, and offline bundle verification |
+| `contracts.py` | Shared engine, stage, index, and schema-version vocabulary |
+| `immutability.py` | Recursive conversion of JSON-like data into immutable structures |
+| `model_common.py` | Shared validation vocabulary and field contracts |
+| `event_models.py` | Events, conditions, aggregates, responses, and rules |
+| `scenario_models.py` | Exact expectations and scenario contracts |
+| `result_models.py` | Detections and verification records |
+| `models.py` | Stable compatibility façade for public model imports |
+| `operators.py` | Small inspectable predicate registry |
+| `compiler.py` | Field accessors, operator binding, candidate selectors, and fingerprints |
+| `indexing.py` | Immutable equality/tag indexes and selector intersections |
+| `correlation.py` | Single-event and window evaluation plus rule traces |
+| `verification.py` | Aggregate and exact detection-contract comparison |
+| `pipeline.py` | Stage orchestration and ledger construction |
+| `result.py` | Immutable result and public report representation |
+| `report_render.py` | JSON and analyst-readable rendering |
+| `bundle.py` | Manifest construction and internal-consistency verification |
+| `report.py` | Stable reporting façade |
 
 ## Execution order
 
@@ -33,25 +42,40 @@ A scenario supplies immutable `scenario.json` and `events.jsonl` inputs. The eng
 load → compile → index → evaluate → verify
 ```
 
-The order is part of the public execution contract and is checked by the repository verifier.
+The order is shared by the pipeline, ledger builder, ledger verifier, schemas, CLI graph, repository auditor, and documentation.
 
-## Why compile rules
+## Deep immutability
 
-Without compilation, every event evaluation repeatedly splits field paths, resolves operators, and reconstructs aggregation behavior. Compilation moves that work into a single deterministic preparation stage. The resulting plan has a fingerprint derived from rule semantics.
+Inputs are recursively frozen at the public model boundary. Mapping values become read-only mappings and JSON arrays become tuples. The serialization layer converts those structures back to normal JSON objects and arrays. This prevents a completed stage from being silently modified through a nested reference.
 
-## Why index candidates
+## Compilation
 
-Indexes reduce avoidable scans for common equality and tag conditions. They are only candidate selectors: every selected event must still satisfy every compiled condition. A missing hint falls back to a full scan.
+Every condition receives a pre-parsed field accessor and a bound operator callable. Aggregate grouping and distinct-value accessors are prepared once. The compiler extracts all safe index selectors and creates a complete rule fingerprint from every field capable of changing evaluation or report output.
 
-## Correlation guarantees
+## Candidate intersection
 
-- Inputs are sorted by timestamp and event ID.
-- Groups are processed in deterministic representation order.
-- Detection IDs are stable within a rule.
-- `first_per_group` emits the first qualifying window.
-- `all_non_overlapping` consumes evidence after each qualifying window.
-- Candidate strategy and counts are preserved in detection metadata.
+A rule may compile several selectors, for example:
+
+```text
+intersection[
+  eq:category=network_connection,
+  eq:outcome=blocked,
+  tag:reconnaissance
+]
+```
+
+The index intersects these pools in original event order. The complete rule predicate is still evaluated against every candidate; indexes cannot decide a match.
+
+## Rule execution traces
+
+The evaluation stage emits a `RuleExecution` even when no detection occurs. It records candidate count, matched count, group count, windows considered, and detection count. This makes negative controls and non-firing rules inspectable.
+
+## Exact verification
+
+Scenario schema 1.1 can specify the exact ordered detection set. The verifier compares rule ID, severity, evidence-event IDs, grouping values, and simulated response action. Aggregate count, rule-ID, severity, and action-count checks remain as independent diagnostics.
 
 ## Compatibility
 
-`engine.run_scenario`, `engine.evaluate_rule`, `report.write_reports`, and `normalize-suricata` remain available as compatibility surfaces. New code should prefer `ReplayPipeline`, `write_bundle`, and the generic adapter registry.
+- Scenario schema 1.0 remains accepted by the runtime.
+- Maintained scenarios use 1.1 and exact detection contracts.
+- `engine.run_scenario`, `engine.evaluate_rule`, `report.write_reports`, and `normalize-suricata` remain compatibility surfaces.

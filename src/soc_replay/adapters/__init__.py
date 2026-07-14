@@ -7,6 +7,7 @@ from .suricata import SuricataAdapter, normalize_eve_record, normalize_suricata_
 
 _registry = AdapterRegistry()
 _registry.register(SuricataAdapter())
+_registry.freeze()
 
 
 def adapter_registry() -> AdapterRegistry:

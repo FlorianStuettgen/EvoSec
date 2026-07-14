@@ -2,7 +2,7 @@
 
 ## Purpose
 
-A completed replay is delivered as a three-file bundle:
+A completed replay is delivered as:
 
 ```text
 output-directory/
@@ -11,11 +11,25 @@ output-directory/
 └── manifest.json
 ```
 
-`report.json` is the machine contract. `report.md` is the analyst surface. `manifest.json` commits to both artifact byte streams and cross-checks the run ID, input hashes, execution-plan fingerprint, execution-ledger root, engine version, and verification result.
+`report.json` is the machine contract. `report.md` is the analyst surface. `manifest.json` commits to the artifact bytes and repeats the execution identities required to expose contradiction.
+
+## Report contract 2.1
+
+The report contains:
+
+- engine and input provenance;
+- compiled execution plan;
+- one trace per rule;
+- strict execution ledger;
+- scenario context;
+- summary counts;
+- verification checks;
+- ordered detections; and
+- ordered simulated actions.
 
 ## Completion protocol
 
-The JSON and Markdown reports are written atomically first. The manifest is written atomically last. The manifest is therefore the local completion marker for the bundle, not merely another report.
+JSON and Markdown are written atomically first. The manifest is written atomically last. A manifest therefore marks a completed local bundle rather than an in-progress artifact pair.
 
 ## Offline verification
 
@@ -25,29 +39,29 @@ soc-replay verify-bundle build/network-scan
 
 Verification checks:
 
-- report and manifest schema versions;
-- engine and run identity;
-- scenario and event provenance hashes;
-- plan fingerprint;
-- the complete execution-ledger hash chain and root;
-- expectation-verification consistency;
-- exact artifact names, byte counts, and SHA-256 hashes; and
-- the bundle ID derived from the canonical manifest body.
+- exact top-level report and manifest field sets;
+- report and manifest contract versions;
+- engine, run, scenario, and provenance identity;
+- plan rule IDs and fingerprints against rule traces;
+- rule-trace totals against detections;
+- summary totals against traces, detections, actions, and verification;
+- simulated actions against detection response objects;
+- unique detection IDs and simulation-only modes;
+- complete typed execution-ledger structure and hash chain;
+- ledger stage counts against report contents;
+- artifact names, byte counts, and SHA-256 hashes; and
+- bundle ID derived from the canonical manifest body.
 
-A modified, missing, partially written, or internally inconsistent artifact produces a failed verdict and a non-zero CLI exit code.
+A modified, missing, partially written, structurally invalid, or internally contradictory artifact produces a failed verdict.
 
-## Reproducibility test
+## Rehashed contradiction test
 
-The repository does not trust stale committed report snapshots. `tools/verify_deterministic_bundles.py` runs every scenario twice in isolated directories, verifies both bundles, and compares `report.json`, `report.md`, and `manifest.json` byte for byte.
+The test suite modifies report content, recalculates the report artifact hash, and recalculates the manifest bundle ID. Verification still fails because the report summary, traces, detections, actions, or ledger no longer agree. This demonstrates that the verifier is not merely a checksum checker.
 
-This proves deterministic generation from the current source, scenarios, schemas, and engine version.
+## Reproducibility
+
+`tools/verify_deterministic_bundles.py` executes every maintained scenario twice in isolated directories, verifies both bundles, and compares all three artifact byte streams exactly.
 
 ## Security meaning
 
-The ledger and manifest provide tamper evidence relative to their hashes. They are not digital signatures and do not establish authorship, trusted time, external custody, or that source telemetry originated from a live system.
-
-## Machine contracts
-
-- [`schemas/report.schema.json`](../schemas/report.schema.json)
-- [`schemas/bundle-manifest.schema.json`](../schemas/bundle-manifest.schema.json)
-- [`schemas/execution-ledger.schema.json`](../schemas/execution-ledger.schema.json)
+The ledger and manifest provide tamper evidence relative to their hashes. They are not signatures and do not establish authorship, trusted time, external custody, hardware identity, or live telemetry provenance.

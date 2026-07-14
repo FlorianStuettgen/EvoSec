@@ -36,12 +36,22 @@ class TelemetryAdapter(Protocol):
 class AdapterRegistry:
     def __init__(self) -> None:
         self._adapters: dict[str, TelemetryAdapter] = {}
+        self._frozen = False
+
+    @property
+    def frozen(self) -> bool:
+        return self._frozen
 
     def register(self, adapter: TelemetryAdapter) -> None:
+        if self._frozen:
+            raise RuntimeError("adapter registry is frozen")
         name = adapter.descriptor.name
         if not name or name in self._adapters:
             raise ValueError(f"adapter {name!r} is already registered or invalid")
         self._adapters[name] = adapter
+
+    def freeze(self) -> None:
+        self._frozen = True
 
     def get(self, name: str) -> TelemetryAdapter:
         try:

@@ -18,7 +18,7 @@ class ModelTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationError, "unknown fields"):
             Event.from_dict(payload)
 
-    def test_nested_details_path(self) -> None:
+    def test_nested_details_path_and_deep_immutability(self) -> None:
         event = Event.from_dict(
             {
                 "event_id": "x",
@@ -26,15 +26,51 @@ class ModelTests(unittest.TestCase):
                 "source": "fixture",
                 "category": "test",
                 "action": "observe",
-                "details": {"nested": {"value": 7}},
+                "details": {"nested": {"value": 7}, "items": [1, 2]},
             }
         )
         self.assertEqual(event.value("details.nested.value"), 7)
         self.assertIsNone(event.value("details.missing"))
+        with self.assertRaises(TypeError):
+            event.details["new"] = 1  # type: ignore[index]
+        nested = event.details["nested"]
+        with self.assertRaises(TypeError):
+            nested["value"] = 8  # type: ignore[index]
+        self.assertEqual(event.details["items"], (1, 2))
 
     def test_condition_rejects_nested_non_details_path(self) -> None:
         with self.assertRaisesRegex(ValidationError, "only permits nested paths"):
             Condition.from_dict({"field": "source.name", "operator": "eq", "value": "x"})
+
+    def test_scenario_11_requires_exact_detection_contracts(self) -> None:
+        payload = {
+            "schema_version": "1.1",
+            "id": "x",
+            "title": "x",
+            "objective": "x",
+            "authorization_boundary": "x",
+            "expected_outcome": "x",
+            "expectations": {
+                "detection_count": 0,
+                "rule_ids": [],
+                "severity_counts": {},
+                "simulated_action_count": 0,
+            },
+            "rules": [
+                {
+                    "id": "R1",
+                    "name": "rule",
+                    "severity": "low",
+                    "match": [{"field": "category", "operator": "eq", "value": "x"}],
+                    "response": {"action": "review", "description": "review", "mode": "simulated"},
+                }
+            ],
+        }
+        with self.assertRaisesRegex(ValidationError, "requires expectations.detections"):
+            Scenario.from_dict(payload)
+        payload["schema_version"] = "1.0"
+        scenario = Scenario.from_dict(payload)
+        self.assertIsNone(scenario.expectations.detection_contracts)
 
     def test_scenario_rejects_unknown_expectation_rule(self) -> None:
         with self.assertRaisesRegex(ValidationError, "unknown rule IDs"):

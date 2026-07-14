@@ -15,7 +15,7 @@ from .verification import verify_result
 def evaluate_rule(rule: Rule, events: Iterable[Event]) -> list[Detection]:
     frozen = tuple(sorted(events, key=lambda event: (event.timestamp, event.event_id)))
     compiled = compile_rule(rule)
-    return list(evaluate_compiled_rule(compiled, EventIndex(frozen).candidates(compiled)))
+    return list(evaluate_compiled_rule(compiled, EventIndex(frozen).candidates(compiled)).detections)
 
 
 def run_scenario(directory: str | Path, *, max_events: int = 1_000_000) -> ReplayResult:

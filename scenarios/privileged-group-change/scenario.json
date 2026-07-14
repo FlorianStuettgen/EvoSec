@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "id": "privileged-group-change",
   "title": "Synthetic privileged group change",
   "objective": "Detect an unexpected administrative group membership change and produce an evidence-preserving simulated response.",
@@ -7,9 +7,24 @@
   "expected_outcome": "One critical detection associated with the unauthorized group-change event.",
   "expectations": {
     "detection_count": 1,
-    "rule_ids": ["IAM-PRIV-001"],
-    "severity_counts": {"critical": 1},
-    "simulated_action_count": 1
+    "rule_ids": [
+      "IAM-PRIV-001"
+    ],
+    "severity_counts": {
+      "critical": 1
+    },
+    "simulated_action_count": 1,
+    "detections": [
+      {
+        "rule_id": "IAM-PRIV-001",
+        "severity": "critical",
+        "event_ids": [
+          "iam-002"
+        ],
+        "group": {},
+        "action": "recommend_account_review"
+      }
+    ]
   },
   "rules": [
     {
@@ -18,11 +33,31 @@
       "severity": "critical",
       "description": "A non-approved actor adds an account to a privileged group without a change ticket.",
       "match": [
-        {"field": "category", "operator": "eq", "value": "identity_change"},
-        {"field": "action", "operator": "eq", "value": "add_to_privileged_group"},
-        {"field": "outcome", "operator": "eq", "value": "success"},
-        {"field": "tags", "operator": "contains", "value": "unauthorized"},
-        {"field": "details.change_ticket", "operator": "exists", "value": false}
+        {
+          "field": "category",
+          "operator": "eq",
+          "value": "identity_change"
+        },
+        {
+          "field": "action",
+          "operator": "eq",
+          "value": "add_to_privileged_group"
+        },
+        {
+          "field": "outcome",
+          "operator": "eq",
+          "value": "success"
+        },
+        {
+          "field": "tags",
+          "operator": "contains",
+          "value": "unauthorized"
+        },
+        {
+          "field": "details.change_ticket",
+          "operator": "exists",
+          "value": false
+        }
       ],
       "response": {
         "action": "recommend_account_review",

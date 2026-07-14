@@ -1,6 +1,6 @@
 # 12 — Scenario Format
 
-A scenario is an executable experiment contract.
+Each scenario directory contains:
 
 ```text
 scenario-name/
@@ -8,75 +8,65 @@ scenario-name/
 └── events.jsonl
 ```
 
-## Required scenario fields
+## Scenario schema versions
 
-- `schema_version`: currently `1.0`
-- `id`, `title`, and `objective`
-- `authorization_boundary`
-- `expected_outcome`
-- `expectations`
-- one or more rules
+- `1.0` remains readable for backward compatibility.
+- `1.1` is the maintained standard and requires exact detection contracts.
 
-## Expectations
+## Core scenario fields
 
-```json
-{
-  "detection_count": 1,
-  "rule_ids": ["NET-SCAN-001"],
-  "severity_counts": {"high": 1},
-  "simulated_action_count": 1
-}
-```
+A scenario declares its identity, title, objective, authorization boundary, expected outcome, expectations, and one or more rules.
 
-These values are validated for internal consistency and checked after every replay.
+## Rules
 
-## Rule conditions
+A rule contains:
 
-Supported operators:
+- stable ID and display name;
+- severity and description;
+- one or more conditions;
+- an optional aggregate contract; and
+- a simulation-only response.
 
-| Operator | Meaning |
-| --- | --- |
-| `eq`, `ne` | equality and inequality |
-| `in`, `not_in` | membership against a declared list |
-| `contains` | containment for strings, lists, tuples, sets, or objects |
-| `gte`, `lte` | ordered comparison |
-| `exists` | field presence; accepts `true`, `false`, or omission for `true` |
+Supported operators are `eq`, `ne`, `in`, `not_in`, `contains`, `gte`, `lte`, and `exists`. Nested paths are permitted only beneath `details`.
 
-Nested data is addressed with paths such as `details.actor.role`.
+## Aggregate rules
 
-## Aggregation
+Aggregate rules declare:
+
+- grouping fields;
+- minimum event count;
+- window duration;
+- optional distinct field and threshold; and
+- `first_per_group` or `all_non_overlapping` window policy.
+
+## Exact expectations in 1.1
+
+`expectations.detections` is ordered and identifies:
 
 ```json
 {
-  "group_by": ["source_ip", "destination_ip"],
-  "count_gte": 5,
-  "within_seconds": 60,
-  "distinct_field": "destination_port",
-  "distinct_gte": 5,
-  "window_policy": "first_per_group"
+  "rule_id": "NET-SCAN-001",
+  "severity": "high",
+  "event_ids": ["net-001", "net-002", "net-003", "net-004", "net-005"],
+  "group": {
+    "source_ip": "10.20.30.77",
+    "destination_ip": "10.20.40.10"
+  },
+  "action": "recommend_segment_isolation"
 }
 ```
 
-The distinct fields must be supplied together. Window policies are `first_per_group` and `all_non_overlapping`.
+The exact list must agree with detection count, rule-ID sequence, severity totals, and simulated-action count.
 
-## Response boundary
+## Events
 
-```json
-{
-  "action": "recommend_segment_isolation",
-  "description": "Analyst-facing recommendation",
-  "mode": "simulated"
-}
+Every JSONL record requires event ID, timezone-aware timestamp, source, category, and action. Optional fields include IPs, destination port, host, user, outcome, tags, and nested details. Event IDs and tags must be unique within their respective scopes.
+
+## Validation
+
+```bash
+soc-replay validate scenarios/network-scan
+python tools/validate_contracts.py
 ```
 
-Any other mode is rejected. Response action names are descriptive data, not executable commands.
-
-## Event contract
-
-Every JSONL record requires `event_id`, timezone-aware `timestamp`, `source`, `category`, and `action`. Optional normalized fields include IPs, destination port, host, user, outcome, tags, and arbitrary nested `details`.
-
-See the machine-readable contracts in [`schemas/`](../schemas/).
-
-## Positive and negative controls
-
-A scenario may expect zero detections. Negative controls should exercise realistic benign activity against the same rule contract used by a positive scenario. This demonstrates false-positive discipline and prevents a catalog made only of guaranteed detections.
+The first command applies runtime validation. The second validates the repository and generated artifacts against the JSON Schemas.

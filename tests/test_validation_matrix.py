@@ -2,7 +2,17 @@ from __future__ import annotations
 
 import unittest
 
-from soc_replay.models import Aggregate, Condition, Event, Expectations, Response, Rule, Scenario, ValidationError
+from soc_replay.models import (
+    Aggregate,
+    Condition,
+    Event,
+    Expectations,
+    ExpectedDetection,
+    Response,
+    Rule,
+    Scenario,
+    ValidationError,
+)
 
 BASE_EVENT = {
     "event_id": "evt",
@@ -100,10 +110,34 @@ class ValidationMatrixTests(unittest.TestCase):
                 {"detection_count": 1, "rule_ids": ["R"], "severity_counts": {"low": 1}, "simulated_action_count": 0}
             )
 
+    def test_exact_detection_validation_failures(self) -> None:
+        with self.assertRaisesRegex(ValidationError, "object"):
+            ExpectedDetection.from_dict([])  # type: ignore[arg-type]
+        with self.assertRaisesRegex(ValidationError, "unsupported severity"):
+            ExpectedDetection.from_dict(
+                {"rule_id": "R", "severity": "bad", "event_ids": ["e"], "group": {}, "action": "a"}
+            )
+        with self.assertRaisesRegex(ValidationError, "non-empty"):
+            ExpectedDetection.from_dict(
+                {"rule_id": "R", "severity": "low", "event_ids": [], "group": {}, "action": "a"}
+            )
+        with self.assertRaisesRegex(ValidationError, "rule order"):
+            Expectations.from_dict(
+                {
+                    "detection_count": 1,
+                    "rule_ids": ["R1"],
+                    "severity_counts": {"low": 1},
+                    "simulated_action_count": 1,
+                    "detections": [
+                        {"rule_id": "R2", "severity": "low", "event_ids": ["e"], "group": {}, "action": "a"}
+                    ],
+                }
+            )
+
     def test_scenario_validation_failures(self) -> None:
         with self.assertRaisesRegex(ValidationError, "object"):
             Scenario.from_dict([])  # type: ignore[arg-type]
-        with self.assertRaisesRegex(ValidationError, "schema_version"):
+        with self.assertRaisesRegex(ValidationError, "one of"):
             Scenario.from_dict({"schema_version": "9"})
         with self.assertRaisesRegex(ValidationError, "requires at least one rule"):
             Scenario.from_dict(
