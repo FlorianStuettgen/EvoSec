@@ -1,3 +1,293 @@
 {
-  "placeholder": true
+  "detections": [
+    {
+      "correlation": {
+        "candidate_events": 6,
+        "candidate_strategy": "intersection[eq:category=network_connection,eq:outcome=blocked,tag:reconnaissance]",
+        "distinct_count": 5,
+        "distinct_field": "destination_port",
+        "distinct_threshold": 5,
+        "event_count": 5,
+        "matched_events": 6,
+        "rule_fingerprint": "8950e9b4ceaeb4076ffa90a980994c435147c12a1c08b35936891ba6de45dc7d",
+        "threshold": 5,
+        "type": "time_window",
+        "window_policy": "first_per_group",
+        "within_seconds": 60
+      },
+      "detection_id": "NET-SCAN-001:001",
+      "event_ids": [
+        "net-001",
+        "net-002",
+        "net-003",
+        "net-004",
+        "net-005"
+      ],
+      "first_seen": "2026-07-01T12:00:00Z",
+      "group": {
+        "destination_ip": "10.20.40.10",
+        "source_ip": "10.20.30.77"
+      },
+      "last_seen": "2026-07-01T12:00:31Z",
+      "response": {
+        "action": "recommend_segment_isolation",
+        "description": "Recommend isolating the synthetic source segment and preserving the matched event set for analyst review.",
+        "mode": "simulated"
+      },
+      "rule_description": "A single source touches several destination ports in a short window.",
+      "rule_id": "NET-SCAN-001",
+      "rule_name": "Multi-port connection burst",
+      "severity": "high"
+    }
+  ],
+  "engine": {
+    "name": "soc-replay",
+    "version": "3.2.1"
+  },
+  "execution": {
+    "ledger": {
+      "entries": [
+        {
+          "entry_hash": "2957549f6ff905b28f8837fda204b0234fff1c9572ba63a4902855074254a065",
+          "input_digest": "ff3655b2078fed954d566adb285f944a7588c41fc941118dd52904b4e3cbd803",
+          "metadata": {
+            "run_id": "686f91bca3c385b6",
+            "scenario_id": "network-scan"
+          },
+          "output_digest": "4364dc93c7b6c73da9d2ad415f6f043e5985bd5d637a9f097e9bf7d1b880963f",
+          "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "records_in": 2,
+          "records_out": 7,
+          "sequence": 1,
+          "stage": "load",
+          "status": "ok"
+        },
+        {
+          "entry_hash": "1c797376a137c4f17fee9cd19354975f023fd268b95c58652990155715ee19cf",
+          "input_digest": "4364dc93c7b6c73da9d2ad415f6f043e5985bd5d637a9f097e9bf7d1b880963f",
+          "metadata": {
+            "rule_fingerprints": [
+              "8950e9b4ceaeb4076ffa90a980994c435147c12a1c08b35936891ba6de45dc7d"
+            ]
+          },
+          "output_digest": "1a8be1ed446db27f0bd5bf7306165b53f0f67c0ff4e4934638e33ad27e339e94",
+          "previous_hash": "2957549f6ff905b28f8837fda204b0234fff1c9572ba63a4902855074254a065",
+          "records_in": 1,
+          "records_out": 1,
+          "sequence": 2,
+          "stage": "compile",
+          "status": "ok"
+        },
+        {
+          "entry_hash": "6a84cb843c084f648669b0d2458ed3777cc561bd03de32dbf279cbc1d4dcab25",
+          "input_digest": "e7421a5093e510b41f013c8cef4e4d5014764ddfa578cb03352c3415f46dc6dd",
+          "metadata": {
+            "index_fields": [
+              "category",
+              "action",
+              "outcome",
+              "source",
+              "host",
+              "user",
+              "tags"
+            ]
+          },
+          "output_digest": "37c45cbd12606720b27d87746ffde7bf8dcbcc6ac05212576edf40ae182e3996",
+          "previous_hash": "1c797376a137c4f17fee9cd19354975f023fd268b95c58652990155715ee19cf",
+          "records_in": 7,
+          "records_out": 7,
+          "sequence": 3,
+          "stage": "index",
+          "status": "ok"
+        },
+        {
+          "entry_hash": "061f9670dfb56967b6ff34c74cf8845ae3a9287bc66dc754053b1045d50b643c",
+          "input_digest": "364b3066f3245c5407571eca22cf10e553e2e042354096b33b6532b5029b80e2",
+          "metadata": {
+            "rule_executions": [
+              {
+                "candidate_count": 6,
+                "candidate_strategy": "intersection[eq:category=network_connection,eq:outcome=blocked,tag:reconnaissance]",
+                "detection_count": 1,
+                "group_count": 1,
+                "matched_count": 6,
+                "rule_fingerprint": "8950e9b4ceaeb4076ffa90a980994c435147c12a1c08b35936891ba6de45dc7d",
+                "rule_id": "NET-SCAN-001",
+                "windows_considered": 5
+              }
+            ]
+          },
+          "output_digest": "0365f6bc313b270e31aa0a5ac1bca9443d111a85dde6005996887c5440aee6af",
+          "previous_hash": "6a84cb843c084f648669b0d2458ed3777cc561bd03de32dbf279cbc1d4dcab25",
+          "records_in": 7,
+          "records_out": 1,
+          "sequence": 4,
+          "stage": "evaluate",
+          "status": "ok"
+        },
+        {
+          "entry_hash": "2e051d78d6adfac1e71af2debbe525258bb4ca97815daa902b02dbb4edb7f84a",
+          "input_digest": "0365f6bc313b270e31aa0a5ac1bca9443d111a85dde6005996887c5440aee6af",
+          "metadata": {
+            "passed": true
+          },
+          "output_digest": "460f954b3b35b27b6c6763a64ff0a9cc818eb37cb49490045d45363492c1ee67",
+          "previous_hash": "061f9670dfb56967b6ff34c74cf8845ae3a9287bc66dc754053b1045d50b643c",
+          "records_in": 1,
+          "records_out": 5,
+          "sequence": 5,
+          "stage": "verify",
+          "status": "ok"
+        }
+      ],
+      "genesis_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "root_hash": "2e051d78d6adfac1e71af2debbe525258bb4ca97815daa902b02dbb4edb7f84a",
+      "schema_version": "1.0"
+    },
+    "plan": {
+      "fingerprint": "1a8be1ed446db27f0bd5bf7306165b53f0f67c0ff4e4934638e33ad27e339e94",
+      "rules": [
+        {
+          "candidate_selectors": [
+            {
+              "field": "category",
+              "mode": "eq",
+              "value": "network_connection"
+            },
+            {
+              "field": "outcome",
+              "mode": "eq",
+              "value": "blocked"
+            },
+            {
+              "field": "tags",
+              "mode": "contains",
+              "value": "reconnaissance"
+            }
+          ],
+          "fingerprint": "8950e9b4ceaeb4076ffa90a980994c435147c12a1c08b35936891ba6de45dc7d",
+          "id": "NET-SCAN-001"
+        }
+      ],
+      "scenario_id": "network-scan"
+    },
+    "rules": [
+      {
+        "candidate_count": 6,
+        "candidate_strategy": "intersection[eq:category=network_connection,eq:outcome=blocked,tag:reconnaissance]",
+        "detection_count": 1,
+        "group_count": 1,
+        "matched_count": 6,
+        "rule_fingerprint": "8950e9b4ceaeb4076ffa90a980994c435147c12a1c08b35936891ba6de45dc7d",
+        "rule_id": "NET-SCAN-001",
+        "windows_considered": 5
+      }
+    ]
+  },
+  "provenance": {
+    "events_sha256": "e7421a5093e510b41f013c8cef4e4d5014764ddfa578cb03352c3415f46dc6dd",
+    "run_id": "686f91bca3c385b6",
+    "scenario_sha256": "defa19d6af50f8335bae607271c780f1b7aea998b47baee3f605a9693d431817"
+  },
+  "report_schema_version": "2.1",
+  "scenario": {
+    "authorization_boundary": "Synthetic telemetry only. No packets are generated and no network device is contacted.",
+    "expected_outcome": "One high-severity detection backed by at least five events and five distinct destination ports within sixty seconds.",
+    "id": "network-scan",
+    "objective": "Confirm that a concentrated burst of connection attempts is detected, grouped, and converted into a simulated containment recommendation.",
+    "schema_version": "1.1",
+    "title": "Synthetic multi-port scan"
+  },
+  "simulated_actions": [
+    {
+      "action": "recommend_segment_isolation",
+      "description": "Recommend isolating the synthetic source segment and preserving the matched event set for analyst review.",
+      "detection_id": "NET-SCAN-001:001",
+      "mode": "simulated"
+    }
+  ],
+  "summary": {
+    "detections": 1,
+    "events_processed": 7,
+    "rules_executed": 1,
+    "simulated_actions": 1,
+    "verification_passed": true
+  },
+  "verification": {
+    "checks": [
+      {
+        "actual": 1,
+        "expected": 1,
+        "name": "detection_count",
+        "passed": true
+      },
+      {
+        "actual": [
+          "NET-SCAN-001"
+        ],
+        "expected": [
+          "NET-SCAN-001"
+        ],
+        "name": "rule_ids",
+        "passed": true
+      },
+      {
+        "actual": {
+          "high": 1
+        },
+        "expected": {
+          "high": 1
+        },
+        "name": "severity_counts",
+        "passed": true
+      },
+      {
+        "actual": 1,
+        "expected": 1,
+        "name": "simulated_action_count",
+        "passed": true
+      },
+      {
+        "actual": [
+          {
+            "action": "recommend_segment_isolation",
+            "event_ids": [
+              "net-001",
+              "net-002",
+              "net-003",
+              "net-004",
+              "net-005"
+            ],
+            "group": {
+              "destination_ip": "10.20.40.10",
+              "source_ip": "10.20.30.77"
+            },
+            "rule_id": "NET-SCAN-001",
+            "severity": "high"
+          }
+        ],
+        "expected": [
+          {
+            "action": "recommend_segment_isolation",
+            "event_ids": [
+              "net-001",
+              "net-002",
+              "net-003",
+              "net-004",
+              "net-005"
+            ],
+            "group": {
+              "destination_ip": "10.20.40.10",
+              "source_ip": "10.20.30.77"
+            },
+            "rule_id": "NET-SCAN-001",
+            "severity": "high"
+          }
+        ],
+        "name": "detection_contracts",
+        "passed": true
+      }
+    ],
+    "passed": true
+  }
 }
