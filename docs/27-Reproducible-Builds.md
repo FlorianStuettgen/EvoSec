@@ -2,17 +2,20 @@
 
 ## Goal
 
-A source tree should produce the same wheel bytes when built twice with the same toolchain and deterministic build inputs.
+A clean source tree should produce the same wheel bytes when built twice with the same toolchain and deterministic build inputs.
 
 ## Verification process
 
 `tools/verify_reproducible_wheel.py`:
 
-1. creates two isolated output directories;
-2. fixes `SOURCE_DATE_EPOCH` and `PYTHONHASHSEED`;
-3. builds the wheel twice without dependency isolation;
-4. compares wheel names and SHA-256 hashes; and
-5. reports differing archive entries when bytes diverge.
+1. copies the repository into two independent clean source directories;
+2. excludes version-control state, caches, virtual environments, build output, distributions, and egg-info metadata;
+3. fixes `SOURCE_DATE_EPOCH` and `PYTHONHASHSEED`;
+4. builds each copy without dependency isolation using the explicitly declared setuptools and wheel development dependencies;
+5. compares wheel names and complete SHA-256 hashes; and
+6. preserves build logs, both wheel files, differing entry content, and ZIP metadata when verification fails.
+
+The CI artifact uploader runs even after a failed gate and includes `build/reproducibility/`, so a failed supply-chain check remains inspectable rather than disappearing with its temporary directory.
 
 ## Why it matters
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.2.1 — 2026-07-14
+
+- Resolved all Ruff failures across the recursive immutability, serialization, and compatibility-wrapper surfaces.
+- Made CI preserve and upload lint, build, benchmark, bundle, and proof diagnostics even when an earlier gate fails.
+- Confirmed the Python 3.11 and 3.12 matrices pass every quality, contract, proof, schema, bundle, adapter, determinism, audit, and package-build gate.
+- Confirmed the Python 3.13 benchmark smoke run produces schema-valid artifacts with embedded passing semantic-equivalence proofs.
+- Corrected the reproducible-wheel verifier to build from two independent clean source copies rather than one mutable source tree.
+- Added persistent build-frontend logs and entry-level wheel diagnostics for forensic failures.
+- Declared the setuptools backend and wheel builder as development dependencies for deliberate no-isolation builds.
+- Retained environment-labelled benchmark measurements without introducing brittle latency thresholds or unsupported speed claims.
+
 ## 3.2.0 — 2026-07-14
 
 - Added differential correctness proofs comparing indexed execution with a full-scan reference path.

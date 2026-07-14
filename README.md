@@ -123,13 +123,13 @@ The benchmark schema validates structure, not speed. CI deliberately avoids brit
 
 ## Reproducible package construction
 
-The project verifies that two isolated wheel builds produce byte-identical artifacts when supplied the same source tree, fixed build epoch, and hash seed:
+The project verifies that two independent clean source copies produce byte-identical wheels when supplied the same build backend, wheel builder, fixed build epoch, and hash seed:
 
 ```bash
 python tools/verify_reproducible_wheel.py
 ```
 
-This establishes reproducibility under the tested toolchain and environment. It does not replace artifact signing, trusted timestamps, or independent provenance attestation.
+The verifier preserves build-frontend logs and entry-level ZIP diagnostics on failure, and CI uploads those diagnostics even when the build check fails. This establishes reproducibility under the tested toolchain and environment; it does not replace artifact signing, trusted timestamps, or independent provenance attestation.
 
 ## Contract-complete internals
 
@@ -252,7 +252,7 @@ python tools/verify_reproducible_wheel.py
 python tools/benchmark_scenarios.py --copies 4 --iterations 2 --warmups 1
 ```
 
-The gate verifies code quality, exact scenario behavior, schema-instance validity, differential index correctness, deterministic bundle bytes, strict ledger consistency, repository invariants, reproducible package bytes, and a schema-valid benchmark smoke run.
+The gate verifies code quality, exact scenario behavior, schema-instance validity, differential index correctness, deterministic bundle bytes, strict ledger consistency, repository invariants, reproducible package bytes, and a schema-valid benchmark smoke run. CI preserves diagnostics and benchmark artifacts even when an earlier quality gate fails.
 
 ## Documentation
 
@@ -279,11 +279,11 @@ The execution ledger and bundle manifest provide tamper evidence relative to the
 
 ## Current state
 
-**Version:** 3.2.0  
+**Version:** 3.2.1  
 **Execution engine:** deeply immutable, compiled, composite-indexed, traced, and packaged  
 **Correctness assurance:** indexed execution differentially checked against full scan  
 **Experiment evidence:** four exact deterministic contracts, including a zero-detection control  
 **Schema assurance:** inputs, outputs, proofs, and benchmark artifacts validated as real Draft 2020-12 instances  
-**Build assurance:** deterministic bundle generation and reproducible wheel verification  
+**Build assurance:** deterministic bundle generation plus two-clean-source wheel reproducibility verification  
 **Adapter surface:** frozen, offline, sanitized Suricata EVE normalization  
 **Live response:** deliberately outside the package
