@@ -35,7 +35,16 @@ jobs:
           echo "status=${status}" >> "${GITHUB_OUTPUT}"
           exit "${status}"
       - name: Type check
-        run: mypy
+        id: typing
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p build/diagnostics
+          set +e
+          mypy 2>&1 | tee build/diagnostics/mypy.txt
+          status=${PIPESTATUS[0]}
+          echo "status=${status}" >> "${GITHUB_OUTPUT}"
+          exit "${status}"
       - name: Compile
         run: python -m compileall -q src tests tools
       - name: Test with branch coverage
@@ -113,5 +122,5 @@ jobs:
             build/diagnostics/
             build/reproducibility/
       - name: Enforce captured quality results
-        if: always() && (steps.lint.outcome == 'failure' || steps.tests.outcome == 'failure')
+        if: always() && (steps.lint.outcome == 'failure' || steps.typing.outcome == 'failure' || steps.tests.outcome == 'failure')
         run: exit 1
