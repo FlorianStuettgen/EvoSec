@@ -20,11 +20,11 @@ def check_ledger(state: BundleState, derived: DerivedState, checks: CheckCollect
     )
 
     entries = object_array(state.ledger.get("entries"), "JSON report.execution.ledger.entries")
-    by_stage = {entry.get("stage"): entry for entry in entries}
     checks.add("ledger_stage_order", list(PIPELINE_STAGES), [entry.get("stage") for entry in entries])
     if not ledger_valid:
         return
 
+    by_stage = {entry["stage"]: entry for entry in entries}
     load_entry = by_stage["load"]
     compile_entry = by_stage["compile"]
     index_entry = by_stage["index"]

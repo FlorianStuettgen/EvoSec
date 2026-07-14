@@ -19,8 +19,10 @@ class ReportTests(unittest.TestCase):
         report: dict[str, object],
         manifest: dict[str, object],
     ) -> None:
+        json_path = bundle.json_path
+        manifest_path = bundle.manifest_path
         report_content = pretty_json(report)
-        bundle.json_path.write_text(report_content, encoding="utf-8")
+        json_path.write_text(report_content, encoding="utf-8")
         artifacts = manifest["artifacts"]
         assert isinstance(artifacts, dict)
         artifacts["report.json"] = {
@@ -29,15 +31,17 @@ class ReportTests(unittest.TestCase):
         }
         core = {key: value for key, value in manifest.items() if key != "bundle_id"}
         manifest["bundle_id"] = digest_object(core)
-        bundle.manifest_path.write_text(pretty_json(manifest), encoding="utf-8")
+        manifest_path.write_text(pretty_json(manifest), encoding="utf-8")
 
     def test_bundle_round_trip_and_identity(self) -> None:
         scenario = ROOT / "scenarios" / "network-scan"
         result = run_scenario(scenario)
         with TemporaryDirectory() as temporary:
             bundle = write_bundle(result, temporary)
-            self.assertTrue(verify_bundle(temporary).passed)
-            self.assertTrue(verify_bundle(temporary, source_directory=scenario).passed)
+            verification = verify_bundle(temporary)
+            self.assertTrue(verification.passed)
+            source_verification = verify_bundle(temporary, source_directory=scenario)
+            self.assertTrue(source_verification.passed)
             manifest = json.loads(bundle.manifest_path.read_text())
             self.assertEqual(manifest["bundle_id"], bundle.bundle_id)
             self.assertEqual(manifest["ledger_root"], result.ledger.root_hash)
@@ -94,6 +98,34 @@ class ReportTests(unittest.TestCase):
             failed = {check.name for check in source_verification.checks if not check.passed}
             self.assertIn("source_bound.report.json.sha256", failed)
             self.assertIn("source_bound.manifest.json.sha256", failed)
+
+    def test_bundle_rejects_non_scalar_ledger_stage_without_crashing(self) -> None:
+        result = run_scenario(ROOT / "scenarios" / "network-scan")
+        with TemporaryDirectory() as temporary:
+            bundle = write_bundle(result, temporary)
+            report = json.loads(bundle.json_path.read_text())
+            manifest = json.loads(bundle.manifest_path.read_text())
+            report["execution"]["ledger"]["entries"][0]["stage"] = ["load"]
+            self._rewrite_report_and_manifest(bundle, report, manifest)
+            verification = verify_bundle(temporary)
+            self.assertFalse(verification.passed)
+            failed = {check.name for check in verification.checks if not check.passed}
+            self.assertIn("ledger_valid", failed)
+            self.assertIn("ledger_stage_order", failed)
+
+    def test_bundle_rejects_non_scalar_ledger_status_without_crashing(self) -> None:
+        result = run_scenario(ROOT / "scenarios" / "network-scan")
+        for invalid_status in (["ok"], {"status": "ok"}):
+            with self.subTest(invalid_status=invalid_status), TemporaryDirectory() as temporary:
+                bundle = write_bundle(result, temporary)
+                report = json.loads(bundle.json_path.read_text())
+                manifest = json.loads(bundle.manifest_path.read_text())
+                report["execution"]["ledger"]["entries"][0]["status"] = invalid_status
+                self._rewrite_report_and_manifest(bundle, report, manifest)
+                verification = verify_bundle(temporary)
+                self.assertFalse(verification.passed)
+                failed = {check.name for check in verification.checks if not check.passed}
+                self.assertIn("ledger_valid", failed)
 
     def test_report_exposes_plan_traces_and_ledger(self) -> None:
         payload = json.loads(render_json(run_scenario(ROOT / "scenarios" / "network-scan")))

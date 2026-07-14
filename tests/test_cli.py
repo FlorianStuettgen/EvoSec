@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
@@ -30,10 +31,11 @@ class CliTests(unittest.TestCase):
         self.assertIn("LOAD --> COMPILE", output)
 
     def test_run_and_verify_bundle(self) -> None:
+        scenario = str(ROOT / "scenarios" / "network-scan")
         with TemporaryDirectory() as temporary:
             code, output, _ = self.run_cli(
                 "run",
-                str(ROOT / "scenarios" / "network-scan"),
+                scenario,
                 "--output",
                 temporary,
             )
@@ -42,6 +44,18 @@ class CliTests(unittest.TestCase):
             code, output, _ = self.run_cli("verify-bundle", temporary)
             self.assertEqual(code, 0)
             self.assertIn("bundle verification: PASS", output)
+            self.assertIn("0 failed", output)
+            self.assertNotIn("engine_name", output)
+
+            code, output, _ = self.run_cli("verify-bundle", temporary, "--source", scenario, "--verbose")
+            self.assertEqual(code, 0)
+            self.assertIn("source_bound.report.json.sha256", output)
+
+            code, output, _ = self.run_cli("verify-bundle", temporary, "--source", scenario, "--json")
+            self.assertEqual(code, 0)
+            payload = json.loads(output)
+            self.assertTrue(payload["passed"])
+            self.assertTrue(any(check["name"].startswith("source_bound.") for check in payload["checks"]))
 
     def test_generic_adapter_command(self) -> None:
         with TemporaryDirectory() as temporary:

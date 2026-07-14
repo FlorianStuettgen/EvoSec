@@ -179,7 +179,7 @@ def verify_ledger_payload(payload: Any, *, require_complete: bool = True) -> tup
         if raw.get("stage") != expected_stage:
             errors.append(f"ledger entry {index} has invalid stage order")
         status = raw.get("status")
-        if status not in {"ok", "failed"}:
+        if not isinstance(status, str) or status not in {"ok", "failed"}:
             errors.append(f"ledger entry {index} has an invalid status")
         if require_complete and status != "ok":
             errors.append(f"ledger entry {index} must have status 'ok' in a complete bundle")

@@ -91,8 +91,18 @@ def build_parser() -> argparse.ArgumentParser:
     explain_parser.add_argument("scenario")
     explain_parser.add_argument("--json", action="store_true")
 
-    bundle_parser = subparsers.add_parser("verify-bundle", help="verify artifacts, manifest, and execution ledger")
+    bundle_parser = subparsers.add_parser(
+        "verify-bundle",
+        help="verify bundle integrity and optionally reproduce it from a source scenario",
+    )
     bundle_parser.add_argument("bundle")
+    bundle_parser.add_argument(
+        "--source",
+        help="scenario directory used to reproduce and byte-compare the complete bundle",
+    )
+    bundle_output = bundle_parser.add_mutually_exclusive_group()
+    bundle_output.add_argument("--verbose", action="store_true", help="print every verification check")
+    bundle_output.add_argument("--json", action="store_true", help="emit the verification result as JSON")
 
     normalize_parser = subparsers.add_parser("normalize", help="normalize a stored telemetry file through an adapter")
     normalize_parser.add_argument("--adapter", required=True)
@@ -227,13 +237,33 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"expected detections: {result.scenario.expectations.detection_count}")
             return 0
         if args.command == "verify-bundle":
-            verification = verify_bundle(args.bundle)
-            print(f"bundle verification: {'PASS' if verification.passed else 'FAIL'}")
-            for check in verification.checks:
+            verification = verify_bundle(args.bundle, source_directory=args.source)
+            if args.json:
+                payload = {
+                    "passed": verification.passed,
+                    "checks": [
+                        {
+                            "name": check.name,
+                            "passed": check.passed,
+                            "expected": to_primitive(check.expected),
+                            "actual": to_primitive(check.actual),
+                        }
+                        for check in verification.checks
+                    ],
+                }
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                failed = [check for check in verification.checks if not check.passed]
                 print(
-                    f"  {'PASS' if check.passed else 'FAIL'} {check.name}: "
-                    f"expected={to_primitive(check.expected)!r} actual={to_primitive(check.actual)!r}"
+                    f"bundle verification: {'PASS' if verification.passed else 'FAIL'} "
+                    f"({len(verification.checks)} checks, {len(failed)} failed)"
                 )
+                visible_checks = verification.checks if args.verbose else failed
+                for check in visible_checks:
+                    print(
+                        f"  {'PASS' if check.passed else 'FAIL'} {check.name}: "
+                        f"expected={to_primitive(check.expected)!r} actual={to_primitive(check.actual)!r}"
+                    )
             return 0 if verification.passed else 4
         if args.command == "normalize":
             adapter_result = normalize_file(args.adapter, args.source, args.destination)
