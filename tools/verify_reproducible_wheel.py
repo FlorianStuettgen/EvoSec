@@ -12,6 +12,20 @@ from zipfile import ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
 DIAGNOSTIC_DIRECTORY = ROOT / "build" / "reproducibility"
+_SOURCE_IGNORE = shutil.ignore_patterns(
+    ".git",
+    ".venv",
+    ".coverage",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "*.egg-info",
+    "build",
+    "dist",
+)
 
 
 def _sha256(path: Path) -> str:
@@ -22,7 +36,13 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _build(destination: Path) -> Path:
+def _copy_source(destination: Path) -> Path:
+    source = destination / "source"
+    shutil.copytree(ROOT, source, ignore=_SOURCE_IGNORE)
+    return source
+
+
+def _build(source: Path, destination: Path) -> Path:
     environment = os.environ.copy()
     environment.update(
         {
@@ -40,7 +60,7 @@ def _build(destination: Path) -> Path:
             "--outdir",
             str(destination),
         ],
-        cwd=ROOT,
+        cwd=source,
         env=environment,
         check=False,
         capture_output=True,
@@ -112,9 +132,13 @@ def main() -> int:
         if path.is_file():
             path.unlink()
     with TemporaryDirectory() as first_dir, TemporaryDirectory() as second_dir:
+        first_root = Path(first_dir)
+        second_root = Path(second_dir)
+        first_source = _copy_source(first_root)
+        second_source = _copy_source(second_root)
         try:
-            first = _build(Path(first_dir))
-            second = _build(Path(second_dir))
+            first = _build(first_source, first_root / "dist")
+            second = _build(second_source, second_root / "dist")
         except RuntimeError as exc:
             print(f"ERROR: {exc}")
             return 1
