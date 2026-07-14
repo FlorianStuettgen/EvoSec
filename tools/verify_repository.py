@@ -7,6 +7,7 @@ from pathlib import Path
 
 from soc_replay import __version__
 from soc_replay.adapters import adapter_registry
+from soc_replay.bundle_verify import verify_bundle
 from soc_replay.contracts import (
     BENCHMARK_SCHEMA_VERSION,
     CURRENT_SCENARIO_SCHEMA_VERSION,
@@ -28,6 +29,7 @@ SCENARIOS = (
     "benign-privileged-change",
 )
 REQUIRED_DOCS = (
+    "docs/00-Start-Here.md",
     "docs/11-Replay-Engine.md",
     "docs/14-Implementation-State.md",
     "docs/16-Engineering-Review.md",
@@ -55,6 +57,12 @@ REQUIRED_TOOLS = (
     "tools/verify_index_equivalence.py",
     "tools/benchmark_scenarios.py",
     "tools/verify_reproducible_wheel.py",
+)
+REQUIRED_REFERENCE = (
+    "reference/README.md",
+    "reference/network-scan/report.json",
+    "reference/network-scan/report.md",
+    "reference/network-scan/manifest.json",
 )
 
 
@@ -96,7 +104,7 @@ def main() -> int:
         errors.append("adapter registry is empty")
     if not registry.frozen:
         errors.append("global adapter registry must be frozen")
-    for relative in REQUIRED_DOCS + REQUIRED_SCHEMAS + REQUIRED_TOOLS:
+    for relative in REQUIRED_DOCS + REQUIRED_SCHEMAS + REQUIRED_TOOLS + REQUIRED_REFERENCE:
         if not (ROOT / relative).exists():
             errors.append(f"missing required repository file: {relative}")
     for schema in REQUIRED_SCHEMAS:
@@ -107,6 +115,13 @@ def main() -> int:
             continue
         if payload.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
             errors.append(f"schema is not draft 2020-12: {schema}")
+
+    reference = verify_bundle(
+        ROOT / "reference" / "network-scan",
+        source_directory=ROOT / "scenarios" / "network-scan",
+    )
+    if not reference.passed:
+        errors.extend(f"reference/network-scan: {check.name}" for check in reference.checks if not check.passed)
 
     for name in SCENARIOS:
         scenario_dir = ROOT / "scenarios" / name
@@ -143,7 +158,7 @@ def main() -> int:
     print(
         "repository verification: PASS "
         f"({len(SCENARIOS)} exact scenarios, {len(operator_catalog())} operators, "
-        f"{len(registry.descriptors())} frozen adapters, differential index proof)"
+        f"{len(registry.descriptors())} frozen adapters, committed reference evidence, differential index proof)"
     )
     return 0
 
