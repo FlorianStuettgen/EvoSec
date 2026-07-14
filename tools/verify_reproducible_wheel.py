@@ -42,7 +42,7 @@ def _copy_source(destination: Path) -> Path:
     return source
 
 
-def _build(source: Path, destination: Path) -> Path:
+def _build(source: Path, destination: Path, label: str) -> Path:
     environment = os.environ.copy()
     environment.update(
         {
@@ -66,15 +66,23 @@ def _build(source: Path, destination: Path) -> Path:
         capture_output=True,
         text=True,
     )
+    diagnostic_log = DIAGNOSTIC_DIRECTORY / f"{label}-build.log"
+    diagnostic_log.write_text(
+        "\n".join(
+            [
+                f"returncode={completed.returncode}",
+                "--- stdout ---",
+                completed.stdout.rstrip(),
+                "--- stderr ---",
+                completed.stderr.rstrip(),
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
     if completed.returncode != 0:
-        print("ERROR: wheel build failed")
-        if completed.stdout:
-            print("--- build stdout ---")
-            print(completed.stdout.rstrip())
-        if completed.stderr:
-            print("--- build stderr ---")
-            print(completed.stderr.rstrip())
-        raise RuntimeError(f"wheel build exited with status {completed.returncode}")
+        print(f"ERROR: {label} wheel build failed; diagnostics: {diagnostic_log}")
+        raise RuntimeError(f"{label} wheel build exited with status {completed.returncode}")
     wheels = tuple(destination.glob("*.whl"))
     if len(wheels) != 1:
         raise RuntimeError(f"expected one wheel in {destination}, found {len(wheels)}")
@@ -103,7 +111,6 @@ def _entry_metadata(path: Path) -> dict[str, dict[str, object]]:
 
 
 def _preserve_failure(first: Path, second: Path, differing: list[str]) -> Path:
-    DIAGNOSTIC_DIRECTORY.mkdir(parents=True, exist_ok=True)
     first_copy = DIAGNOSTIC_DIRECTORY / "first.whl"
     second_copy = DIAGNOSTIC_DIRECTORY / "second.whl"
     shutil.copy2(first, first_copy)
@@ -137,8 +144,8 @@ def main() -> int:
         first_source = _copy_source(first_root)
         second_source = _copy_source(second_root)
         try:
-            first = _build(first_source, first_root / "dist")
-            second = _build(second_source, second_root / "dist")
+            first = _build(first_source, first_root / "dist", "first")
+            second = _build(second_source, second_root / "dist", "second")
         except RuntimeError as exc:
             print(f"ERROR: {exc}")
             return 1
