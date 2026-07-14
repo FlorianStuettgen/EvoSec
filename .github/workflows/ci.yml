@@ -77,7 +77,7 @@ jobs:
         if: matrix.python-version == '3.13'
         run: python tools/verify_reproducible_wheel.py
       - name: Run schema-valid benchmark smoke test
-        if: matrix.python-version == '3.13'
+        if: always() && matrix.python-version == '3.13'
         run: |
           python tools/benchmark_scenarios.py \
             --copies 4 \
@@ -95,6 +95,7 @@ jobs:
             build/index-equivalence.json
             build/benchmarks/
             build/diagnostics/
+            build/reproducibility/
       - name: Enforce lint result
         if: always() && steps.lint.outcome == 'failure'
         run: exit 1
