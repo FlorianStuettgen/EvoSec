@@ -15,9 +15,9 @@ def to_primitive(value: Any) -> Any:
         return str(value)
     if isinstance(value, Mapping):
         return {str(key): to_primitive(item) for key, item in value.items()}
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray):
         return [to_primitive(item) for item in value]
-    if isinstance(value, Set) and not isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, Set) and not isinstance(value, str | bytes | bytearray):
         converted = [to_primitive(item) for item in value]
         return sorted(converted, key=lambda item: json.dumps(item, sort_keys=True, ensure_ascii=False))
     return value
