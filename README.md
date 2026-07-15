@@ -199,7 +199,7 @@ The version-controlled `docs/` directory is canonical. Wiki material is secondar
 
 ## Current state
 
-- **Version:** 3.2.1
+- **Version:** 3.3.0
 - **Runtime:** standard-library only
 - **Supported Python:** 3.11–3.13
 - **Maintained scenarios:** four exact controls

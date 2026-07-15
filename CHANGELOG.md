@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 3.3.0 — 2026-07-15
+
 - Added source-bound bundle verification through `verify_bundle(..., source_directory=...)`, with deterministic re-execution and exact byte comparison of JSON, Markdown, and manifest artifacts.
 - Strengthened standalone verification by recomputing run IDs, plan fingerprints, candidate strategies, verification outcomes, rule/detection accounting, and load/compile/evaluate/verify ledger digests.
 - Added correlation-to-trace checks, sequential detection identity checks, exact schema 1.1 contract verification, and adversarial tests for rehashed semantic tampering and coherent report-only rewrites.
