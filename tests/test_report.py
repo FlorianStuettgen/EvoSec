@@ -22,7 +22,9 @@ class ReportTests(unittest.TestCase):
         json_path = bundle.json_path
         manifest_path = bundle.manifest_path
         report_content = pretty_json(report)
-        json_path.write_text(report_content, encoding="utf-8")
+        # Write exact UTF-8 bytes so the rehashed fixture is portable across
+        # platforms; Path.write_text translates newlines on Windows.
+        json_path.write_bytes(report_content.encode("utf-8"))
         artifacts = manifest["artifacts"]
         assert isinstance(artifacts, dict)
         artifacts["report.json"] = {
@@ -31,7 +33,7 @@ class ReportTests(unittest.TestCase):
         }
         core = {key: value for key, value in manifest.items() if key != "bundle_id"}
         manifest["bundle_id"] = digest_object(core)
-        manifest_path.write_text(pretty_json(manifest), encoding="utf-8")
+        manifest_path.write_bytes(pretty_json(manifest).encode("utf-8"))
 
     def test_bundle_round_trip_and_identity(self) -> None:
         scenario = ROOT / "scenarios" / "network-scan"
