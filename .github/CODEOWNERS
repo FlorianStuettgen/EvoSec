@@ -1,0 +1,9 @@
+* @FlorianStuettgen
+
+/.github/ @FlorianStuettgen
+/src/soc_replay/ @FlorianStuettgen
+/schemas/ @FlorianStuettgen
+/scenarios/ @FlorianStuettgen
+/reference/ @FlorianStuettgen
+/tools/verify_* @FlorianStuettgen
+/SECURITY.md @FlorianStuettgen
