@@ -1,6 +1,6 @@
 # Replay report: Synthetic multi-port scan
 
-> **Verification: PASS** · Run ID `a593cecd501f5d1a` · Engine `soc-replay 3.3.0`
+> **Verification: PASS** · Run ID `686f91bca3c385b6` · Engine `soc-replay 3.3.0`
 
 ## Decision summary
 
@@ -14,21 +14,21 @@
 
 ## Provenance and execution identity
 
-- **Scenario SHA-256:** `094766adbee70e9378f485140668d4a60f802132dc1aabf04cd331a4e250bc09`
-- **Events SHA-256:** `97f67c5acaf07d7792d0e32305802c0ebeaf7941a48883c666015b0f300682c4`
-- **Deterministic run ID:** `a593cecd501f5d1a`
+- **Scenario SHA-256:** `defa19d6af50f8335bae607271c780f1b7aea998b47baee3f605a9693d431817`
+- **Events SHA-256:** `e7421a5093e510b41f013c8cef4e4d5014764ddfa578cb03352c3415f46dc6dd`
+- **Deterministic run ID:** `686f91bca3c385b6`
 - **Execution-plan fingerprint:** `1a8be1ed446db27f0bd5bf7306165b53f0f67c0ff4e4934638e33ad27e339e94`
-- **Execution-ledger root:** `2d709f79a2bdee2fa6105234aeee63b2478447107cbd089a8f428fc49e84c937`
+- **Execution-ledger root:** `2e051d78d6adfac1e71af2debbe525258bb4ca97815daa902b02dbb4edb7f84a`
 
 ## Execution ledger
 
 | # | Stage | In | Out | Entry hash |
 | ---: | --- | ---: | ---: | --- |
-| 1 | `load` | 2 | 7 | `1e88699192b227ca…` |
-| 2 | `compile` | 1 | 1 | `3e415069f9b7de62…` |
-| 3 | `index` | 7 | 7 | `ecc404b559ecc50c…` |
-| 4 | `evaluate` | 7 | 1 | `618bf12604f17bc5…` |
-| 5 | `verify` | 1 | 5 | `2d709f79a2bdee2f…` |
+| 1 | `load` | 2 | 7 | `2957549f6ff905b2…` |
+| 2 | `compile` | 1 | 1 | `1c797376a137c4f1…` |
+| 3 | `index` | 7 | 7 | `6a84cb843c084f64…` |
+| 4 | `evaluate` | 7 | 1 | `061f9670dfb56967…` |
+| 5 | `verify` | 1 | 5 | `2e051d78d6adfac1…` |
 
 Each ledger entry commits to the prior entry, stage inputs, stage outputs, record counts, and deterministic metadata.
 
