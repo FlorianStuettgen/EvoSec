@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=80,<81", "wheel>=0.45,<1"]
+requires = ["setuptools>=80,<84", "wheel>=0.45,<1"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -48,9 +48,9 @@ dev = [
   "build>=1.2,<2",
   "coverage[toml]>=7.6,<8",
   "jsonschema[format]>=4.23,<5",
-  "mypy>=1.20,<1.21",
-  "ruff>=0.12,<0.13",
-  "setuptools>=80,<81",
+  "mypy>=1.20,<2.4",
+  "ruff>=0.12,<0.17",
+  "setuptools>=80,<84",
   "wheel>=0.45,<1",
 ]
 
